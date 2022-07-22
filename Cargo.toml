@@ -1,5 +1,5 @@
 [package]
-name = "simdutf-rs"
+name = "simdutf"
 version = "0.1.0"
 edition = "2021"
 
