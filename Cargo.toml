@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 license = "MIT"
 description = "Unicode validation and transcoding at billions of characters per second"
-repository = "https://github.com/Nugine/simdutf"
+repository = "https://github.com/Nugine/simdutf-rs"
 keywords = ["utf8", "utf16", "utf32", "unicode", "string", "validation", "simd"]
 categories = ["encoding", "algorithms", "no-std", "text-processing"]
 
