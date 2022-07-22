@@ -2,11 +2,17 @@
 name = "simdutf"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "MIT"
+description = "Unicode validation and transcoding at billions of characters per second"
+repository = "https://github.com/Nugine/simdutf"
+keywords = ["utf8", "utf16", "utf32", "unicode", "string", "validation", "simd"]
+categories = ["encoding", "algorithms", "no-std", "text-processing"]
 
 [profile.release]
 lto = "fat"
 
 [build-dependencies]
 cc = "1.0"
+
+[package.metadata.docs.rs]
+rustdoc-args = ["--cfg", "docsrs"]
