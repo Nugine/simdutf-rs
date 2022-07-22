@@ -1,15 +1,23 @@
 use crate::bindings::*;
 
 /// ASCII encoding
+#[derive(Debug, Clone, Copy)]
 pub struct ASCII;
+
 /// UTF8 encoding
+#[derive(Debug, Clone, Copy)]
 pub struct UTF8;
+
 /// Utf16LE encoding
+#[derive(Debug, Clone, Copy)]
 pub struct UTF16LE;
+
 /// UTF32LE encoding
+#[derive(Debug, Clone, Copy)]
 pub struct UTF32LE;
 
 /// Transcoding adapter
+#[derive(Debug, Clone, Copy)]
 pub struct Transcoder<S, D>(S, D);
 
 macro_rules! impl_encoding {
@@ -22,6 +30,7 @@ macro_rules! impl_encoding {
             /// Returns true if and only if the `data` is valid
             #[doc=stringify!($src_encoding)]
             /// .
+            #[inline]
             pub fn validate(data: &[$src_ty]) -> bool {
                 let len = data.len();
                 let src = data.as_ptr();
@@ -38,6 +47,7 @@ impl_encoding!(UTF32LE, u32, simdutf_validate_utf32);
 
 impl<S, D> Transcoder<S, D> {
     /// Returns a transcoder from `S` to `D`
+    #[inline]
     pub const fn new(src: S, dst: D) -> Self {
         debug_assert!(core::mem::size_of::<S>() == 0);
         debug_assert!(core::mem::size_of::<D>() == 0);
@@ -69,6 +79,7 @@ macro_rules! impl_transcoding {
             /// This function assumes that the input string is valid
             #[doc=stringify!($src_encoding)]
             /// .
+            #[inline]
             pub unsafe fn converted_count(&self, src: &[$src_ty]) -> usize {
                 let len = src.len();
                 let src = src.as_ptr();
@@ -98,6 +109,7 @@ macro_rules! impl_transcoding {
             #[doc=stringify!($dst_ty)]
             ///  words after successful conversion.
             /// + `dst` must be non-null and properly aligned.
+            #[inline]
             pub unsafe fn convert_arbitrary(&self, src: &[$src_ty], dst: *mut $dst_ty) -> usize {
                 let len = src.len();
                 let src = src.as_ptr();
@@ -122,6 +134,7 @@ macro_rules! impl_transcoding {
             #[doc=stringify!($dst_ty)]
             ///  words after successful conversion.
             /// + `dst` must be non-null and properly aligned.
+            #[inline]
             pub unsafe fn convert_valid(&self, src: &[$src_ty], dst: *mut $dst_ty) -> usize {
                 let len = src.len();
                 let src = src.as_ptr();
