@@ -1,8 +1,4 @@
-mod bindings {
-    extern "C" {
-        pub fn simdutf_validate_utf8(buf: *const u8, len: usize) -> bool;
-    }
-}
+mod bindings;
 
 #[inline]
 pub fn validate_utf8(data: &[u8]) -> bool {
