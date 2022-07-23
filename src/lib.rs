@@ -10,7 +10,7 @@
     clippy::missing_inline_in_public_items,
     clippy::must_use_candidate
 )]
-#![cfg_attr(no_std, not(test))]
+#![cfg_attr(not(test), no_std)]
 
 mod bindings;
 
