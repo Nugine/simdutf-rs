@@ -31,6 +31,7 @@ macro_rules! impl_encoding {
             #[doc=stringify!($src_encoding)]
             /// .
             #[inline]
+            #[must_use]
             pub fn validate(data: &[$src_ty]) -> bool {
                 let len = data.len();
                 let src = data.as_ptr();
@@ -80,6 +81,7 @@ macro_rules! impl_transcoding {
             #[doc=stringify!($src_encoding)]
             /// .
             #[inline]
+            #[must_use]
             pub unsafe fn converted_count(&self, src: &[$src_ty]) -> usize {
                 let len = src.len();
                 let src = src.as_ptr();
@@ -110,6 +112,7 @@ macro_rules! impl_transcoding {
             ///  words after successful conversion.
             /// + `dst` must be non-null and properly aligned.
             #[inline]
+            #[must_use]
             pub unsafe fn convert_arbitrary(&self, src: &[$src_ty], dst: *mut $dst_ty) -> usize {
                 let len = src.len();
                 let src = src.as_ptr();
@@ -135,6 +138,7 @@ macro_rules! impl_transcoding {
             ///  words after successful conversion.
             /// + `dst` must be non-null and properly aligned.
             #[inline]
+            #[must_use]
             pub unsafe fn convert_valid(&self, src: &[$src_ty], dst: *mut $dst_ty) -> usize {
                 let len = src.len();
                 let src = src.as_ptr();
