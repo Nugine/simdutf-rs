@@ -8,7 +8,7 @@ fn test_validate_ascii() {
     ];
 
     for s in cases {
-        let output = ASCII::validate(s);
+        let output = validate_ascii(s);
         let expected = s.is_ascii();
         assert_eq!(output, expected);
     }
@@ -24,16 +24,15 @@ fn test_utf8_to_utf16() {
 
     for s in cases {
         {
-            let output = UTF8::validate(s.as_bytes());
+            let output = validate_utf8(s.as_bytes());
             let expected = true;
             assert_eq!(output, expected);
         }
 
-        let codec = Transcoder::new(UTF8, UTF16LE);
         let utf16: Vec<u16> = s.encode_utf16().collect();
 
         {
-            let output = unsafe { codec.converted_count(s.as_bytes()) };
+            let output = unsafe { count_utf16le_from_utf8(s.as_bytes()) };
             let expected = utf16.len();
             assert_eq!(output, expected);
         }
@@ -41,7 +40,7 @@ fn test_utf8_to_utf16() {
         let mut buf: Vec<u16> = Vec::with_capacity(utf16.len());
 
         {
-            let output = unsafe { codec.convert_arbitrary(s.as_bytes(), buf.as_mut_ptr()) };
+            let output = unsafe { convert_arbitrary_utf8_to_utf16le(s.as_bytes(), buf.as_mut_ptr()) };
             let expected = utf16.len();
             assert_eq!(output, expected);
         }
@@ -55,7 +54,7 @@ fn test_utf8_to_utf16() {
         }
 
         {
-            let output = unsafe { codec.convert_valid(s.as_bytes(), buf.as_mut_ptr()) };
+            let output = unsafe { convert_valid_utf8_to_utf16le(s.as_bytes(), buf.as_mut_ptr()) };
             let expected = utf16.len();
             assert_eq!(output, expected);
         }
