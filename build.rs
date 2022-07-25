@@ -1,6 +1,13 @@
 fn main() {
-    cc::Build::new().file("cpp/simdutfrs.cpp").compile("simdutfrs");
+    let mut cc = cc::Build::new();
 
-    // FIXME: https://github.com/simdutf/simdutf/issues/158
-    println!("cargo:rustc-link-lib=dylib=stdc++");
+    cc.cpp(true).file("cpp/simdutfrs.cpp");
+
+    if cfg!(all(windows, target_env = "msvc")) {
+        cc.flag("/std:c++11");
+    } else {
+        cc.flag("-std=c++11");
+    }
+
+    cc.compile("simdutfrs");
 }
