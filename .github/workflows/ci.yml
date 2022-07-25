@@ -1,0 +1,47 @@
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+name: CI
+
+jobs:
+  cross-test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+      - name: test
+        run: |
+          cargo test
+          cargo test --release
+
+  develop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+      - name: Rust components
+        run: |
+          rustup component add rustfmt
+          rustup component add clippy
+      - name: Rust check
+        run: |
+          cargo fmt --all -- --check
+          cargo clippy --all -- -D warnings
+          cargo build
+          cargo build --release
