@@ -32,7 +32,7 @@ fn test_utf8_to_utf16() {
         let utf16: Vec<u16> = s.encode_utf16().collect();
 
         {
-            let output = unsafe { count_utf16le_from_utf8(s.as_bytes()) };
+            let output = unsafe { count_utf16_from_utf8(s.as_bytes()) };
             let expected = utf16.len();
             assert_eq!(output, expected);
         }
@@ -40,7 +40,10 @@ fn test_utf8_to_utf16() {
         let mut buf: Vec<u16> = Vec::with_capacity(utf16.len());
 
         {
-            let output = unsafe { convert_arbitrary_utf8_to_utf16le(s.as_bytes(), buf.as_mut_ptr()) };
+            let len = s.len();
+            let src = s.as_bytes().as_ptr();
+            let dst = buf.as_mut_ptr();
+            let output = unsafe { convert_arbitrary_utf8_to_utf16le(src, len, dst) };
             let expected = utf16.len();
             assert_eq!(output, expected);
         }
@@ -54,7 +57,10 @@ fn test_utf8_to_utf16() {
         }
 
         {
-            let output = unsafe { convert_valid_utf8_to_utf16le(s.as_bytes(), buf.as_mut_ptr()) };
+            let len = s.len();
+            let src = s.as_bytes().as_ptr();
+            let dst = buf.as_mut_ptr();
+            let output = unsafe { convert_valid_utf8_to_utf16le(src, len, dst) };
             let expected = utf16.len();
             assert_eq!(output, expected);
         }

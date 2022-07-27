@@ -1,4 +1,4 @@
-/* auto-generated on 2022-07-12 11:51:03 -0400. Do not edit! */
+/* auto-generated on 2022-07-25 16:36:20 -0400. Do not edit! */
 
 /* begin file src/simdutf.cpp */
 #include "simdutf.h"
@@ -71,24 +71,37 @@ public:
   simdutf_really_inline implementation() : simdutf::implementation("arm64", "ARM NEON", internal::instruction_set::NEON) {}
   simdutf_warn_unused bool validate_utf8(const char *buf, size_t len) const noexcept final;
   simdutf_warn_unused bool validate_ascii(const char *buf, size_t len) const noexcept final;
-  simdutf_warn_unused bool validate_utf16(const char16_t *buf, size_t len) const noexcept final;
+  simdutf_warn_unused bool validate_utf16le(const char16_t *buf, size_t len) const noexcept final;
+  simdutf_warn_unused bool validate_utf16be(const char16_t *buf, size_t len) const noexcept final;
   simdutf_warn_unused bool validate_utf32(const char32_t *buf, size_t len) const noexcept final;
-  simdutf_warn_unused size_t convert_utf8_to_utf16(const char * buf, size_t len, char16_t* utf16_output) const noexcept final;
-  simdutf_warn_unused size_t convert_valid_utf8_to_utf16(const char * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf8_to_utf16le(const char * buf, size_t len, char16_t* utf16_output) const noexcept final;
+  simdutf_warn_unused size_t convert_utf8_to_utf16be(const char * buf, size_t len, char16_t* utf16_output) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf8_to_utf16le(const char * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf8_to_utf16be(const char * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
   simdutf_warn_unused size_t convert_utf8_to_utf32(const char * buf, size_t len, char32_t* utf32_output) const noexcept final;
   simdutf_warn_unused size_t convert_valid_utf8_to_utf32(const char * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_utf16_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_valid_utf16_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf16le_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf16be_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf16le_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf16be_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
   simdutf_warn_unused size_t convert_utf32_to_utf8(const char32_t * buf, size_t len, char* utf8_buffer) const noexcept final;
   simdutf_warn_unused size_t convert_valid_utf32_to_utf8(const char32_t * buf, size_t len, char* utf8_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_utf32_to_utf16(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_valid_utf32_to_utf16(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_utf16_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_valid_utf16_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
-  simdutf_warn_unused size_t count_utf16(const char16_t * buf, size_t length) const noexcept;
+  simdutf_warn_unused size_t convert_utf32_to_utf16le(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf32_to_utf16be(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf32_to_utf16le(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf32_to_utf16be(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf16le_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf16be_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf16le_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf16be_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
+  void change_endianness_utf16(const char16_t * buf, size_t length, char16_t * output) const noexcept final;
+  simdutf_warn_unused size_t count_utf16le(const char16_t * buf, size_t length) const noexcept;
+  simdutf_warn_unused size_t count_utf16be(const char16_t * buf, size_t length) const noexcept;
   simdutf_warn_unused size_t count_utf8(const char * buf, size_t length) const noexcept;
-  simdutf_warn_unused size_t utf8_length_from_utf16(const char16_t * input, size_t length) const noexcept;
-  simdutf_warn_unused size_t utf32_length_from_utf16(const char16_t * input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf8_length_from_utf16le(const char16_t * input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf8_length_from_utf16be(const char16_t * input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf32_length_from_utf16le(const char16_t * input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf32_length_from_utf16be(const char16_t * input, size_t length) const noexcept;
   simdutf_warn_unused size_t utf16_length_from_utf8(const char * input, size_t length) const noexcept;
   simdutf_warn_unused size_t utf8_length_from_utf32(const char32_t * input, size_t length) const noexcept;
   simdutf_warn_unused size_t utf16_length_from_utf32(const char32_t * input, size_t length) const noexcept;
@@ -225,6 +238,20 @@ simdutf_really_inline int8x16_t make_int8x16_t(int8_t x1,  int8_t x2,  int8_t x3
   x = vsetq_lane_s8(x14, x, 13);
   x = vsetq_lane_s8(x15, x, 14);
   x = vsetq_lane_s8(x16, x, 15);
+  return x;
+}
+
+simdutf_really_inline uint8x8_t make_uint8x8_t(uint8_t x1,  uint8_t x2,  uint8_t x3,  uint8_t x4,
+                                         uint8_t x5,  uint8_t x6,  uint8_t x7,  uint8_t x8) {
+  uint8x8_t x{};
+  x = vset_lane_u8(x1, x, 0);
+  x = vset_lane_u8(x2, x, 1);
+  x = vset_lane_u8(x3, x, 2);
+  x = vset_lane_u8(x4, x, 3);
+  x = vset_lane_u8(x5, x, 4);
+  x = vset_lane_u8(x6, x, 5);
+  x = vset_lane_u8(x7, x, 6);
+  x = vset_lane_u8(x8, x, 7);
   return x;
 }
 
@@ -462,9 +489,21 @@ simdutf_really_inline int16x8_t make_int16x8_t(int16_t x1,  int16_t x2,  int16_t
     static simdutf_really_inline simd8<int8_t> splat(int8_t _value) { return vmovq_n_s8(_value); }
     static simdutf_really_inline simd8<int8_t> zero() { return vdupq_n_s8(0); }
     static simdutf_really_inline simd8<int8_t> load(const int8_t values[16]) { return vld1q_s8(values); }
+    template <endianness big_endian>
     simdutf_really_inline void store_ascii_as_utf16(char16_t * p) const {
-      vst1q_u16(reinterpret_cast<uint16_t*>(p), vmovl_u8(vget_low_u8 (vreinterpretq_u8_s8(this->value))));
-      vst1q_u16(reinterpret_cast<uint16_t*>(p + 8), vmovl_high_u8(vreinterpretq_u8_s8(this->value)));
+      uint16x8_t first = vmovl_u8(vget_low_u8 (vreinterpretq_u8_s8(this->value)));
+      uint16x8_t second = vmovl_high_u8(vreinterpretq_u8_s8(this->value));
+      if (big_endian) {
+        #ifdef SIMDUTF_REGULAR_VISUAL_STUDIO
+        const uint8x16_t swap = make_uint8x16_t(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
+        #else
+        const uint8x16_t swap = {1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14};
+        #endif
+        first = vreinterpretq_u16_u8(vqtbl1q_u8(vreinterpretq_u8_u16(first), swap));
+        second = vreinterpretq_u16_u8(vqtbl1q_u8(vreinterpretq_u8_u16(second), swap));
+      }
+      vst1q_u16(reinterpret_cast<uint16_t*>(p), first);
+      vst1q_u16(reinterpret_cast<uint16_t*>(p + 8), second);
     }
     simdutf_really_inline void store_ascii_as_utf32(char32_t * p) const {
       vst1q_u32(reinterpret_cast<uint32_t*>(p), vmovl_u16(vget_low_u16(vmovl_u8(vget_low_u8 (vreinterpretq_u8_s8(this->value))))));
@@ -614,11 +653,12 @@ simdutf_really_inline int16x8_t make_int16x8_t(int16_t x1,  int16_t x2,  int16_t
       return reduce_or().is_ascii();
     }
 
+    template <endianness endian>
     simdutf_really_inline void store_ascii_as_utf16(char16_t * ptr) const {
-      this->chunks[0].store_ascii_as_utf16(ptr+sizeof(simd8<T>)*0);
-      this->chunks[1].store_ascii_as_utf16(ptr+sizeof(simd8<T>)*1);
-      this->chunks[2].store_ascii_as_utf16(ptr+sizeof(simd8<T>)*2);
-      this->chunks[3].store_ascii_as_utf16(ptr+sizeof(simd8<T>)*3);
+      this->chunks[0].template store_ascii_as_utf16<endian>(ptr+sizeof(simd8<T>)*0);
+      this->chunks[1].template store_ascii_as_utf16<endian>(ptr+sizeof(simd8<T>)*1);
+      this->chunks[2].template store_ascii_as_utf16<endian>(ptr+sizeof(simd8<T>)*2);
+      this->chunks[3].template store_ascii_as_utf16<endian>(ptr+sizeof(simd8<T>)*3);
     }
 
     simdutf_really_inline void store_ascii_as_utf32(char32_t * ptr) const {
@@ -892,6 +932,16 @@ struct simd16<uint16_t>: base16_numeric<uint16_t>  {
   static simdutf_really_inline simd8<uint8_t> pack(const simd16<uint16_t>& v0, const simd16<uint16_t>& v1) {
     return vqmovn_high_u16(vqmovn_u16(v0), v1);
   }
+
+  // Change the endianness
+  simdutf_really_inline simd16<uint16_t> swap_bytes() const {
+    #ifdef SIMDUTF_REGULAR_VISUAL_STUDIO
+    const uint8x16_t swap = make_uint8x16_t(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
+    #else
+    const uint8x16_t swap = {1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14};
+    #endif
+    return vreinterpretq_u16_u8(vqtbl1q_u8(vreinterpretq_u8_u16(*this), swap));
+  }
 };
 simdutf_really_inline simd16<int16_t>::operator simd16<uint16_t>() const { return this->value; }
 
@@ -900,7 +950,7 @@ simdutf_really_inline simd16<int16_t>::operator simd16<uint16_t>() const { retur
   struct simd16x32 {
     static constexpr int NUM_CHUNKS = 64 / sizeof(simd16<T>);
     static_assert(NUM_CHUNKS == 4, "ARM kernel should use four registers per 64-byte block.");
-    const simd16<T> chunks[NUM_CHUNKS];
+    simd16<T> chunks[NUM_CHUNKS];
 
     simd16x32(const simd16x32<T>& o) = delete; // no copy allowed
     simd16x32<T>& operator=(const simd16<T> other) = delete; // no assignment allowed
@@ -949,6 +999,13 @@ simdutf_really_inline simd16<int16_t>::operator simd16<uint16_t>() const { retur
       sum0 = vpaddq_u8(sum0, sum1);
       sum0 = vpaddq_u8(sum0, sum0);
       return vgetq_lane_u64(vreinterpretq_u64_u8(sum0), 0);
+    }
+
+    simdutf_really_inline void swap_bytes() {
+      this->chunks[0] = this->chunks[0].swap_bytes();
+      this->chunks[1] = this->chunks[1].swap_bytes();
+      this->chunks[2] = this->chunks[2].swap_bytes();
+      this->chunks[3] = this->chunks[3].swap_bytes();
     }
 
     simdutf_really_inline uint64_t eq(const T m) const {
@@ -1094,24 +1151,37 @@ public:
   ) {}
   simdutf_warn_unused bool validate_utf8(const char *buf, size_t len) const noexcept final;
   simdutf_warn_unused bool validate_ascii(const char *buf, size_t len) const noexcept final;
-  simdutf_warn_unused bool validate_utf16(const char16_t *buf, size_t len) const noexcept final;
+  simdutf_warn_unused bool validate_utf16le(const char16_t *buf, size_t len) const noexcept final;
+  simdutf_warn_unused bool validate_utf16be(const char16_t *buf, size_t len) const noexcept final;
   simdutf_warn_unused bool validate_utf32(const char32_t *buf, size_t len) const noexcept final;
-  simdutf_warn_unused size_t convert_utf8_to_utf16(const char * buf, size_t len, char16_t* utf16_output) const noexcept final;
-  simdutf_warn_unused size_t convert_valid_utf8_to_utf16(const char * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf8_to_utf16le(const char * buf, size_t len, char16_t* utf16_output) const noexcept final;
+  simdutf_warn_unused size_t convert_utf8_to_utf16be(const char * buf, size_t len, char16_t* utf16_output) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf8_to_utf16le(const char * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf8_to_utf16be(const char * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
   simdutf_warn_unused size_t convert_utf8_to_utf32(const char * buf, size_t len, char32_t* utf32_output) const noexcept final;
   simdutf_warn_unused size_t convert_valid_utf8_to_utf32(const char * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_utf16_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_valid_utf16_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf16le_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf16be_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf16le_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf16be_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
   simdutf_warn_unused size_t convert_utf32_to_utf8(const char32_t * buf, size_t len, char* utf8_buffer) const noexcept final;
   simdutf_warn_unused size_t convert_valid_utf32_to_utf8(const char32_t * buf, size_t len, char* utf8_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_utf32_to_utf16(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_valid_utf32_to_utf16(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_utf16_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_valid_utf16_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
-  simdutf_warn_unused size_t count_utf16(const char16_t * buf, size_t length) const noexcept;
+  simdutf_warn_unused size_t convert_utf32_to_utf16le(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf32_to_utf16be(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf32_to_utf16le(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf32_to_utf16be(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf16le_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf16be_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf16le_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf16be_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
+  void change_endianness_utf16(const char16_t * buf, size_t length, char16_t * output) const noexcept final;
+  simdutf_warn_unused size_t count_utf16le(const char16_t * buf, size_t length) const noexcept;
+  simdutf_warn_unused size_t count_utf16be(const char16_t * buf, size_t length) const noexcept;
   simdutf_warn_unused size_t count_utf8(const char * buf, size_t length) const noexcept;
-  simdutf_warn_unused size_t utf8_length_from_utf16(const char16_t * input, size_t length) const noexcept;
-  simdutf_warn_unused size_t utf32_length_from_utf16(const char16_t * input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf8_length_from_utf16le(const char16_t * input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf8_length_from_utf16be(const char16_t * input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf32_length_from_utf16le(const char16_t * input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf32_length_from_utf16be(const char16_t * input, size_t length) const noexcept;
   simdutf_warn_unused size_t utf16_length_from_utf8(const char * input, size_t length) const noexcept;
   simdutf_warn_unused size_t utf8_length_from_utf32(const char32_t * input, size_t length) const noexcept;
   simdutf_warn_unused size_t utf16_length_from_utf32(const char32_t * input, size_t length) const noexcept;
@@ -1239,9 +1309,18 @@ namespace simd {
     // Conversion to SIMD register
     simdutf_really_inline operator const __m256i&() const { return this->value; }
     simdutf_really_inline operator __m256i&() { return this->value; }
+    template <endianness big_endian>
     simdutf_really_inline void store_ascii_as_utf16(char16_t * ptr) const {
-      _mm256_storeu_si256(reinterpret_cast<__m256i *>(ptr), _mm256_cvtepu8_epi16(_mm256_castsi256_si128(*this)));
-      _mm256_storeu_si256(reinterpret_cast<__m256i *>(ptr + 16), _mm256_cvtepu8_epi16(_mm256_extractf128_si256(*this,1)));
+      __m256i first = _mm256_cvtepu8_epi16(_mm256_castsi256_si128(*this));
+      __m256i second = _mm256_cvtepu8_epi16(_mm256_extractf128_si256(*this,1));
+      if (big_endian) {
+        const __m256i swap = _mm256_setr_epi8(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14,
+                                  17, 16, 19, 18, 21, 20, 23, 22, 25, 24, 27, 26, 29, 28, 31, 30);
+        first = _mm256_shuffle_epi8(first, swap);
+        second = _mm256_shuffle_epi8(second, swap);
+      }
+      _mm256_storeu_si256(reinterpret_cast<__m256i *>(ptr), first);
+      _mm256_storeu_si256(reinterpret_cast<__m256i *>(ptr + 16), second);
     }
     simdutf_really_inline void store_ascii_as_utf32(char32_t * ptr) const {
       _mm256_storeu_si256(reinterpret_cast<__m256i *>(ptr), _mm256_cvtepu8_epi32(_mm256_castsi256_si128(*this)));
@@ -1510,9 +1589,10 @@ namespace simd {
       return this->reduce_or().is_ascii();
     }
 
+    template <endianness endian>
     simdutf_really_inline void store_ascii_as_utf16(char16_t * ptr) const {
-      this->chunks[0].store_ascii_as_utf16(ptr+sizeof(simd8<T>)*0);
-      this->chunks[1].store_ascii_as_utf16(ptr+sizeof(simd8<T>));
+      this->chunks[0].template store_ascii_as_utf16<endian>(ptr+sizeof(simd8<T>)*0);
+      this->chunks[1].template store_ascii_as_utf16<endian>(ptr+sizeof(simd8<T>)*1);
     }
 
     simdutf_really_inline void store_ascii_as_utf32(char32_t * ptr) const {
@@ -1739,6 +1819,13 @@ struct simd16<uint16_t>: base16_numeric<uint16_t>  {
   template<int N>
   simdutf_really_inline int get_bit() const { return _mm256_movemask_epi8(_mm256_slli_epi16(*this, 15-N)); }
 
+  // Change the endianness
+  simdutf_really_inline simd16<uint16_t> swap_bytes() const {
+    const __m256i swap = _mm256_setr_epi8(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14,
+                                  17, 16, 19, 18, 21, 20, 23, 22, 25, 24, 27, 26, 29, 28, 31, 30);
+    return _mm256_shuffle_epi8(*this, swap);
+  }
+
   // Pack with the unsigned saturation two uint16_t words into single uint8_t vector
   static simdutf_really_inline simd8<uint8_t> pack(const simd16<uint16_t>& v0, const simd16<uint16_t>& v1) {
     // Note: the AVX2 variant of pack operates on 128-bit lanes, thus
@@ -1767,7 +1854,7 @@ struct simd16<uint16_t>: base16_numeric<uint16_t>  {
   struct simd16x32 {
     static constexpr int NUM_CHUNKS = 64 / sizeof(simd16<T>);
     static_assert(NUM_CHUNKS == 2, "Haswell kernel should use two registers per 64-byte block.");
-    const simd16<T> chunks[NUM_CHUNKS];
+    simd16<T> chunks[NUM_CHUNKS];
 
     simd16x32(const simd16x32<T>& o) = delete; // no copy allowed
     simd16x32<T>& operator=(const simd16<T> other) = delete; // no assignment allowed
@@ -1806,6 +1893,11 @@ struct simd16<uint16_t>: base16_numeric<uint16_t>  {
         this->chunks[0] | mask,
         this->chunks[1] | mask
       );
+    }
+
+    simdutf_really_inline void swap_bytes() {
+      this->chunks[0] = this->chunks[0].swap_bytes();
+      this->chunks[1] = this->chunks[1].swap_bytes();
     }
 
     simdutf_really_inline uint64_t eq(const T m) const {
@@ -1931,24 +2023,37 @@ public:
   simdutf_really_inline implementation() : simdutf::implementation("westmere", "Intel/AMD SSE4.2", internal::instruction_set::SSE42 | internal::instruction_set::PCLMULQDQ) {}
   simdutf_warn_unused bool validate_utf8(const char *buf, size_t len) const noexcept final;
   simdutf_warn_unused bool validate_ascii(const char *buf, size_t len) const noexcept final;
-  simdutf_warn_unused bool validate_utf16(const char16_t *buf, size_t len) const noexcept final;
+  simdutf_warn_unused bool validate_utf16le(const char16_t *buf, size_t len) const noexcept final;
+  simdutf_warn_unused bool validate_utf16be(const char16_t *buf, size_t len) const noexcept final;
   simdutf_warn_unused bool validate_utf32(const char32_t *buf, size_t len) const noexcept final;
-  simdutf_warn_unused size_t convert_utf8_to_utf16(const char * buf, size_t len, char16_t* utf16_output) const noexcept final;
-  simdutf_warn_unused size_t convert_valid_utf8_to_utf16(const char * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf8_to_utf16le(const char * buf, size_t len, char16_t* utf16_output) const noexcept final;
+  simdutf_warn_unused size_t convert_utf8_to_utf16be(const char * buf, size_t len, char16_t* utf16_output) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf8_to_utf16le(const char * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf8_to_utf16be(const char * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
   simdutf_warn_unused size_t convert_utf8_to_utf32(const char * buf, size_t len, char32_t* utf32_output) const noexcept final;
   simdutf_warn_unused size_t convert_valid_utf8_to_utf32(const char * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_utf16_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_valid_utf16_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf16le_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf16be_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf16le_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf16be_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
   simdutf_warn_unused size_t convert_utf32_to_utf8(const char32_t * buf, size_t len, char* utf8_buffer) const noexcept final;
   simdutf_warn_unused size_t convert_valid_utf32_to_utf8(const char32_t * buf, size_t len, char* utf8_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_utf32_to_utf16(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_valid_utf32_to_utf16(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_utf16_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_valid_utf16_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
-  simdutf_warn_unused size_t count_utf16(const char16_t * buf, size_t length) const noexcept;
+  simdutf_warn_unused size_t convert_utf32_to_utf16le(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf32_to_utf16be(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf32_to_utf16le(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf32_to_utf16be(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf16le_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf16be_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf16le_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf16be_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
+  void change_endianness_utf16(const char16_t * buf, size_t length, char16_t * output) const noexcept final;
+  simdutf_warn_unused size_t count_utf16le(const char16_t * buf, size_t length) const noexcept;
+  simdutf_warn_unused size_t count_utf16be(const char16_t * buf, size_t length) const noexcept;
   simdutf_warn_unused size_t count_utf8(const char * buf, size_t length) const noexcept;
-  simdutf_warn_unused size_t utf8_length_from_utf16(const char16_t * input, size_t length) const noexcept;
-  simdutf_warn_unused size_t utf32_length_from_utf16(const char16_t * input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf8_length_from_utf16le(const char16_t * input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf8_length_from_utf16be(const char16_t * input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf32_length_from_utf16le(const char16_t * input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf32_length_from_utf16be(const char16_t * input, size_t length) const noexcept;
   simdutf_warn_unused size_t utf16_length_from_utf8(const char * input, size_t length) const noexcept;
   simdutf_warn_unused size_t utf8_length_from_utf32(const char32_t * input, size_t length) const noexcept;
   simdutf_warn_unused size_t utf16_length_from_utf32(const char32_t * input, size_t length) const noexcept;
@@ -2050,9 +2155,17 @@ namespace simd {
     // Conversion to SIMD register
     simdutf_really_inline operator const __m128i&() const { return this->value; }
     simdutf_really_inline operator __m128i&() { return this->value; }
+    template <endianness big_endian>
     simdutf_really_inline void store_ascii_as_utf16(char16_t * p) const {
-      _mm_storeu_si128(reinterpret_cast<__m128i *>(p), _mm_cvtepu8_epi16(*this));
-      _mm_storeu_si128(reinterpret_cast<__m128i *>(p+8), _mm_cvtepu8_epi16(_mm_srli_si128(*this,8)));
+      __m128i first = _mm_cvtepu8_epi16(*this);
+      __m128i second = _mm_cvtepu8_epi16(_mm_srli_si128(*this,8));
+      if (big_endian) {
+        const __m128i swap = _mm_setr_epi8(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
+        first = _mm_shuffle_epi8(first, swap);
+        second = _mm_shuffle_epi8(second, swap);
+      }
+      _mm_storeu_si128(reinterpret_cast<__m128i *>(p), first);
+      _mm_storeu_si128(reinterpret_cast<__m128i *>(p+8), second);
     }
     simdutf_really_inline void store_ascii_as_utf32(char32_t * p) const {
       _mm_storeu_si128(reinterpret_cast<__m128i *>(p), _mm_cvtepu8_epi32(*this));
@@ -2352,11 +2465,12 @@ namespace simd {
       return this->reduce_or().is_ascii();
     }
 
+    template <endianness endian>
     simdutf_really_inline void store_ascii_as_utf16(char16_t * ptr) const {
-      this->chunks[0].store_ascii_as_utf16(ptr+sizeof(simd8<T>)*0);
-      this->chunks[1].store_ascii_as_utf16(ptr+sizeof(simd8<T>)*1);
-      this->chunks[2].store_ascii_as_utf16(ptr+sizeof(simd8<T>)*2);
-      this->chunks[3].store_ascii_as_utf16(ptr+sizeof(simd8<T>)*3);
+      this->chunks[0].template store_ascii_as_utf16<endian>(ptr+sizeof(simd8<T>)*0);
+      this->chunks[1].template store_ascii_as_utf16<endian>(ptr+sizeof(simd8<T>)*1);
+      this->chunks[2].template store_ascii_as_utf16<endian>(ptr+sizeof(simd8<T>)*2);
+      this->chunks[3].template store_ascii_as_utf16<endian>(ptr+sizeof(simd8<T>)*3);
     }
 
     simdutf_really_inline void store_ascii_as_utf32(char32_t * ptr) const {
@@ -2607,6 +2721,12 @@ struct simd16<uint16_t>: base16_numeric<uint16_t>  {
   template<int N>
   simdutf_really_inline int get_bit() const { return _mm_movemask_epi8(_mm_slli_epi16(*this, 7-N)); }
 
+  // Change the endianness
+  simdutf_really_inline simd16<uint16_t> swap_bytes() const {
+    const __m128i swap = _mm_setr_epi8(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
+    return _mm_shuffle_epi8(*this, swap);
+  }
+
   // Pack with the unsigned saturation  two uint16_t words into single uint8_t vector
   static simdutf_really_inline simd8<uint8_t> pack(const simd16<uint16_t>& v0, const simd16<uint16_t>& v1) {
     return _mm_packus_epi16(v0, v1);
@@ -2618,7 +2738,7 @@ template<typename T>
   struct simd16x32 {
     static constexpr int NUM_CHUNKS = 64 / sizeof(simd16<T>);
     static_assert(NUM_CHUNKS == 4, "Westmere kernel should use four registers per 64-byte block.");
-    const simd16<T> chunks[NUM_CHUNKS];
+    simd16<T> chunks[NUM_CHUNKS];
 
     simd16x32(const simd16x32<T>& o) = delete; // no copy allowed
     simd16x32<T>& operator=(const simd16<T> other) = delete; // no assignment allowed
@@ -2655,6 +2775,13 @@ template<typename T>
       uint64_t r2 =          this->chunks[2].to_bitmask() ;
       uint64_t r3 =          this->chunks[3].to_bitmask() ;
       return r0 | (r1 << 16) | (r2 << 32) | (r3 << 48);
+    }
+
+    simdutf_really_inline void swap_bytes() {
+      this->chunks[0] = this->chunks[0].swap_bytes();
+      this->chunks[1] = this->chunks[1].swap_bytes();
+      this->chunks[2] = this->chunks[2].swap_bytes();
+      this->chunks[3] = this->chunks[3].swap_bytes();
     }
 
     simdutf_really_inline uint64_t eq(const T m) const {
@@ -2782,24 +2909,37 @@ public:
                                  internal::instruction_set::ALTIVEC) {}
   simdutf_warn_unused bool validate_utf8(const char *buf, size_t len) const noexcept final;
   simdutf_warn_unused bool validate_ascii(const char *buf, size_t len) const noexcept final;
-  simdutf_warn_unused bool validate_utf16(const char16_t *buf, size_t len) const noexcept final;
+  simdutf_warn_unused bool validate_utf16le(const char16_t *buf, size_t len) const noexcept final;
+  simdutf_warn_unused bool validate_utf16be(const char16_t *buf, size_t len) const noexcept final;
   simdutf_warn_unused bool validate_utf32(const char32_t *buf, size_t len) const noexcept final;
-  simdutf_warn_unused size_t convert_utf8_to_utf16(const char * buf, size_t len, char16_t* utf16_output) const noexcept final;
-  simdutf_warn_unused size_t convert_valid_utf8_to_utf16(const char * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf8_to_utf16le(const char * buf, size_t len, char16_t* utf16_output) const noexcept final;
+  simdutf_warn_unused size_t convert_utf8_to_utf16be(const char * buf, size_t len, char16_t* utf16_output) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf8_to_utf16le(const char * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf8_to_utf16be(const char * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
   simdutf_warn_unused size_t convert_utf8_to_utf32(const char * buf, size_t len, char32_t* utf32_output) const noexcept final;
   simdutf_warn_unused size_t convert_valid_utf8_to_utf32(const char * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_utf16_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_valid_utf16_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf16le_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf16be_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf16le_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf16be_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
   simdutf_warn_unused size_t convert_utf32_to_utf8(const char32_t * buf, size_t len, char* utf8_buffer) const noexcept final;
   simdutf_warn_unused size_t convert_valid_utf32_to_utf8(const char32_t * buf, size_t len, char* utf8_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_utf32_to_utf16(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_valid_utf32_to_utf16(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_utf16_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_valid_utf16_to_utf32(const char16_t * buf, size_t len, char32* utf32_buffer) const noexcept final;
-  simdutf_warn_unused size_t count_utf16(const char16_t * buf, size_t length) const noexcept;
+  simdutf_warn_unused size_t convert_utf32_to_utf16le(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf32_to_utf16be(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf32_to_utf16le(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf32_to_utf16be(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf16le_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf16be_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf16le_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf16be_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
+  void change_endianness_utf16(const char16_t * buf, size_t length, char16_t * output) const noexcept final;
+  simdutf_warn_unused size_t count_utf16le(const char16_t * buf, size_t length) const noexcept;
+  simdutf_warn_unused size_t count_utf16be(const char16_t * buf, size_t length) const noexcept;
   simdutf_warn_unused size_t count_utf8(const char * buf, size_t length) const noexcept;
-  simdutf_warn_unused size_t utf8_length_from_utf16(const char16_t * input, size_t length) const noexcept;
-  simdutf_warn_unused size_t utf32_length_from_utf16(const char16_t * input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf8_length_from_utf16le(const char16_t * input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf8_length_from_utf16be(const char16_t * input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf32_length_from_utf16le(const char16_t * input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf32_length_from_utf16be(const char16_t * input, size_t length) const noexcept;
   simdutf_warn_unused size_t utf16_length_from_utf8(const char * input, size_t length) const noexcept;
   simdutf_warn_unused size_t utf8_length_from_utf32(const char32_t * input, size_t length) const noexcept;
   simdutf_warn_unused size_t utf16_length_from_utf32(const char32_t * input, size_t length) const noexcept;
@@ -3410,24 +3550,37 @@ public:
   ) {}
   simdutf_warn_unused bool validate_utf8(const char *buf, size_t len) const noexcept final;
   simdutf_warn_unused bool validate_ascii(const char *buf, size_t len) const noexcept final;
-  simdutf_warn_unused bool validate_utf16(const char16_t *buf, size_t len) const noexcept final;
+  simdutf_warn_unused bool validate_utf16le(const char16_t *buf, size_t len) const noexcept final;
+  simdutf_warn_unused bool validate_utf16be(const char16_t *buf, size_t len) const noexcept final;
   simdutf_warn_unused bool validate_utf32(const char32_t *buf, size_t len) const noexcept final;
-  simdutf_warn_unused size_t convert_utf8_to_utf16(const char * buf, size_t len, char16_t* utf16_output) const noexcept final;
+  simdutf_warn_unused size_t convert_utf8_to_utf16le(const char * buf, size_t len, char16_t* utf16_output) const noexcept final;
+  simdutf_warn_unused size_t convert_utf8_to_utf16be(const char * buf, size_t len, char16_t* utf16_output) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf8_to_utf16le(const char * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf8_to_utf16be(const char * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
   simdutf_warn_unused size_t convert_utf8_to_utf32(const char * buf, size_t len, char32_t* utf32_output) const noexcept final;
-  simdutf_warn_unused size_t convert_valid_utf8_to_utf16(const char * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
   simdutf_warn_unused size_t convert_valid_utf8_to_utf32(const char * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_utf16_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_valid_utf16_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf16le_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf16be_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf16le_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf16be_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) const noexcept final;
   simdutf_warn_unused size_t convert_utf32_to_utf8(const char32_t * buf, size_t len, char* utf8_buffer) const noexcept final;
   simdutf_warn_unused size_t convert_valid_utf32_to_utf8(const char32_t * buf, size_t len, char* utf8_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_utf32_to_utf16(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_valid_utf32_to_utf16(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_utf16_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
-  simdutf_warn_unused size_t convert_valid_utf16_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
-  simdutf_warn_unused size_t count_utf16(const char16_t * buf, size_t length) const noexcept;
+  simdutf_warn_unused size_t convert_utf32_to_utf16le(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf32_to_utf16be(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf32_to_utf16le(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf32_to_utf16be(const char32_t * buf, size_t len, char16_t* utf16_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf16le_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_utf16be_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf16le_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
+  simdutf_warn_unused size_t convert_valid_utf16be_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) const noexcept final;
+  void change_endianness_utf16(const char16_t * buf, size_t length, char16_t * output) const noexcept final;
+  simdutf_warn_unused size_t count_utf16le(const char16_t * buf, size_t length) const noexcept;
+  simdutf_warn_unused size_t count_utf16be(const char16_t * buf, size_t length) const noexcept;
   simdutf_warn_unused size_t count_utf8(const char * buf, size_t length) const noexcept;
-  simdutf_warn_unused size_t utf8_length_from_utf16(const char16_t * input, size_t length) const noexcept;
-  simdutf_warn_unused size_t utf32_length_from_utf16(const char16_t * input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf8_length_from_utf16le(const char16_t * input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf8_length_from_utf16be(const char16_t * input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf32_length_from_utf16le(const char16_t * input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf32_length_from_utf16be(const char16_t * input, size_t length) const noexcept;
   simdutf_warn_unused size_t utf16_length_from_utf8(const char * input, size_t length) const noexcept;
   simdutf_warn_unused size_t utf8_length_from_utf32(const char32_t * input, size_t length) const noexcept;
   simdutf_warn_unused size_t utf16_length_from_utf32(const char32_t * input, size_t length) const noexcept;
@@ -3529,7 +3682,7 @@ simdutf_warn_unused encoding_type implementation::autodetect_encoding(const char
     // UTF-16LE, so try that next.
     if((length % 2) == 0) {
       // important: we need to divide by two
-      if(validate_utf16(reinterpret_cast<const char16_t*>(input), length/2)) { return encoding_type::UTF16_LE; }
+      if(validate_utf16le(reinterpret_cast<const char16_t*>(input), length/2)) { return encoding_type::UTF16_LE; }
     }
     if((length % 4) == 0) {
       if(validate_utf32(reinterpret_cast<const char32_t*>(input), length/4)) { return encoding_type::UTF32_LE; }
@@ -3575,20 +3728,32 @@ public:
     return set_best()->validate_ascii(buf, len);
   }
 
-  simdutf_warn_unused bool validate_utf16(const char16_t * buf, size_t len) const noexcept final override {
-    return set_best()->validate_utf16(buf, len);
+  simdutf_warn_unused bool validate_utf16le(const char16_t * buf, size_t len) const noexcept final override {
+    return set_best()->validate_utf16le(buf, len);
+  }
+
+  simdutf_warn_unused bool validate_utf16be(const char16_t * buf, size_t len) const noexcept final override {
+    return set_best()->validate_utf16be(buf, len);
   }
 
   simdutf_warn_unused bool validate_utf32(const char32_t * buf, size_t len) const noexcept final override {
     return set_best()->validate_utf32(buf, len);
   }
 
-  simdutf_warn_unused size_t convert_utf8_to_utf16(const char * buf, size_t len, char16_t* utf16_output) const noexcept final override {
-    return set_best()->convert_utf8_to_utf16(buf, len, utf16_output);
+  simdutf_warn_unused size_t convert_utf8_to_utf16le(const char * buf, size_t len, char16_t* utf16_output) const noexcept final override {
+    return set_best()->convert_utf8_to_utf16le(buf, len, utf16_output);
   }
 
-  simdutf_warn_unused size_t convert_valid_utf8_to_utf16(const char * buf, size_t len, char16_t* utf16_output) const noexcept final override {
-    return set_best()->convert_valid_utf8_to_utf16(buf, len, utf16_output);
+  simdutf_warn_unused size_t convert_utf8_to_utf16be(const char * buf, size_t len, char16_t* utf16_output) const noexcept final override {
+    return set_best()->convert_utf8_to_utf16be(buf, len, utf16_output);
+  }
+
+  simdutf_warn_unused size_t convert_valid_utf8_to_utf16le(const char * buf, size_t len, char16_t* utf16_output) const noexcept final override {
+    return set_best()->convert_valid_utf8_to_utf16le(buf, len, utf16_output);
+  }
+
+  simdutf_warn_unused size_t convert_valid_utf8_to_utf16be(const char * buf, size_t len, char16_t* utf16_output) const noexcept final override {
+    return set_best()->convert_valid_utf8_to_utf16be(buf, len, utf16_output);
   }
 
   simdutf_warn_unused size_t convert_utf8_to_utf32(const char * buf, size_t len, char32_t* utf32_output) const noexcept final override {
@@ -3599,12 +3764,20 @@ public:
     return set_best()->convert_valid_utf8_to_utf32(buf, len, utf32_output);
   }
 
-  simdutf_warn_unused size_t convert_utf16_to_utf8(const char16_t * buf, size_t len, char* utf8_output) const noexcept final override {
-    return set_best()->convert_utf16_to_utf8(buf, len, utf8_output);
+  simdutf_warn_unused size_t convert_utf16le_to_utf8(const char16_t * buf, size_t len, char* utf8_output) const noexcept final override {
+    return set_best()->convert_utf16le_to_utf8(buf, len, utf8_output);
   }
 
-  simdutf_warn_unused size_t convert_valid_utf16_to_utf8(const char16_t * buf, size_t len, char* utf8_output) const noexcept final override {
-    return set_best()->convert_valid_utf16_to_utf8(buf, len, utf8_output);
+  simdutf_warn_unused size_t convert_utf16be_to_utf8(const char16_t * buf, size_t len, char* utf8_output) const noexcept final override {
+    return set_best()->convert_utf16be_to_utf8(buf, len, utf8_output);
+  }
+
+  simdutf_warn_unused size_t convert_valid_utf16le_to_utf8(const char16_t * buf, size_t len, char* utf8_output) const noexcept final override {
+    return set_best()->convert_valid_utf16le_to_utf8(buf, len, utf8_output);
+  }
+
+  simdutf_warn_unused size_t convert_valid_utf16be_to_utf8(const char16_t * buf, size_t len, char* utf8_output) const noexcept final override {
+    return set_best()->convert_valid_utf16be_to_utf8(buf, len, utf8_output);
   }
 
   simdutf_warn_unused size_t convert_utf32_to_utf8(const char32_t * buf, size_t len, char* utf8_output) const noexcept final override {
@@ -3615,36 +3788,68 @@ public:
     return set_best()->convert_valid_utf32_to_utf8(buf, len, utf8_output);
   }
 
-    simdutf_warn_unused size_t convert_utf32_to_utf16(const char32_t * buf, size_t len, char16_t* utf16_output) const noexcept final override {
-    return set_best()->convert_utf32_to_utf16(buf, len, utf16_output);
+  simdutf_warn_unused size_t convert_utf32_to_utf16le(const char32_t * buf, size_t len, char16_t* utf16_output) const noexcept final override {
+    return set_best()->convert_utf32_to_utf16le(buf, len, utf16_output);
   }
 
-  simdutf_warn_unused size_t convert_valid_utf32_to_utf16(const char32_t * buf, size_t len, char16_t* utf16_output) const noexcept final override {
-    return set_best()->convert_valid_utf32_to_utf16(buf, len, utf16_output);
+  simdutf_warn_unused size_t convert_utf32_to_utf16be(const char32_t * buf, size_t len, char16_t* utf16_output) const noexcept final override {
+    return set_best()->convert_utf32_to_utf16be(buf, len, utf16_output);
   }
 
-  simdutf_warn_unused size_t convert_utf16_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_output) const noexcept final override {
-    return set_best()->convert_utf16_to_utf32(buf, len, utf32_output);
+  simdutf_warn_unused size_t convert_valid_utf32_to_utf16le(const char32_t * buf, size_t len, char16_t* utf16_output) const noexcept final override {
+    return set_best()->convert_valid_utf32_to_utf16le(buf, len, utf16_output);
   }
 
-  simdutf_warn_unused size_t convert_valid_utf16_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_output) const noexcept final override {
-    return set_best()->convert_valid_utf16_to_utf32(buf, len, utf32_output);
+  simdutf_warn_unused size_t convert_valid_utf32_to_utf16be(const char32_t * buf, size_t len, char16_t* utf16_output) const noexcept final override {
+    return set_best()->convert_valid_utf32_to_utf16be(buf, len, utf16_output);
   }
 
-  simdutf_warn_unused size_t count_utf16(const char16_t * buf, size_t len) const noexcept final override {
-    return set_best()->count_utf16(buf, len);
+  simdutf_warn_unused size_t convert_utf16le_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_output) const noexcept final override {
+    return set_best()->convert_utf16le_to_utf32(buf, len, utf32_output);
+  }
+
+  simdutf_warn_unused size_t convert_utf16be_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_output) const noexcept final override {
+    return set_best()->convert_utf16be_to_utf32(buf, len, utf32_output);
+  }
+
+  simdutf_warn_unused size_t convert_valid_utf16le_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_output) const noexcept final override {
+    return set_best()->convert_valid_utf16le_to_utf32(buf, len, utf32_output);
+  }
+
+  simdutf_warn_unused size_t convert_valid_utf16be_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_output) const noexcept final override {
+    return set_best()->convert_valid_utf16be_to_utf32(buf, len, utf32_output);
+  }
+
+  void change_endianness_utf16(const char16_t * buf, size_t len, char16_t * output) const noexcept final override {
+    set_best()->change_endianness_utf16(buf, len, output);
+  }
+
+  simdutf_warn_unused size_t count_utf16le(const char16_t * buf, size_t len) const noexcept final override {
+    return set_best()->count_utf16le(buf, len);
+  }
+
+  simdutf_warn_unused size_t count_utf16be(const char16_t * buf, size_t len) const noexcept final override {
+    return set_best()->count_utf16be(buf, len);
   }
 
   simdutf_warn_unused size_t count_utf8(const char * buf, size_t len) const noexcept final override {
     return set_best()->count_utf8(buf, len);
   }
 
-  simdutf_warn_unused size_t utf8_length_from_utf16(const char16_t * buf, size_t len) const noexcept override {
-    return set_best()->utf8_length_from_utf16(buf, len);
+  simdutf_warn_unused size_t utf8_length_from_utf16le(const char16_t * buf, size_t len) const noexcept override {
+    return set_best()->utf8_length_from_utf16le(buf, len);
   }
 
-  simdutf_warn_unused size_t utf32_length_from_utf16(const char16_t * buf, size_t len) const noexcept override {
-    return set_best()->utf32_length_from_utf16(buf, len);
+  simdutf_warn_unused size_t utf8_length_from_utf16be(const char16_t * buf, size_t len) const noexcept override {
+    return set_best()->utf8_length_from_utf16be(buf, len);
+  }
+
+  simdutf_warn_unused size_t utf32_length_from_utf16le(const char16_t * buf, size_t len) const noexcept override {
+    return set_best()->utf32_length_from_utf16le(buf, len);
+  }
+
+  simdutf_warn_unused size_t utf32_length_from_utf16be(const char16_t * buf, size_t len) const noexcept override {
+    return set_best()->utf32_length_from_utf16be(buf, len);
   }
 
   simdutf_warn_unused size_t utf16_length_from_utf8(const char * buf, size_t len) const noexcept override {
@@ -3707,7 +3912,11 @@ public:
     return false;
   }
 
-  simdutf_warn_unused bool validate_utf16(const char16_t*, size_t) const noexcept final override {
+  simdutf_warn_unused bool validate_utf16le(const char16_t*, size_t) const noexcept final override {
+    return false;
+  }
+
+  simdutf_warn_unused bool validate_utf16be(const char16_t*, size_t) const noexcept final override {
     return false;
   }
 
@@ -3715,11 +3924,19 @@ public:
     return false;
   }
 
-  simdutf_warn_unused size_t convert_utf8_to_utf16(const char*, size_t, char16_t*) const noexcept final override {
+  simdutf_warn_unused size_t convert_utf8_to_utf16le(const char*, size_t, char16_t*) const noexcept final override {
     return 0;
   }
 
-  simdutf_warn_unused size_t convert_valid_utf8_to_utf16(const char*, size_t, char16_t*) const noexcept final override {
+  simdutf_warn_unused size_t convert_utf8_to_utf16be(const char*, size_t, char16_t*) const noexcept final override {
+    return 0;
+  }
+
+  simdutf_warn_unused size_t convert_valid_utf8_to_utf16le(const char*, size_t, char16_t*) const noexcept final override {
+    return 0;
+  }
+
+  simdutf_warn_unused size_t convert_valid_utf8_to_utf16be(const char*, size_t, char16_t*) const noexcept final override {
     return 0;
   }
 
@@ -3731,11 +3948,19 @@ public:
     return 0;
   }
 
-  simdutf_warn_unused size_t convert_utf16_to_utf8(const char16_t*, size_t, char*) const noexcept final override {
+  simdutf_warn_unused size_t convert_utf16le_to_utf8(const char16_t*, size_t, char*) const noexcept final override {
     return 0;
   }
 
-  simdutf_warn_unused size_t convert_valid_utf16_to_utf8(const char16_t*, size_t, char*) const noexcept final override {
+  simdutf_warn_unused size_t convert_utf16be_to_utf8(const char16_t*, size_t, char*) const noexcept final override {
+    return 0;
+  }
+
+  simdutf_warn_unused size_t convert_valid_utf16le_to_utf8(const char16_t*, size_t, char*) const noexcept final override {
+    return 0;
+  }
+
+  simdutf_warn_unused size_t convert_valid_utf16be_to_utf8(const char16_t*, size_t, char*) const noexcept final override {
     return 0;
   }
 
@@ -3747,23 +3972,47 @@ public:
     return 0;
   }
 
-  simdutf_warn_unused size_t convert_utf32_to_utf16(const char32_t*, size_t, char16_t*) const noexcept final override {
+  simdutf_warn_unused size_t convert_utf32_to_utf16le(const char32_t*, size_t, char16_t*) const noexcept final override {
     return 0;
   }
 
-  simdutf_warn_unused size_t convert_valid_utf32_to_utf16(const char32_t*, size_t, char16_t*) const noexcept final override {
+  simdutf_warn_unused size_t convert_utf32_to_utf16be(const char32_t*, size_t, char16_t*) const noexcept final override {
     return 0;
   }
 
-  simdutf_warn_unused size_t convert_utf16_to_utf32(const char16_t*, size_t, char32_t*) const noexcept final override {
+  simdutf_warn_unused size_t convert_valid_utf32_to_utf16le(const char32_t*, size_t, char16_t*) const noexcept final override {
     return 0;
   }
 
-  simdutf_warn_unused size_t convert_valid_utf16_to_utf32(const char16_t*, size_t, char32_t*) const noexcept final override {
+  simdutf_warn_unused size_t convert_valid_utf32_to_utf16be(const char32_t*, size_t, char16_t*) const noexcept final override {
     return 0;
   }
 
-  simdutf_warn_unused size_t count_utf16(const char16_t *, size_t) const noexcept final override {
+  simdutf_warn_unused size_t convert_utf16le_to_utf32(const char16_t*, size_t, char32_t*) const noexcept final override {
+    return 0;
+  }
+
+  simdutf_warn_unused size_t convert_utf16be_to_utf32(const char16_t*, size_t, char32_t*) const noexcept final override {
+    return 0;
+  }
+
+  simdutf_warn_unused size_t convert_valid_utf16le_to_utf32(const char16_t*, size_t, char32_t*) const noexcept final override {
+    return 0;
+  }
+
+  simdutf_warn_unused size_t convert_valid_utf16be_to_utf32(const char16_t*, size_t, char32_t*) const noexcept final override {
+    return 0;
+  }
+
+  void change_endianness_utf16(const char16_t *, size_t, char16_t *) const noexcept final override {
+
+  }
+
+  simdutf_warn_unused size_t count_utf16le(const char16_t *, size_t) const noexcept final override {
+    return 0;
+  }
+
+  simdutf_warn_unused size_t count_utf16be(const char16_t *, size_t) const noexcept final override {
     return 0;
   }
 
@@ -3771,11 +4020,19 @@ public:
     return 0;
   }
 
-  simdutf_warn_unused size_t utf8_length_from_utf16(const char16_t *, size_t) const noexcept override {
+  simdutf_warn_unused size_t utf8_length_from_utf16le(const char16_t *, size_t) const noexcept override {
     return 0;
   }
 
-  simdutf_warn_unused size_t utf32_length_from_utf16(const char16_t *, size_t) const noexcept override {
+  simdutf_warn_unused size_t utf8_length_from_utf16be(const char16_t *, size_t) const noexcept override {
+    return 0;
+  }
+
+  simdutf_warn_unused size_t utf32_length_from_utf16le(const char16_t *, size_t) const noexcept override {
+    return 0;
+  }
+
+  simdutf_warn_unused size_t utf32_length_from_utf16be(const char16_t *, size_t) const noexcept override {
     return 0;
   }
 
@@ -3848,29 +4105,44 @@ simdutf_warn_unused bool validate_utf8(const char *buf, size_t len) noexcept {
 simdutf_warn_unused bool validate_ascii(const char *buf, size_t len) noexcept {
   return active_implementation->validate_ascii(buf, len);
 }
-simdutf_warn_unused size_t convert_utf8_to_utf16(const char * input, size_t length, char16_t* utf16_output) noexcept {
-  return active_implementation->convert_utf8_to_utf16(input, length, utf16_output);
+simdutf_warn_unused size_t convert_utf8_to_utf16le(const char * input, size_t length, char16_t* utf16_output) noexcept {
+  return active_implementation->convert_utf8_to_utf16le(input, length, utf16_output);
+}
+simdutf_warn_unused size_t convert_utf8_to_utf16be(const char * input, size_t length, char16_t* utf16_output) noexcept {
+  return active_implementation->convert_utf8_to_utf16be(input, length, utf16_output);
 }
 simdutf_warn_unused size_t convert_utf8_to_utf32(const char * input, size_t length, char32_t* utf32_output) noexcept {
   return active_implementation->convert_utf8_to_utf32(input, length, utf32_output);
 }
-simdutf_warn_unused bool validate_utf16(const char16_t * buf, size_t len) noexcept {
-  return active_implementation->validate_utf16(buf, len);
+simdutf_warn_unused bool validate_utf16le(const char16_t * buf, size_t len) noexcept {
+  return active_implementation->validate_utf16le(buf, len);
+}
+simdutf_warn_unused bool validate_utf16be(const char16_t * buf, size_t len) noexcept {
+  return active_implementation->validate_utf16be(buf, len);
 }
 simdutf_warn_unused bool validate_utf32(const char32_t * buf, size_t len) noexcept {
   return active_implementation->validate_utf32(buf, len);
 }
-simdutf_warn_unused size_t convert_valid_utf8_to_utf16(const char * input, size_t length, char16_t* utf16_buffer) noexcept {
-  return active_implementation->convert_valid_utf8_to_utf16(input, length, utf16_buffer);
+simdutf_warn_unused size_t convert_valid_utf8_to_utf16le(const char * input, size_t length, char16_t* utf16_buffer) noexcept {
+  return active_implementation->convert_valid_utf8_to_utf16le(input, length, utf16_buffer);
+}
+simdutf_warn_unused size_t convert_valid_utf8_to_utf16be(const char * input, size_t length, char16_t* utf16_buffer) noexcept {
+  return active_implementation->convert_valid_utf8_to_utf16be(input, length, utf16_buffer);
 }
 simdutf_warn_unused size_t convert_valid_utf8_to_utf32(const char * input, size_t length, char32_t* utf32_buffer) noexcept {
   return active_implementation->convert_valid_utf8_to_utf32(input, length, utf32_buffer);
 }
-simdutf_warn_unused size_t convert_utf16_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) noexcept {
-  return active_implementation->convert_utf16_to_utf8(buf, len, utf8_buffer);
+simdutf_warn_unused size_t convert_utf16le_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) noexcept {
+  return active_implementation->convert_utf16le_to_utf8(buf, len, utf8_buffer);
 }
-simdutf_warn_unused size_t convert_valid_utf16_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) noexcept {
-  return active_implementation->convert_valid_utf16_to_utf8(buf, len, utf8_buffer);
+simdutf_warn_unused size_t convert_utf16be_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) noexcept {
+  return active_implementation->convert_utf16be_to_utf8(buf, len, utf8_buffer);
+}
+simdutf_warn_unused size_t convert_valid_utf16le_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) noexcept {
+  return active_implementation->convert_valid_utf16le_to_utf8(buf, len, utf8_buffer);
+}
+simdutf_warn_unused size_t convert_valid_utf16be_to_utf8(const char16_t * buf, size_t len, char* utf8_buffer) noexcept {
+  return active_implementation->convert_valid_utf16be_to_utf8(buf, len, utf8_buffer);
 }
 simdutf_warn_unused size_t convert_utf32_to_utf8(const char32_t * buf, size_t len, char* utf8_buffer) noexcept {
   return active_implementation->convert_utf32_to_utf8(buf, len, utf8_buffer);
@@ -3878,29 +4150,53 @@ simdutf_warn_unused size_t convert_utf32_to_utf8(const char32_t * buf, size_t le
 simdutf_warn_unused size_t convert_valid_utf32_to_utf8(const char32_t * buf, size_t len, char* utf8_buffer) noexcept {
   return active_implementation->convert_valid_utf32_to_utf8(buf, len, utf8_buffer);
 }
-simdutf_warn_unused size_t convert_utf32_to_utf16(const char32_t * buf, size_t len, char16_t* utf16_buffer) noexcept {
-  return active_implementation->convert_utf32_to_utf16(buf, len, utf16_buffer);
+simdutf_warn_unused size_t convert_utf32_to_utf16le(const char32_t * buf, size_t len, char16_t* utf16_buffer) noexcept {
+  return active_implementation->convert_utf32_to_utf16le(buf, len, utf16_buffer);
 }
-simdutf_warn_unused size_t convert_valid_utf32_to_utf16(const char32_t * buf, size_t len, char16_t* utf16_buffer) noexcept {
-  return active_implementation->convert_valid_utf32_to_utf16(buf, len, utf16_buffer);
+simdutf_warn_unused size_t convert_utf32_to_utf16be(const char32_t * buf, size_t len, char16_t* utf16_buffer) noexcept {
+  return active_implementation->convert_utf32_to_utf16be(buf, len, utf16_buffer);
 }
-simdutf_warn_unused size_t convert_utf16_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) noexcept {
-  return active_implementation->convert_utf16_to_utf32(buf, len, utf32_buffer);
+simdutf_warn_unused size_t convert_valid_utf32_to_utf16le(const char32_t * buf, size_t len, char16_t* utf16_buffer) noexcept {
+  return active_implementation->convert_valid_utf32_to_utf16le(buf, len, utf16_buffer);
 }
-simdutf_warn_unused size_t convert_valid_utf16_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) noexcept {
-  return active_implementation->convert_valid_utf16_to_utf32(buf, len, utf32_buffer);
+simdutf_warn_unused size_t convert_valid_utf32_to_utf16be(const char32_t * buf, size_t len, char16_t* utf16_buffer) noexcept {
+  return active_implementation->convert_valid_utf32_to_utf16be(buf, len, utf16_buffer);
 }
-simdutf_warn_unused size_t count_utf16(const char16_t * input, size_t length) noexcept {
-  return active_implementation->count_utf16(input, length);
+simdutf_warn_unused size_t convert_utf16le_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) noexcept {
+  return active_implementation->convert_utf16le_to_utf32(buf, len, utf32_buffer);
+}
+simdutf_warn_unused size_t convert_utf16be_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) noexcept {
+  return active_implementation->convert_utf16be_to_utf32(buf, len, utf32_buffer);
+}
+simdutf_warn_unused size_t convert_valid_utf16le_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) noexcept {
+  return active_implementation->convert_valid_utf16le_to_utf32(buf, len, utf32_buffer);
+}
+simdutf_warn_unused size_t convert_valid_utf16be_to_utf32(const char16_t * buf, size_t len, char32_t* utf32_buffer) noexcept {
+  return active_implementation->convert_valid_utf16be_to_utf32(buf, len, utf32_buffer);
+}
+void change_endianness_utf16(const char16_t * input, size_t length, char16_t * output) noexcept {
+  active_implementation->change_endianness_utf16(input, length, output);
+}
+simdutf_warn_unused size_t count_utf16le(const char16_t * input, size_t length) noexcept {
+  return active_implementation->count_utf16le(input, length);
+}
+simdutf_warn_unused size_t count_utf16be(const char16_t * input, size_t length) noexcept {
+  return active_implementation->count_utf16be(input, length);
 }
 simdutf_warn_unused size_t count_utf8(const char * input, size_t length) noexcept {
   return active_implementation->count_utf8(input, length);
 }
-simdutf_warn_unused size_t utf8_length_from_utf16(const char16_t * input, size_t length) noexcept {
-  return active_implementation->utf8_length_from_utf16(input, length);
+simdutf_warn_unused size_t utf8_length_from_utf16le(const char16_t * input, size_t length) noexcept {
+  return active_implementation->utf8_length_from_utf16le(input, length);
 }
-simdutf_warn_unused size_t utf32_length_from_utf16(const char16_t * input, size_t length) noexcept {
-  return active_implementation->utf32_length_from_utf16(input, length);
+simdutf_warn_unused size_t utf8_length_from_utf16be(const char16_t * input, size_t length) noexcept {
+  return active_implementation->utf8_length_from_utf16be(input, length);
+}
+simdutf_warn_unused size_t utf32_length_from_utf16le(const char16_t * input, size_t length) noexcept {
+  return active_implementation->utf32_length_from_utf16le(input, length);
+}
+simdutf_warn_unused size_t utf32_length_from_utf16be(const char16_t * input, size_t length) noexcept {
+  return active_implementation->utf32_length_from_utf16be(input, length);
 }
 simdutf_warn_unused size_t utf16_length_from_utf8(const char * input, size_t length) noexcept {
   return active_implementation->utf16_length_from_utf8(input, length);
@@ -8864,6 +9160,307 @@ namespace utf16_to_utf8 {
 
 // The scalar routines should be included once.
 
+/* begin file src/scalar/ascii.h */
+#ifndef SIMDUTF_ASCII_H
+#define SIMDUTF_ASCII_H
+
+namespace simdutf {
+namespace scalar {
+namespace {
+namespace ascii {
+
+    inline simdutf_warn_unused bool validate(const char *buf, size_t len) noexcept {
+    const uint8_t *data = reinterpret_cast<const uint8_t *>(buf);
+    uint64_t pos = 0;
+    // process in blocks of 16 bytes when possible
+    for (;pos + 16 < len; pos += 16) {
+        uint64_t v1;
+        std::memcpy(&v1, data + pos, sizeof(uint64_t));
+        uint64_t v2;
+        std::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
+        uint64_t v{v1 | v2};
+        if ((v & 0x8080808080808080) != 0) { return false; }
+    }
+    // process the tail byte-by-byte
+    for (;pos < len; pos ++) {
+        if (data[pos] >= 0b10000000) { return false; }
+    }
+    return true;
+    }
+
+} // ascii namespace
+} // unnamed namespace
+} // namespace scalar
+} // namespace simdutf
+
+#endif
+/* end file src/scalar/ascii.h */
+
+/* begin file src/scalar/utf8.h */
+#ifndef SIMDUTF_UTF8_H
+#define SIMDUTF_UTF8_H
+
+namespace simdutf {
+namespace scalar {
+namespace {
+namespace utf8 {
+// credit: based on code from Google Fuchsia (Apache Licensed)
+inline simdutf_warn_unused bool validate(const char *buf, size_t len) noexcept {
+  const uint8_t *data = reinterpret_cast<const uint8_t *>(buf);
+  uint64_t pos = 0;
+  uint32_t code_point = 0;
+  while (pos < len) {
+    // check of the next 8 bytes are ascii.
+    uint64_t next_pos = pos + 16;
+    if (next_pos <= len) { // if it is safe to read 8 more bytes, check that they are ascii
+      uint64_t v1;
+      std::memcpy(&v1, data + pos, sizeof(uint64_t));
+      uint64_t v2;
+      std::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
+      uint64_t v{v1 | v2};
+      if ((v & 0x8080808080808080) == 0) {
+        pos = next_pos;
+        continue;
+      }
+    }
+    unsigned char byte = data[pos];
+
+    while (byte < 0b10000000) {
+      if (++pos == len) { return true; }
+      byte = data[pos];
+    }
+
+    if ((byte & 0b11100000) == 0b11000000) {
+      next_pos = pos + 2;
+      if (next_pos > len) { return false; }
+      if ((data[pos + 1] & 0b11000000) != 0b10000000) { return false; }
+      // range check
+      code_point = (byte & 0b00011111) << 6 | (data[pos + 1] & 0b00111111);
+      if ((code_point < 0x80) || (0x7ff < code_point)) { return false; }
+    } else if ((byte & 0b11110000) == 0b11100000) {
+      next_pos = pos + 3;
+      if (next_pos > len) { return false; }
+      if ((data[pos + 1] & 0b11000000) != 0b10000000) { return false; }
+      if ((data[pos + 2] & 0b11000000) != 0b10000000) { return false; }
+      // range check
+      code_point = (byte & 0b00001111) << 12 |
+                   (data[pos + 1] & 0b00111111) << 6 |
+                   (data[pos + 2] & 0b00111111);
+      if ((code_point < 0x800) || (0xffff < code_point) ||
+          (0xd7ff < code_point && code_point < 0xe000)) {
+        return false;
+      }
+    } else if ((byte & 0b11111000) == 0b11110000) { // 0b11110000
+      next_pos = pos + 4;
+      if (next_pos > len) { return false; }
+      if ((data[pos + 1] & 0b11000000) != 0b10000000) { return false; }
+      if ((data[pos + 2] & 0b11000000) != 0b10000000) { return false; }
+      if ((data[pos + 3] & 0b11000000) != 0b10000000) { return false; }
+      // range check
+      code_point =
+          (byte & 0b00000111) << 18 | (data[pos + 1] & 0b00111111) << 12 |
+          (data[pos + 2] & 0b00111111) << 6 | (data[pos + 3] & 0b00111111);
+      if (code_point <= 0xffff || 0x10ffff < code_point) { return false; }
+    } else {
+      // we may have a continuation
+      return false;
+    }
+    pos = next_pos;
+  }
+  return true;
+}
+
+inline size_t count_code_points(const char* buf, size_t len) {
+    const int8_t * p = reinterpret_cast<const int8_t *>(buf);
+    size_t counter{0};
+    for(size_t i = 0; i < len; i++) {
+        // -65 is 0b10111111, anything larger in two-complement's should start a new code point.
+        if(p[i] > -65) { counter++; }
+    }
+    return counter;
+}
+
+inline size_t utf16_length_from_utf8(const char* buf, size_t len) {
+    const int8_t * p = reinterpret_cast<const int8_t *>(buf);
+    size_t counter{0};
+    for(size_t i = 0; i < len; i++) {
+        if(p[i] > -65) { counter++; }
+        if(uint8_t(p[i]) >= 240) { counter++; }
+    }
+    return counter;
+}
+
+inline size_t utf32_length_from_utf8(const char* buf, size_t len) {
+    const int8_t * p = reinterpret_cast<const int8_t *>(buf);
+    size_t counter{0};
+    for(size_t i = 0; i < len; i++) {
+        // -65 is 0b10111111, anything larger in two-complement's should start a new code point.
+        if(p[i] > -65) { counter++; }
+    }
+    return counter;
+}
+
+} // utf8 namespace
+} // unnamed namespace
+} // namespace scalar
+} // namespace simdutf
+
+#endif
+/* end file src/scalar/utf8.h */
+
+/* begin file src/scalar/utf16.h */
+#ifndef SIMDUTF_UTF16_H
+#define SIMDUTF_UTF16_H
+
+namespace simdutf {
+namespace scalar {
+namespace {
+namespace utf16 {
+
+inline simdutf_warn_unused uint16_t swap_bytes(const uint16_t word) {
+  return uint16_t((word >> 8) | (word << 8));
+}
+
+template <endianness big_endian>
+inline simdutf_warn_unused bool validate(const char16_t *buf, size_t len) noexcept {
+  const uint16_t *data = reinterpret_cast<const uint16_t *>(buf);
+  uint64_t pos = 0;
+  while (pos < len) {
+    uint16_t word = big_endian ? swap_bytes(data[pos]) : data[pos];
+    if((word &0xF800) == 0xD800) {
+        if(pos + 1 >= len) { return false; }
+        uint16_t diff = uint16_t(word - 0xD800);
+        if(diff > 0x3FF) { return false; }
+        uint16_t next_word = big_endian ? uint16_t((data[pos + 1] >> 8) | (data[pos + 1] << 8)) : data[pos + 1];
+        uint16_t diff2 = uint16_t(next_word - 0xDC00);
+        if(diff2 > 0x3FF) { return false; }
+        pos += 2;
+    } else {
+        pos++;
+    }
+  }
+  return true;
+}
+
+template <endianness big_endian>
+inline size_t count_code_points(const char16_t* buf, size_t len) {
+  // We are not BOM aware.
+  const uint16_t * p = reinterpret_cast<const uint16_t *>(buf);
+  size_t counter{0};
+  for(size_t i = 0; i < len; i++) {
+    uint16_t word = big_endian ? swap_bytes(p[i]) : p[i];
+    counter += ((word & 0xFC00) != 0xDC00);
+  }
+  return counter;
+}
+
+template <endianness big_endian>
+inline size_t utf8_length_from_utf16(const char16_t* buf, size_t len) {
+  // We are not BOM aware.
+  const uint16_t * p = reinterpret_cast<const uint16_t *>(buf);
+  size_t counter{0};
+  for(size_t i = 0; i < len; i++) {
+    uint16_t word = big_endian ? swap_bytes(p[i]) : p[i];
+    /** ASCII **/
+    if(word <= 0x7F) { counter++; }
+    /** two-byte **/
+    else if (word <= 0x7FF) { counter += 2; }
+    /** three-byte **/
+    else if((word <= 0xD7FF) || (word >= 0xE000)) { counter += 3; }
+    /** surrogates -- 4 bytes **/
+    else { counter += 2; }
+  }
+  return counter;
+}
+
+template <endianness big_endian>
+inline size_t utf32_length_from_utf16(const char16_t* buf, size_t len) {
+  // We are not BOM aware.
+  const uint16_t * p = reinterpret_cast<const uint16_t *>(buf);
+  size_t counter{0};
+  for(size_t i = 0; i < len; i++) {
+    uint16_t word = big_endian ? swap_bytes(p[i]) : p[i];
+    counter += ((word & 0xFC00) != 0xDC00);
+  }
+  return counter;
+}
+
+simdutf_really_inline void change_endianness_utf16(const char16_t* in, size_t size, char16_t* out) {
+  const uint16_t * input = reinterpret_cast<const uint16_t *>(in);
+  uint16_t * output = reinterpret_cast<uint16_t *>(out);
+  for (size_t i = 0; i < size; i++) {
+    *output++ = uint16_t(input[i] >> 8 | input[i] << 8);
+  }
+}
+
+} // utf16 namespace
+} // unnamed namespace
+} // namespace scalar
+} // namespace simdutf
+
+#endif
+/* end file src/scalar/utf16.h */
+
+/* begin file src/scalar/utf32.h */
+#ifndef SIMDUTF_UTF32_H
+#define SIMDUTF_UTF32_H
+
+namespace simdutf {
+namespace scalar {
+namespace {
+namespace utf32 {
+
+inline simdutf_warn_unused bool validate(const char32_t *buf, size_t len) noexcept {
+  const uint32_t *data = reinterpret_cast<const uint32_t *>(buf);
+  uint64_t pos = 0;
+  for(;pos < len; pos++) {
+    uint32_t word = data[pos];
+    if(word > 0x10FFFF || (word >= 0xD800 && word <= 0xDFFF)) {
+        return false;
+    }
+  }
+  return true;
+}
+
+inline size_t utf8_length_from_utf32(const char32_t* buf, size_t len) {
+  // We are not BOM aware.
+  const uint32_t * p = reinterpret_cast<const uint32_t *>(buf);
+  size_t counter{0};
+  for(size_t i = 0; i < len; i++) {
+    /** ASCII **/
+    if(p[i] <= 0x7F) { counter++; }
+    /** two-byte **/
+    else if(p[i] <= 0x7FF) { counter += 2; }
+    /** three-byte **/
+    else if(p[i] <= 0xFFFF) { counter += 3; }
+    /** four-bytes **/
+    else { counter += 4; }
+  }
+  return counter;
+}
+
+inline size_t utf16_length_from_utf32(const char32_t* buf, size_t len) {
+  // We are not BOM aware.
+  const uint32_t * p = reinterpret_cast<const uint32_t *>(buf);
+  size_t counter{0};
+  for(size_t i = 0; i < len; i++) {
+    /** non-surrogate word **/
+    if(p[i] <= 0xFFFF) { counter++; }
+    /** surrogate pair **/
+    else { counter += 2; }
+  }
+  return counter;
+}
+
+} // utf32 namespace
+} // unnamed namespace
+} // namespace scalar
+} // namespace simdutf
+
+#endif
+/* end file src/scalar/utf32.h */
+
+
 /* begin file src/scalar/utf32_to_utf8/valid_utf32_to_utf8.h */
 #ifndef SIMDUTF_VALID_UTF32_TO_UTF8_H
 #define SIMDUTF_VALID_UTF32_TO_UTF8_H
@@ -9004,6 +9601,7 @@ namespace scalar {
 namespace {
 namespace utf32_to_utf16 {
 
+template <endianness big_endian>
 inline size_t convert_valid(const char32_t* buf, size_t len, char16_t* utf16_output) {
   const uint32_t *data = reinterpret_cast<const uint32_t *>(buf);
   size_t pos = 0;
@@ -9012,13 +9610,19 @@ inline size_t convert_valid(const char32_t* buf, size_t len, char16_t* utf16_out
     uint32_t word = data[pos];
     if((word & 0xFFFF0000)==0) {
       // will not generate a surrogate pair
-      *utf16_output++ = char16_t(word);
+      *utf16_output++ = big_endian ? char16_t(utf16::swap_bytes(uint16_t(word))) : char16_t(word);
       pos++;
     } else {
       // will generate a surrogate pair
       word -= 0x10000;
-      *utf16_output++ = char16_t(0xD800 + (word >> 10));
-      *utf16_output++ = char16_t(0xDC00 + (word & 0x3FF));
+      uint16_t high_surrogate = uint16_t(0xD800 + (word >> 10));
+      uint16_t low_surrogate = uint16_t(0xDC00 + (word & 0x3FF));
+      if (big_endian) {
+        high_surrogate = utf16::swap_bytes(high_surrogate);
+        low_surrogate = utf16::swap_bytes(low_surrogate);
+      }
+      *utf16_output++ = char16_t(high_surrogate);
+      *utf16_output++ = char16_t(low_surrogate);
       pos++;
     }
   }
@@ -9042,6 +9646,7 @@ namespace scalar {
 namespace {
 namespace utf32_to_utf16 {
 
+template <endianness big_endian>
 inline size_t convert(const char32_t* buf, size_t len, char16_t* utf16_output) {
   const uint32_t *data = reinterpret_cast<const uint32_t *>(buf);
   size_t pos = 0;
@@ -9051,16 +9656,21 @@ inline size_t convert(const char32_t* buf, size_t len, char16_t* utf16_output) {
     if((word & 0xFFFF0000)==0) {
       if (word >= 0xD800 && word <= 0xDFFF) { return 0; }
       // will not generate a surrogate pair
-      *utf16_output++ = char16_t(word);
-      pos++;
+      *utf16_output++ = big_endian ? char16_t(utf16::swap_bytes(uint16_t(word))) : char16_t(word);
     } else {
       // will generate a surrogate pair
       if (word > 0x10FFFF) { return 0; }
       word -= 0x10000;
-      *utf16_output++ = char16_t(0xD800 + (word >> 10));
-      *utf16_output++ = char16_t(0xDC00 + (word & 0x3FF));
-      pos++;
+      uint16_t high_surrogate = uint16_t(0xD800 + (word >> 10));
+      uint16_t low_surrogate = uint16_t(0xDC00 + (word & 0x3FF));
+      if (big_endian) {
+        high_surrogate = utf16::swap_bytes(high_surrogate);
+        low_surrogate = utf16::swap_bytes(low_surrogate);
+      }
+      *utf16_output++ = char16_t(high_surrogate);
+      *utf16_output++ = char16_t(low_surrogate);
     }
+    pos++;
   }
   return utf16_output - start;
 }
@@ -9083,6 +9693,7 @@ namespace scalar {
 namespace {
 namespace utf16_to_utf8 {
 
+template <endianness big_endian>
 inline size_t convert_valid(const char16_t* buf, size_t len, char* utf8_output) {
  const uint16_t *data = reinterpret_cast<const uint16_t *>(buf);
   size_t pos = 0;
@@ -9092,16 +9703,17 @@ inline size_t convert_valid(const char16_t* buf, size_t len, char* utf8_output) 
     if (pos + 4 <= len) { // if it is safe to read 8 more bytes, check that they are ascii
       uint64_t v;
       ::memcpy(&v, data + pos, sizeof(uint64_t));
+      if (big_endian) v = (v >> 8) | (v << (64 - 8));
       if ((v & 0xFF80FF80FF80FF80) == 0) {
         size_t final_pos = pos + 4;
         while(pos < final_pos) {
-          *utf8_output++ = char(buf[pos]);
+          *utf8_output++ = big_endian ? char(utf16::swap_bytes(buf[pos])) : char(buf[pos]);
           pos++;
         }
         continue;
       }
     }
-    uint16_t word = data[pos];
+    uint16_t word = big_endian ? utf16::swap_bytes(data[pos]) : data[pos];
     if((word & 0xFF80)==0) {
       // will generate one UTF-8 bytes
       *utf8_output++ = char(word);
@@ -9123,7 +9735,7 @@ inline size_t convert_valid(const char16_t* buf, size_t len, char* utf8_output) 
       // must be a surrogate pair
       uint16_t diff = uint16_t(word - 0xD800);
       if(pos + 1 >= len) { return 0; } // minimal bound checking
-      uint16_t next_word = data[pos + 1];
+      uint16_t next_word = big_endian ? utf16::swap_bytes(data[pos + 1]) : data[pos + 1];
       uint16_t diff2 = uint16_t(next_word - 0xDC00);
       uint32_t value = (diff << 10) + diff2 + 0x10000;
       // will generate four UTF-8 bytes
@@ -9155,6 +9767,7 @@ namespace scalar {
 namespace {
 namespace utf16_to_utf8 {
 
+template <endianness big_endian>
 inline size_t convert(const char16_t* buf, size_t len, char* utf8_output) {
  const uint16_t *data = reinterpret_cast<const uint16_t *>(buf);
   size_t pos = 0;
@@ -9164,16 +9777,17 @@ inline size_t convert(const char16_t* buf, size_t len, char* utf8_output) {
     if (pos + 4 <= len) { // if it is safe to read 8 more bytes, check that they are ascii
       uint64_t v;
       ::memcpy(&v, data + pos, sizeof(uint64_t));
+      if (big_endian) v = (v >> 8) | (v << (64 - 8));
       if ((v & 0xFF80FF80FF80FF80) == 0) {
         size_t final_pos = pos + 4;
         while(pos < final_pos) {
-          *utf8_output++ = char(buf[pos]);
+          *utf8_output++ = big_endian ? char(utf16::swap_bytes(buf[pos])) : char(buf[pos]);
           pos++;
         }
         continue;
       }
     }
-    uint16_t word = data[pos];
+    uint16_t word = big_endian ? utf16::swap_bytes(data[pos]) : data[pos];
     if((word & 0xFF80)==0) {
       // will generate one UTF-8 bytes
       *utf8_output++ = char(word);
@@ -9196,7 +9810,7 @@ inline size_t convert(const char16_t* buf, size_t len, char* utf8_output) {
       if(pos + 1 >= len) { return 0; }
       uint16_t diff = uint16_t(word - 0xD800);
       if(diff > 0x3FF) { return 0; }
-      uint16_t next_word = data[pos + 1];
+      uint16_t next_word = big_endian ? utf16::swap_bytes(data[pos + 1]) : data[pos + 1];
       uint16_t diff2 = uint16_t(next_word - 0xDC00);
       if(diff2 > 0x3FF) { return 0; }
       uint32_t value = (diff << 10) + diff2 + 0x10000;
@@ -9230,12 +9844,13 @@ namespace scalar {
 namespace {
 namespace utf16_to_utf32 {
 
+template <endianness big_endian>
 inline size_t convert_valid(const char16_t* buf, size_t len, char32_t* utf32_output) {
  const uint16_t *data = reinterpret_cast<const uint16_t *>(buf);
   size_t pos = 0;
   char32_t* start{utf32_output};
   while (pos < len) {
-    uint16_t word = data[pos];
+    uint16_t word = big_endian ? utf16::swap_bytes(data[pos]) : data[pos];
     if((word &0xF800 ) != 0xD800) {
       // No surrogate pair, extend 16-bit word to 32-bit word
       *utf32_output++ = char32_t(word);
@@ -9244,7 +9859,7 @@ inline size_t convert_valid(const char16_t* buf, size_t len, char32_t* utf32_out
       // must be a surrogate pair
       uint16_t diff = uint16_t(word - 0xD800);
       if(pos + 1 >= len) { return 0; } // minimal bound checking
-      uint16_t next_word = data[pos + 1];
+      uint16_t next_word = big_endian ? utf16::swap_bytes(data[pos + 1]) : data[pos + 1];
       uint16_t diff2 = uint16_t(next_word - 0xDC00);
       uint32_t value = (diff << 10) + diff2 + 0x10000;
       *utf32_output++ = char32_t(value);
@@ -9271,12 +9886,13 @@ namespace scalar {
 namespace {
 namespace utf16_to_utf32 {
 
+template <endianness big_endian>
 inline size_t convert(const char16_t* buf, size_t len, char32_t* utf32_output) {
  const uint16_t *data = reinterpret_cast<const uint16_t *>(buf);
   size_t pos = 0;
   char32_t* start{utf32_output};
   while (pos < len) {
-    uint16_t word = data[pos];
+    uint16_t word = big_endian ? utf16::swap_bytes(data[pos]) : data[pos];
     if((word &0xF800 ) != 0xD800) {
       // No surrogate pair, extend 16-bit word to 32-bit word
       *utf32_output++ = char32_t(word);
@@ -9286,7 +9902,7 @@ inline size_t convert(const char16_t* buf, size_t len, char32_t* utf32_output) {
       uint16_t diff = uint16_t(word - 0xD800);
       if(diff > 0x3FF) { return 0; }
       if(pos + 1 >= len) { return 0; } // minimal bound checking
-      uint16_t next_word = data[pos + 1];
+      uint16_t next_word = big_endian ? utf16::swap_bytes(data[pos + 1]) : data[pos + 1];
       uint16_t diff2 = uint16_t(next_word - 0xDC00);
       if(diff2 > 0x3FF) { return 0; }
       uint32_t value = (diff << 10) + diff2 + 0x10000;
@@ -9315,6 +9931,7 @@ namespace scalar {
 namespace {
 namespace utf8_to_utf16 {
 
+template <endianness big_endian>
 inline size_t convert_valid(const char* buf, size_t len, char16_t* utf16_output) {
  const uint8_t *data = reinterpret_cast<const uint8_t *>(buf);
   size_t pos = 0;
@@ -9327,7 +9944,7 @@ inline size_t convert_valid(const char* buf, size_t len, char16_t* utf16_output)
       if ((v & 0x8080808080808080) == 0) {
         size_t final_pos = pos + 8;
         while(pos < final_pos) {
-          *utf16_output++ = char16_t(buf[pos]);
+          *utf16_output++ = big_endian ? char16_t(utf16::swap_bytes(buf[pos])) : char16_t(buf[pos]);
           pos++;
         }
         continue;
@@ -9336,28 +9953,42 @@ inline size_t convert_valid(const char* buf, size_t len, char16_t* utf16_output)
     uint8_t leading_byte = data[pos]; // leading byte
     if (leading_byte < 0b10000000) {
       // converting one ASCII byte !!!
-      *utf16_output++ = char16_t(leading_byte);
+      *utf16_output++ = big_endian ? char16_t(utf16::swap_bytes(leading_byte)) : char16_t(leading_byte);
       pos++;
     } else if ((leading_byte & 0b11100000) == 0b11000000) {
       // We have a two-byte UTF-8, it should become
       // a single UTF-16 word.
       if(pos + 1 >= len) { break; } // minimal bound checking
-      *utf16_output++ = char16_t(((leading_byte &0b00011111) << 6) | (data[pos + 1] &0b00111111));
+      uint16_t code_point = uint16_t(((leading_byte &0b00011111) << 6) | (data[pos + 1] &0b00111111));
+      if (big_endian) {
+        code_point = utf16::swap_bytes(uint16_t(code_point));
+      }
+      *utf16_output++ = char16_t(code_point);
       pos += 2;
     } else if ((leading_byte & 0b11110000) == 0b11100000) {
       // We have a three-byte UTF-8, it should become
       // a single UTF-16 word.
       if(pos + 2 >= len) { break; } // minimal bound checking
-      *utf16_output++ = char16_t(((leading_byte &0b00001111) << 12) | ((data[pos + 1] &0b00111111) << 6) | (data[pos + 2] &0b00111111));
+      uint16_t code_point = uint16_t(((leading_byte &0b00001111) << 12) | ((data[pos + 1] &0b00111111) << 6) | (data[pos + 2] &0b00111111));
+      if (big_endian) {
+        code_point = utf16::swap_bytes(uint16_t(code_point));
+      }
+      *utf16_output++ = char16_t(code_point);
       pos += 3;
     } else if ((leading_byte & 0b11111000) == 0b11110000) { // 0b11110000
       // we have a 4-byte UTF-8 word.
       if(pos + 3 >= len) { break; } // minimal bound checking
-      uint32_t code_word = ((leading_byte & 0b00000111) << 18 )| ((data[pos + 1] &0b00111111) << 12)
+      uint32_t code_point = ((leading_byte & 0b00000111) << 18 )| ((data[pos + 1] &0b00111111) << 12)
                            | ((data[pos + 2] &0b00111111) << 6) | (data[pos + 3] &0b00111111);
-      code_word -= 0x10000;
-      *utf16_output++ = char16_t(0xD800 + (code_word >> 10));
-      *utf16_output++ = char16_t(0xDC00 + (code_word & 0x3FF));
+      code_point -= 0x10000;
+      uint16_t high_surrogate = uint16_t(0xD800 + (code_point >> 10));
+      uint16_t low_surrogate = uint16_t(0xDC00 + (code_point & 0x3FF));
+      if (big_endian) {
+        high_surrogate = utf16::swap_bytes(high_surrogate);
+        low_surrogate = utf16::swap_bytes(low_surrogate);
+      }
+      *utf16_output++ = char16_t(high_surrogate);
+      *utf16_output++ = char16_t(low_surrogate);
       pos += 4;
     } else {
       // we may have a continuation but we do not do error checking
@@ -9385,6 +10016,7 @@ namespace scalar {
 namespace {
 namespace utf8_to_utf16 {
 
+template <endianness big_endian>
 inline size_t convert(const char* buf, size_t len, char16_t* utf16_output) {
  const uint8_t *data = reinterpret_cast<const uint8_t *>(buf);
   size_t pos = 0;
@@ -9400,7 +10032,7 @@ inline size_t convert(const char* buf, size_t len, char16_t* utf16_output) {
       if ((v & 0x8080808080808080) == 0) {
         size_t final_pos = pos + 16;
         while(pos < final_pos) {
-          *utf16_output++ = char16_t(buf[pos]);
+          *utf16_output++ = big_endian ? char16_t(utf16::swap_bytes(buf[pos])) : char16_t(buf[pos]);
           pos++;
         }
         continue;
@@ -9409,7 +10041,7 @@ inline size_t convert(const char* buf, size_t len, char16_t* utf16_output) {
     uint8_t leading_byte = data[pos]; // leading byte
     if (leading_byte < 0b10000000) {
       // converting one ASCII byte !!!
-      *utf16_output++ = char16_t(leading_byte);
+      *utf16_output++ = big_endian ? char16_t(utf16::swap_bytes(leading_byte)): char16_t(leading_byte);
       pos++;
     } else if ((leading_byte & 0b11100000) == 0b11000000) {
       // We have a two-byte UTF-8, it should become
@@ -9419,6 +10051,9 @@ inline size_t convert(const char* buf, size_t len, char16_t* utf16_output) {
       // range check
       uint32_t code_point = (leading_byte & 0b00011111) << 6 | (data[pos + 1] & 0b00111111);
       if (code_point < 0x80 || 0x7ff < code_point) { return 0; }
+      if (big_endian) {
+        code_point = uint32_t(utf16::swap_bytes(uint16_t(code_point)));
+      }
       *utf16_output++ = char16_t(code_point);
       pos += 2;
     } else if ((leading_byte & 0b11110000) == 0b11100000) {
@@ -9436,6 +10071,9 @@ inline size_t convert(const char* buf, size_t len, char16_t* utf16_output) {
           (0xd7ff < code_point && code_point < 0xe000)) {
         return 0;
       }
+      if (big_endian) {
+        code_point = uint32_t(utf16::swap_bytes(uint16_t(code_point)));
+      }
       *utf16_output++ = char16_t(code_point);
       pos += 3;
     } else if ((leading_byte & 0b11111000) == 0b11110000) { // 0b11110000
@@ -9451,8 +10089,14 @@ inline size_t convert(const char* buf, size_t len, char16_t* utf16_output) {
           (data[pos + 2] & 0b00111111) << 6 | (data[pos + 3] & 0b00111111);
       if (code_point <= 0xffff || 0x10ffff < code_point) { return 0; }
       code_point -= 0x10000;
-      *utf16_output++ = char16_t(0xD800 + (code_point >> 10));
-      *utf16_output++ = char16_t(0xDC00 + (code_point & 0x3FF));
+      uint16_t high_surrogate = uint16_t(0xD800 + (code_point >> 10));
+      uint16_t low_surrogate = uint16_t(0xDC00 + (code_point & 0x3FF));
+      if (big_endian) {
+        high_surrogate = utf16::swap_bytes(high_surrogate);
+        low_surrogate = utf16::swap_bytes(low_surrogate);
+      }
+      *utf16_output++ = char16_t(high_surrogate);
+      *utf16_output++ = char16_t(low_surrogate);
       pos += 4;
     } else {
       return 0;
@@ -9624,289 +10268,6 @@ inline size_t convert(const char* buf, size_t len, char32_t* utf32_output) {
 
 #endif
 /* end file src/scalar/utf8_to_utf32/utf8_to_utf32.h */
-
-
-/* begin file src/scalar/ascii.h */
-#ifndef SIMDUTF_ASCII_H
-#define SIMDUTF_ASCII_H
-
-namespace simdutf {
-namespace scalar {
-namespace {
-namespace ascii {
-
-    inline simdutf_warn_unused bool validate(const char *buf, size_t len) noexcept {
-    const uint8_t *data = reinterpret_cast<const uint8_t *>(buf);
-    uint64_t pos = 0;
-    // process in blocks of 16 bytes when possible
-    for (;pos + 16 < len; pos += 16) {
-        uint64_t v1;
-        std::memcpy(&v1, data + pos, sizeof(uint64_t));
-        uint64_t v2;
-        std::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
-        uint64_t v{v1 | v2};
-        if ((v & 0x8080808080808080) != 0) { return false; }
-    }
-    // process the tail byte-by-byte
-    for (;pos < len; pos ++) {
-        if (data[pos] >= 0b10000000) { return false; }
-    }
-    return true;
-    }
-
-} // ascii namespace
-} // unnamed namespace
-} // namespace scalar
-} // namespace simdutf
-
-#endif
-/* end file src/scalar/ascii.h */
-
-/* begin file src/scalar/utf8.h */
-#ifndef SIMDUTF_UTF8_H
-#define SIMDUTF_UTF8_H
-
-namespace simdutf {
-namespace scalar {
-namespace {
-namespace utf8 {
-// credit: based on code from Google Fuchsia (Apache Licensed)
-inline simdutf_warn_unused bool validate(const char *buf, size_t len) noexcept {
-  const uint8_t *data = reinterpret_cast<const uint8_t *>(buf);
-  uint64_t pos = 0;
-  uint32_t code_point = 0;
-  while (pos < len) {
-    // check of the next 8 bytes are ascii.
-    uint64_t next_pos = pos + 16;
-    if (next_pos <= len) { // if it is safe to read 8 more bytes, check that they are ascii
-      uint64_t v1;
-      std::memcpy(&v1, data + pos, sizeof(uint64_t));
-      uint64_t v2;
-      std::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
-      uint64_t v{v1 | v2};
-      if ((v & 0x8080808080808080) == 0) {
-        pos = next_pos;
-        continue;
-      }
-    }
-    unsigned char byte = data[pos];
-
-    while (byte < 0b10000000) {
-      if (++pos == len) { return true; }
-      byte = data[pos];
-    }
-
-    if ((byte & 0b11100000) == 0b11000000) {
-      next_pos = pos + 2;
-      if (next_pos > len) { return false; }
-      if ((data[pos + 1] & 0b11000000) != 0b10000000) { return false; }
-      // range check
-      code_point = (byte & 0b00011111) << 6 | (data[pos + 1] & 0b00111111);
-      if ((code_point < 0x80) || (0x7ff < code_point)) { return false; }
-    } else if ((byte & 0b11110000) == 0b11100000) {
-      next_pos = pos + 3;
-      if (next_pos > len) { return false; }
-      if ((data[pos + 1] & 0b11000000) != 0b10000000) { return false; }
-      if ((data[pos + 2] & 0b11000000) != 0b10000000) { return false; }
-      // range check
-      code_point = (byte & 0b00001111) << 12 |
-                   (data[pos + 1] & 0b00111111) << 6 |
-                   (data[pos + 2] & 0b00111111);
-      if ((code_point < 0x800) || (0xffff < code_point) ||
-          (0xd7ff < code_point && code_point < 0xe000)) {
-        return false;
-      }
-    } else if ((byte & 0b11111000) == 0b11110000) { // 0b11110000
-      next_pos = pos + 4;
-      if (next_pos > len) { return false; }
-      if ((data[pos + 1] & 0b11000000) != 0b10000000) { return false; }
-      if ((data[pos + 2] & 0b11000000) != 0b10000000) { return false; }
-      if ((data[pos + 3] & 0b11000000) != 0b10000000) { return false; }
-      // range check
-      code_point =
-          (byte & 0b00000111) << 18 | (data[pos + 1] & 0b00111111) << 12 |
-          (data[pos + 2] & 0b00111111) << 6 | (data[pos + 3] & 0b00111111);
-      if (code_point <= 0xffff || 0x10ffff < code_point) { return false; }
-    } else {
-      // we may have a continuation
-      return false;
-    }
-    pos = next_pos;
-  }
-  return true;
-}
-
-inline size_t count_code_points(const char* buf, size_t len) {
-    const int8_t * p = reinterpret_cast<const int8_t *>(buf);
-    size_t counter{0};
-    for(size_t i = 0; i < len; i++) {
-        // -65 is 0b10111111, anything larger in two-complement's should start a new code point.
-        if(p[i] > -65) { counter++; }
-    }
-    return counter;
-}
-
-inline size_t utf16_length_from_utf8(const char* buf, size_t len) {
-    const int8_t * p = reinterpret_cast<const int8_t *>(buf);
-    size_t counter{0};
-    for(size_t i = 0; i < len; i++) {
-        if(p[i] > -65) { counter++; }
-        if(uint8_t(p[i]) >= 240) { counter++; }
-    }
-    return counter;
-}
-
-inline size_t utf32_length_from_utf8(const char* buf, size_t len) {
-    const int8_t * p = reinterpret_cast<const int8_t *>(buf);
-    size_t counter{0};
-    for(size_t i = 0; i < len; i++) {
-        // -65 is 0b10111111, anything larger in two-complement's should start a new code point.
-        if(p[i] > -65) { counter++; }
-    }
-    return counter;
-}
-
-} // utf8 namespace
-} // unnamed namespace
-} // namespace scalar
-} // namespace simdutf
-
-#endif
-/* end file src/scalar/utf8.h */
-
-/* begin file src/scalar/utf16.h */
-#ifndef SIMDUTF_UTF16_H
-#define SIMDUTF_UTF16_H
-
-namespace simdutf {
-namespace scalar {
-namespace {
-namespace utf16 {
-
-inline simdutf_warn_unused bool validate(const char16_t *buf, size_t len) noexcept {
-  const uint16_t *data = reinterpret_cast<const uint16_t *>(buf);
-  uint64_t pos = 0;
-  while (pos < len) {
-    uint16_t word = data[pos];
-    if((word &0xF800) == 0xD800) {
-        if(pos + 1 >= len) { return false; }
-        uint16_t diff = uint16_t(word - 0xD800);
-        if(diff > 0x3FF) { return false; }
-        uint16_t next_word = data[pos + 1];
-        uint16_t diff2 = uint16_t(next_word - 0xDC00);
-        if(diff2 > 0x3FF) { return false; }
-        pos += 2;
-    } else {
-        pos++;
-    }
-  }
-  return true;
-}
-
-
-inline size_t count_code_points(const char16_t* buf, size_t len) {
-  // We are not BOM aware.
-  const uint16_t * p = reinterpret_cast<const uint16_t *>(buf);
-  size_t counter{0};
-  for(size_t i = 0; i < len; i++) {
-    counter += ((p[i] & 0xFC00) != 0xDC00);
-  }
-  return counter;
-}
-
-inline size_t utf8_length_from_utf16(const char16_t* buf, size_t len) {
-  // We are not BOM aware.
-  const uint16_t * p = reinterpret_cast<const uint16_t *>(buf);
-  size_t counter{0};
-  for(size_t i = 0; i < len; i++) {
-    /** ASCII **/
-    if(p[i] <= 0x7F) { counter++; }
-    /** two-byte **/
-    else if(p[i] <= 0x7FF) { counter += 2; }
-    /** three-byte **/
-    else if((p[i] <= 0xD7FF) || (p[i] >= 0xE000)) { counter += 3; }
-    /** surrogates -- 4 bytes **/
-    else { counter += 2; }
-  }
-  return counter;
-}
-
-inline size_t utf32_length_from_utf16(const char16_t* buf, size_t len) {
-  // We are not BOM aware.
-  const uint16_t * p = reinterpret_cast<const uint16_t *>(buf);
-  size_t counter{0};
-  for(size_t i = 0; i < len; i++) {
-    counter += ((p[i] & 0xFC00) != 0xDC00);
-  }
-  return counter;
-}
-
-} // utf16 namespace
-} // unnamed namespace
-} // namespace scalar
-} // namespace simdutf
-
-#endif
-/* end file src/scalar/utf16.h */
-
-/* begin file src/scalar/utf32.h */
-#ifndef SIMDUTF_UTF32_H
-#define SIMDUTF_UTF32_H
-
-namespace simdutf {
-namespace scalar {
-namespace {
-namespace utf32 {
-
-inline simdutf_warn_unused bool validate(const char32_t *buf, size_t len) noexcept {
-  const uint32_t *data = reinterpret_cast<const uint32_t *>(buf);
-  uint64_t pos = 0;
-  for(;pos < len; pos++) {
-    uint32_t word = data[pos];
-    if(word > 0x10FFFF || (word >= 0xD800 && word <= 0xDFFF)) {
-        return false;
-    }
-  }
-  return true;
-}
-
-inline size_t utf8_length_from_utf32(const char32_t* buf, size_t len) {
-  // We are not BOM aware.
-  const uint32_t * p = reinterpret_cast<const uint32_t *>(buf);
-  size_t counter{0};
-  for(size_t i = 0; i < len; i++) {
-    /** ASCII **/
-    if(p[i] <= 0x7F) { counter++; }
-    /** two-byte **/
-    else if(p[i] <= 0x7FF) { counter += 2; }
-    /** three-byte **/
-    else if(p[i] <= 0xFFFF) { counter += 3; }
-    /** four-bytes **/
-    else { counter += 4; }
-  }
-  return counter;
-}
-
-inline size_t utf16_length_from_utf32(const char32_t* buf, size_t len) {
-  // We are not BOM aware.
-  const uint32_t * p = reinterpret_cast<const uint32_t *>(buf);
-  size_t counter{0};
-  for(size_t i = 0; i < len; i++) {
-    /** non-surrogate word **/
-    if(p[i] <= 0xFFFF) { counter++; }
-    /** surrogate pair **/
-    else { counter += 2; }
-  }
-  return counter;
-}
-
-} // utf32 namespace
-} // unnamed namespace
-} // namespace scalar
-} // namespace simdutf
-
-#endif
-/* end file src/scalar/utf32.h */
 //
 
 
@@ -9954,9 +10315,9 @@ simdutf_really_inline simd8<bool> must_be_2_3_continuation(const simd8<uint8_t> 
 }
 
 
-/* begin file src/arm64/arm_validate_utf16le.cpp */
-
-const char16_t* arm_validate_utf16le(const char16_t* input, size_t size) {
+/* begin file src/arm64/arm_validate_utf16.cpp */
+template <endianness big_endian>
+const char16_t* arm_validate_utf16(const char16_t* input, size_t size) {
     const char16_t* end = input + size;
     const auto v_d8 = simd8<uint8_t>::splat(0xd8);
     const auto v_f8 = simd8<uint8_t>::splat(0xf8);
@@ -9966,8 +10327,17 @@ const char16_t* arm_validate_utf16le(const char16_t* input, size_t size) {
         // 0. Load data: since the validation takes into account only higher
         //    byte of each word, we compress the two vectors into one which
         //    consists only the higher bytes.
-        const auto in0 = simd16<uint16_t>(input);
-        const auto in1 = simd16<uint16_t>(input + simd16<uint16_t>::SIZE / sizeof(char16_t));
+        auto in0 = simd16<uint16_t>(input);
+        auto in1 = simd16<uint16_t>(input + simd16<uint16_t>::SIZE / sizeof(char16_t));
+        if (big_endian) {
+            #ifdef SIMDUTF_REGULAR_VISUAL_STUDIO
+            const uint8x16_t swap = make_uint8x16_t(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
+            #else
+            const uint8x16_t swap = {1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14};
+            #endif
+            in0 = vreinterpretq_u16_u8(vqtbl1q_u8(vreinterpretq_u8_u16(in0), swap));
+            in1 = vreinterpretq_u16_u8(vqtbl1q_u8(vreinterpretq_u8_u16(in1), swap));
+        }
         const auto t0 = in0.shr<8>();
         const auto t1 = in1.shr<8>();
         const simd8<uint8_t> in = simd16<uint16_t>::pack(t0, t1);
@@ -10017,7 +10387,7 @@ const char16_t* arm_validate_utf16le(const char16_t* input, size_t size) {
     }
     return input;
 }
-/* end file src/arm64/arm_validate_utf16le.cpp */
+/* end file src/arm64/arm_validate_utf16.cpp */
 
 /* begin file src/arm64/arm_validate_utf32le.cpp */
 
@@ -10057,6 +10427,7 @@ const char32_t* arm_validate_utf32le(const char32_t* input, size_t size) {
 // end of the code points. Only the least significant 12 bits of the mask
 // are accessed.
 // It returns how many bytes were consumed (up to 12).
+template <endianness big_endian>
 size_t convert_masked_utf8_to_utf16(const char *input,
                            uint64_t utf8_end_of_code_point_mask,
                            char16_t *&utf16_output) {
@@ -10064,6 +10435,11 @@ size_t convert_masked_utf8_to_utf16(const char *input,
   // Why 12 input bytes and not 16? Because we are concerned with the size of
   // the lookup tables. Also 12 is nicely divisible by two and three.
   //
+  #ifdef SIMDUTF_REGULAR_VISUAL_STUDIO
+  const uint8x16_t swap = make_uint8x16_t(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
+  #else
+  const uint8x16_t swap = {1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14};
+  #endif
   uint8x16_t in = vld1q_u8(reinterpret_cast<const uint8_t*>(input));
   const uint16_t input_utf8_end_of_code_point_mask =
       utf8_end_of_code_point_mask & 0xfff;
@@ -10075,23 +10451,25 @@ size_t convert_masked_utf8_to_utf16(const char *input,
   // We first try a few fast paths.
   if((utf8_end_of_code_point_mask & 0xffff) == 0xffff) {
     // We process in chunks of 16 bytes
-    vst1q_u16(reinterpret_cast<uint16_t*>(utf16_output), vmovl_u8(vget_low_u8 (in)));
-    vst1q_u16(reinterpret_cast<uint16_t*>(utf16_output) + 8, vmovl_high_u8(in));
+    uint16x8_t ascii_first = vmovl_u8(vget_low_u8 (in));
+    uint16x8_t ascii_second = vmovl_high_u8(in);
+    if (big_endian) {
+      ascii_first = vreinterpretq_u16_u8(vqtbl1q_u8(vreinterpretq_u8_u16(ascii_first), swap));
+      ascii_second = vreinterpretq_u16_u8(vqtbl1q_u8(vreinterpretq_u8_u16(ascii_second), swap));
+    }
+    vst1q_u16(reinterpret_cast<uint16_t*>(utf16_output), ascii_first);
+    vst1q_u16(reinterpret_cast<uint16_t*>(utf16_output) + 8, ascii_second);
     utf16_output += 16; // We wrote 16 16-bit characters.
     return 16; // We consumed 16 bytes.
   }
   if((utf8_end_of_code_point_mask & 0xffff) == 0xaaaa) {
     // We want to take 8 2-byte UTF-8 words and turn them into 8 2-byte UTF-16 words.
     // There is probably a more efficient sequence, but the following might do.
-#ifdef SIMDUTF_REGULAR_VISUAL_STUDIO
-    const uint8x16_t sh = make_uint8x16_t(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
-#else
-    const uint8x16_t sh = {1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14};
-#endif
-    uint8x16_t perm = vqtbl1q_u8(in, sh);
+    uint8x16_t perm = vqtbl1q_u8(in, swap);
     uint8x16_t ascii = vandq_u8(perm, vreinterpretq_u8_u16(vmovq_n_u16(0x7f)));
     uint8x16_t highbyte = vandq_u8(perm, vreinterpretq_u8_u16(vmovq_n_u16(0x1f00)));
     uint8x16_t composed = vorrq_u8(ascii, vreinterpretq_u8_u16(vshrq_n_u16(vreinterpretq_u16_u8(highbyte), 2)));
+    if (big_endian) composed = vqtbl1q_u8(composed, swap);
     vst1q_u8(reinterpret_cast<uint8_t*>(utf16_output), composed);
     utf16_output += 8; // We wrote 16 bytes, 8 code points.
     return 16;
@@ -10116,6 +10494,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     uint32x4_t composed =
         vorrq_u32(vorrq_u32(vreinterpretq_u32_u8(ascii), vreinterpretq_u32_u8(middlebyte_shifted)), highbyte_shifted);
     uint16x8_t composed_repacked = vmovn_high_u32(vmovn_u32(composed), composed);
+    if (big_endian) composed_repacked = vreinterpretq_u16_u8(vqtbl1q_u8(vreinterpretq_u8_u16(composed_repacked), swap));
     vst1q_u16(reinterpret_cast<uint16_t*>(utf16_output), composed_repacked);
     utf16_output += 4;
     return 12;
@@ -10138,6 +10517,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     uint8x16_t ascii = vandq_u8(perm, vreinterpretq_u8_u16(vmovq_n_u16(0x7f)));
     uint8x16_t highbyte = vandq_u8(perm, vreinterpretq_u8_u16(vmovq_n_u16(0x1f00)));
     uint8x16_t composed = vorrq_u8(ascii, vreinterpretq_u8_u16(vshrq_n_u16(vreinterpretq_u16_u8(highbyte), 2)));
+    if (big_endian) composed = vqtbl1q_u8(composed, swap);
     vst1q_u8(reinterpret_cast<uint8_t*>(utf16_output), composed);
     utf16_output += 6; // We wrote 12 bytes, 6 code points.
   } else if (idx < 145) {
@@ -10155,6 +10535,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     uint32x4_t composed =
         vorrq_u32(vorrq_u32(vreinterpretq_u32_u8(ascii), vreinterpretq_u32_u8(middlebyte_shifted)), highbyte_shifted);
     uint16x8_t composed_repacked = vmovn_high_u32(vmovn_u32(composed), composed);
+    if (big_endian) composed_repacked = vreinterpretq_u16_u8(vqtbl1q_u8(vreinterpretq_u8_u16(composed_repacked), swap));
     vst1q_u16(reinterpret_cast<uint16_t*>(utf16_output), composed_repacked);
     utf16_output += 4;
   } else if (idx < 209) {
@@ -10188,12 +10569,17 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     uint32x4_t surrogates =
         vorrq_u32(hightenbitsadd, lowtenbitsaddshifted);
     uint32_t basic_buffer[4];
+    uint32_t basic_buffer_swap[4];
+    if (big_endian) {
+      vst1q_u32(basic_buffer_swap, vreinterpretq_u32_u8(vqtbl1q_u8(composed, swap)));
+      surrogates = vreinterpretq_u32_u8(vqtbl1q_u8(vreinterpretq_u8_u32(surrogates), swap));
+    }
     vst1q_u32(basic_buffer, vreinterpretq_u32_u8(composed));
     uint32_t surrogate_buffer[4];
     vst1q_u32(surrogate_buffer, surrogates);
     for (size_t i = 0; i < 3; i++) {
       if (basic_buffer[i] < 65536) {
-        utf16_output[0] = uint16_t(basic_buffer[i]);
+        utf16_output[0] = big_endian ? uint16_t(basic_buffer_swap[i]) : uint16_t(basic_buffer[i]);
         utf16_output++;
       } else {
         utf16_output[0] = uint16_t(surrogate_buffer[i] & 0xffff);
@@ -10398,6 +10784,7 @@ size_t convert_masked_utf8_to_utf32(const char *input,
   Returns a pair: the first unprocessed byte from buf and utf8_output
   A scalar routing should carry on the conversion of the tail.
 */
+template <endianness big_endian>
 std::pair<const char16_t*, char*> arm_convert_utf16_to_utf8(const char16_t* buf, size_t len, char* utf8_out) {
   uint8_t * utf8_output = reinterpret_cast<uint8_t*>(utf8_out);
   const char16_t* end = buf + len;
@@ -10408,6 +10795,14 @@ std::pair<const char16_t*, char*> arm_convert_utf16_to_utf8(const char16_t* buf,
 
   while (buf + 16 <= end) {
     uint16x8_t in = vld1q_u16(reinterpret_cast<const uint16_t *>(buf));
+    if (big_endian) {
+      #ifdef SIMDUTF_REGULAR_VISUAL_STUDIO
+      const uint8x16_t swap = make_uint8x16_t(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
+      #else
+      const uint8x16_t swap = {1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14};
+      #endif
+      in = vreinterpretq_u16_u8(vqtbl1q_u8(vreinterpretq_u8_u16(in), swap));
+    }
     if(vmaxvq_u16(in) <= 0x7F) { // ASCII fast path!!!!
         // It is common enough that we have sequences of 16 consecutive ASCII characters.
         uint16x8_t nextin = vld1q_u16(reinterpret_cast<const uint16_t *>(buf) + 8);
@@ -10420,6 +10815,14 @@ std::pair<const char16_t*, char*> arm_convert_utf16_to_utf8(const char16_t* buf,
           // 3. adjust pointers
           buf += 8;
           utf8_output += 8;
+          if (big_endian) {
+            #ifdef SIMDUTF_REGULAR_VISUAL_STUDIO
+            const uint8x16_t swap = make_uint8x16_t(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
+            #else
+            const uint8x16_t swap = {1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14};
+            #endif
+            nextin = vreinterpretq_u16_u8(vqtbl1q_u8(vreinterpretq_u8_u16(nextin), swap));
+          }
           in = nextin;
         } else {
           // 1. pack the bytes
@@ -10609,7 +11012,7 @@ std::pair<const char16_t*, char*> arm_convert_utf16_to_utf8(const char16_t* buf,
       size_t k = 0;
       if(size_t(end - buf) < forward + 1) { forward = size_t(end - buf - 1);}
       for(; k < forward; k++) {
-        uint16_t word = buf[k];
+        uint16_t word = big_endian ? scalar::utf16::swap_bytes(buf[k]) : buf[k];
         if((word & 0xFF80)==0) {
           *utf8_output++ = char(word);
         } else if((word & 0xF800)==0) {
@@ -10622,7 +11025,7 @@ std::pair<const char16_t*, char*> arm_convert_utf16_to_utf8(const char16_t* buf,
         } else {
           // must be a surrogate pair
           uint16_t diff = uint16_t(word - 0xD800);
-          uint16_t next_word = buf[k+1];
+          uint16_t next_word = big_endian ? scalar::utf16::swap_bytes(buf[k + 1]) : buf[k + 1];
           k++;
           uint16_t diff2 = uint16_t(next_word - 0xDC00);
           if((diff | diff2) > 0x3FF)  { return std::make_pair(nullptr, reinterpret_cast<char*>(utf8_output)); }
@@ -10694,6 +11097,7 @@ std::pair<const char16_t*, char*> arm_convert_utf16_to_utf8(const char16_t* buf,
   Returns a pair: the first unprocessed byte from buf and utf8_output
   A scalar routing should carry on the conversion of the tail.
 */
+template <endianness big_endian>
 std::pair<const char16_t*, char32_t*> arm_convert_utf16_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_out) {
   uint32_t * utf32_output = reinterpret_cast<uint32_t*>(utf32_out);
   const char16_t* end = buf + len;
@@ -10703,6 +11107,14 @@ std::pair<const char16_t*, char32_t*> arm_convert_utf16_to_utf32(const char16_t*
 
   while (buf + 16 <= end) {
     uint16x8_t in = vld1q_u16(reinterpret_cast<const uint16_t *>(buf));
+    if (big_endian) {
+      #ifdef SIMDUTF_REGULAR_VISUAL_STUDIO
+      const uint8x16_t swap = make_uint8x16_t(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
+      #else
+      const uint8x16_t swap = {1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14};
+      #endif
+      in = vreinterpretq_u16_u8(vqtbl1q_u8(vreinterpretq_u8_u16(in), swap));
+    }
 
     const uint16x8_t surrogates_bytemask = vceqq_u16(vandq_u16(in, v_f800), v_d800);
     // It might seem like checking for surrogates_bitmask == 0xc000 could help. However,
@@ -10722,13 +11134,13 @@ std::pair<const char16_t*, char32_t*> arm_convert_utf16_to_utf32(const char16_t*
       size_t k = 0;
       if(size_t(end - buf) < forward + 1) { forward = size_t(end - buf - 1);}
       for(; k < forward; k++) {
-        uint16_t word = buf[k];
+        uint16_t word = big_endian ? scalar::utf16::swap_bytes(buf[k]) : buf[k];
         if((word &0xF800 ) != 0xD800) {
           *utf32_output++ = char32_t(word);
         } else {
           // must be a surrogate pair
           uint16_t diff = uint16_t(word - 0xD800);
-          uint16_t next_word = buf[k+1];
+          uint16_t next_word = big_endian ? scalar::utf16::swap_bytes(buf[k + 1]) : buf[k + 1];
           k++;
           uint16_t diff2 = uint16_t(next_word - 0xDC00);
           if((diff | diff2) > 0x3FF)  { return std::make_pair(nullptr, reinterpret_cast<char32_t*>(utf32_output)); }
@@ -10982,6 +11394,7 @@ std::pair<const char32_t*, char*> arm_convert_utf32_to_utf8(const char32_t* buf,
 /* end file src/arm64/arm_convert_utf32_to_utf8.cpp */
 
 /* begin file src/arm64/arm_convert_utf32_to_utf16.cpp */
+template <endianness big_endian>
 std::pair<const char32_t*, char16_t*> arm_convert_utf32_to_utf16(const char32_t* buf, size_t len, char16_t* utf16_out) {
   uint16_t * utf16_output = reinterpret_cast<uint16_t*>(utf16_out);
   const char32_t* end = buf + len;
@@ -10999,6 +11412,14 @@ std::pair<const char32_t*, char16_t*> arm_convert_utf32_to_utf16(const char32_t*
       const uint16x4_t v_dfff = vmov_n_u16((uint16_t)0xdfff);
       forbidden_bytemask = vorr_u16(vand_u16(vcle_u16(utf16_packed, v_dfff), vcge_u16(utf16_packed, v_d800)), forbidden_bytemask);
 
+      if (big_endian) {
+        #ifdef SIMDUTF_REGULAR_VISUAL_STUDIO
+        const uint8x8_t swap = make_uint8x8_t(1, 0, 3, 2, 5, 4, 7, 6);
+        #else
+        const uint8x8_t swap = {1, 0, 3, 2, 5, 4, 7, 6};
+        #endif
+        utf16_packed = vreinterpret_u16_u8(vtbl1_u8(vreinterpret_u8_u16(utf16_packed), swap));
+      }
       vst1_u16(utf16_output, utf16_packed);
       utf16_output += 4;
       buf += 4;
@@ -11011,13 +11432,19 @@ std::pair<const char32_t*, char16_t*> arm_convert_utf32_to_utf16(const char32_t*
         if((word & 0xFFFF0000)==0) {
           // will not generate a surrogate pair
           if (word >= 0xD800 && word <= 0xDFFF) { return std::make_pair(nullptr, reinterpret_cast<char16_t*>(utf16_output)); }
-          *utf16_output++ = char16_t(word);
+          *utf16_output++ = big_endian ? char16_t(word >> 8 | word << 8) : char16_t(word);
         } else {
           // will generate a surrogate pair
           if (word > 0x10FFFF) { return std::make_pair(nullptr, reinterpret_cast<char16_t*>(utf16_output)); }
           word -= 0x10000;
-          *utf16_output++ = char16_t(0xD800 + (word >> 10));
-          *utf16_output++ = char16_t(0xDC00 + (word & 0x3FF));
+          uint16_t high_surrogate = uint16_t(0xD800 + (word >> 10));
+          uint16_t low_surrogate = uint16_t(0xDC00 + (word & 0x3FF));
+          if (big_endian) {
+            high_surrogate = uint16_t(high_surrogate >> 8 | high_surrogate << 8);
+            low_surrogate = uint16_t(low_surrogate << 8 | low_surrogate >> 8);
+          }
+          *utf16_output++ = char16_t(high_surrogate);
+          *utf16_output++ = char16_t(low_surrogate);
         }
       }
       buf += k;
@@ -11390,6 +11817,7 @@ namespace utf8_to_utf16 {
 
 using namespace simd;
 
+template <endianness endian>
 simdutf_warn_unused size_t convert_valid(const char* input, size_t size,
     char16_t* utf16_output) noexcept {
   // The implementation is not specific to haswell and should be moved to the generic directory.
@@ -11401,7 +11829,7 @@ simdutf_warn_unused size_t convert_valid(const char* input, size_t size,
     // far more than 64 bytes.
     simd8x64<int8_t> in(reinterpret_cast<const int8_t *>(input + pos));
     if(in.is_ascii()) {
-      in.store_ascii_as_utf16(utf16_output);
+      in.store_ascii_as_utf16<endian>(utf16_output);
       utf16_output += 64;
       pos += 64;
     } else {
@@ -11433,7 +11861,7 @@ simdutf_warn_unused size_t convert_valid(const char* input, size_t size,
         // Thus we may allow convert_masked_utf8_to_utf16 to process
         // more bytes at a time under a fast-path mode where 16 bytes
         // are consumed at once (e.g., when encountering ASCII).
-        size_t consumed = convert_masked_utf8_to_utf16(input + pos,
+        size_t consumed = convert_masked_utf8_to_utf16<endian>(input + pos,
                             utf8_end_of_code_point_mask, utf16_output);
         pos += consumed;
         utf8_end_of_code_point_mask >>= consumed;
@@ -11444,7 +11872,7 @@ simdutf_warn_unused size_t convert_valid(const char* input, size_t size,
       // 85% to 90% efficiency.
     }
   }
-  utf16_output += scalar::utf8_to_utf16::convert_valid(input + pos, size - pos, utf16_output);
+  utf16_output += scalar::utf8_to_utf16::convert_valid<endian>(input + pos, size - pos, utf16_output);
   return utf16_output - start;
 }
 
@@ -11581,7 +12009,7 @@ using namespace simd;
     }
 
 
-
+    template <endianness endian>
     simdutf_really_inline size_t convert(const char* in, size_t size, char16_t* utf16_output) {
       size_t pos = 0;
       char16_t* start{utf16_output};
@@ -11589,7 +12017,7 @@ using namespace simd;
       while(pos + 64 + safety_margin <= size) {
         simd8x64<int8_t> input(reinterpret_cast<const int8_t *>(in + pos));
         if(input.is_ascii()) {
-          input.store_ascii_as_utf16(utf16_output);
+          input.store_ascii_as_utf16<endian>(utf16_output);
           utf16_output += 64;
           pos += 64;
         } else {
@@ -11624,7 +12052,7 @@ using namespace simd;
             // for this section of the code. Hence, there is a limit
             // to how much we can further increase this latency before
             // it seriously harms performance.
-            size_t consumed = convert_masked_utf8_to_utf16(in + pos,
+            size_t consumed = convert_masked_utf8_to_utf16<endian>(in + pos,
                             utf8_end_of_code_point_mask, utf16_output);
             pos += consumed;
             utf8_end_of_code_point_mask >>= consumed;
@@ -11637,7 +12065,7 @@ using namespace simd;
       }
       if(errors()) { return 0; }
       if(pos < size) {
-        size_t howmany  = scalar::utf8_to_utf16::convert(in + pos, size - pos, utf16_output);
+        size_t howmany  = scalar::utf8_to_utf16::convert<endian>(in + pos, size - pos, utf16_output);
         if(howmany == 0) { return 0; }
         utf16_output += howmany;
       }
@@ -11965,22 +12393,27 @@ namespace arm64 {
 namespace {
 namespace utf16 {
 
+template <endianness big_endian>
 simdutf_really_inline size_t count_code_points(const char16_t* in, size_t size) {
     size_t pos = 0;
     size_t count = 0;
     for(;pos + 32 <= size; pos += 32) {
       simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
+      if (big_endian) input.swap_bytes();
       uint64_t not_pair = input.not_in_range(0xDC00, 0xDFFF);
       count += count_ones(not_pair) / 2;
     }
-    return count + scalar::utf16::count_code_points(in + pos, size - pos);
+    return count + scalar::utf16::count_code_points<big_endian>(in + pos, size - pos);
 }
+
+template <endianness big_endian>
 simdutf_really_inline size_t utf8_length_from_utf16(const char16_t* in, size_t size) {
     size_t pos = 0;
     size_t count = 0;
     // This algorithm could no doubt be improved!
     for(;pos + 32 <= size; pos += 32) {
       simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
+      if (big_endian) input.swap_bytes();
       uint64_t ascii_mask = input.lteq(0x7F);
       uint64_t twobyte_mask = input.lteq(0x7FF);
       uint64_t not_pair_mask = input.not_in_range(0xD800, 0xDFFF);
@@ -11991,18 +12424,37 @@ simdutf_really_inline size_t utf8_length_from_utf16(const char16_t* in, size_t s
       size_t fourbyte_count = 32 - count_ones(not_pair_mask) / 2;
       count += 2 * fourbyte_count + 3 * threebyte_count + 2 * twobyte_count + ascii_count;
     }
-    return count + scalar::utf16::utf8_length_from_utf16(in + pos, size - pos);
+    //printf("C: %lu S: %lu ", count, scalar::utf16::utf8_length_from_utf16<big_endian>(in + pos, size - pos));
+    return count + scalar::utf16::utf8_length_from_utf16<big_endian>(in + pos, size - pos);
 }
+
+template <endianness big_endian>
 simdutf_really_inline size_t utf32_length_from_utf16(const char16_t* in, size_t size) {
     size_t pos = 0;
     size_t count = 0;
     for(;pos + 32 <= size; pos += 32) {
       simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
+      if (big_endian) input.swap_bytes();
       uint64_t not_pair = input.not_in_range(0xDC00, 0xDFFF);
       count += count_ones(not_pair) / 2;
     }
-    return count + scalar::utf16::utf32_length_from_utf16(in + pos, size - pos);
+    return count + scalar::utf16::utf32_length_from_utf16<big_endian>(in + pos, size - pos);
 }
+
+simdutf_really_inline void change_endianness_utf16(const char16_t* in, size_t size, char16_t* output) {
+  size_t pos = 0;
+
+  while (pos + 32 <= size) {
+    simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
+    input.swap_bytes();
+    input.store(reinterpret_cast<uint16_t *>(output));
+    pos += 32;
+    output += 32;
+  }
+
+  scalar::utf16::change_endianness_utf16(in + pos, size - pos, output);
+}
+
 } // utf16
 } // unnamed namespace
 } // namespace arm64
@@ -12022,10 +12474,19 @@ simdutf_warn_unused bool implementation::validate_ascii(const char *buf, size_t 
   return arm64::utf8_validation::generic_validate_ascii(buf,len);
 }
 
-simdutf_warn_unused bool implementation::validate_utf16(const char16_t *buf, size_t len) const noexcept {
-  const char16_t* tail = arm_validate_utf16le(buf, len);
+simdutf_warn_unused bool implementation::validate_utf16le(const char16_t *buf, size_t len) const noexcept {
+  const char16_t* tail = arm_validate_utf16<endianness::LITTLE>(buf, len);
   if (tail) {
-    return scalar::utf16::validate(tail, len - (tail - buf));
+    return scalar::utf16::validate<endianness::LITTLE>(tail, len - (tail - buf));
+  } else {
+    return false;
+  }
+}
+
+simdutf_warn_unused bool implementation::validate_utf16be(const char16_t *buf, size_t len) const noexcept {
+  const char16_t* tail = arm_validate_utf16<endianness::BIG>(buf, len);
+  if (tail) {
+    return scalar::utf16::validate<endianness::BIG>(tail, len - (tail - buf));
   } else {
     return false;
   }
@@ -12040,14 +12501,24 @@ simdutf_warn_unused bool implementation::validate_utf32(const char32_t *buf, siz
   }
 }
 
-simdutf_warn_unused size_t implementation::convert_utf8_to_utf16(const char* buf, size_t len, char16_t* utf16_output) const noexcept {
+simdutf_warn_unused size_t implementation::convert_utf8_to_utf16le(const char* buf, size_t len, char16_t* utf16_output) const noexcept {
   utf8_to_utf16::validating_transcoder converter;
-  return converter.convert(buf, len, utf16_output);
+  return converter.convert<endianness::LITTLE>(buf, len, utf16_output);
 }
 
-simdutf_warn_unused size_t implementation::convert_valid_utf8_to_utf16(const char* input, size_t size,
+simdutf_warn_unused size_t implementation::convert_utf8_to_utf16be(const char* buf, size_t len, char16_t* utf16_output) const noexcept {
+  utf8_to_utf16::validating_transcoder converter;
+  return converter.convert<endianness::BIG>(buf, len, utf16_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf8_to_utf16le(const char* input, size_t size,
     char16_t* utf16_output) const noexcept {
-  return utf8_to_utf16::convert_valid(input, size,  utf16_output);
+  return utf8_to_utf16::convert_valid<endianness::LITTLE>(input, size,  utf16_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf8_to_utf16be(const char* input, size_t size,
+    char16_t* utf16_output) const noexcept {
+  return utf8_to_utf16::convert_valid<endianness::BIG>(input, size,  utf16_output);
 }
 
 simdutf_warn_unused size_t implementation::convert_utf8_to_utf32(const char* buf, size_t len, char32_t* utf32_output) const noexcept {
@@ -12060,12 +12531,12 @@ simdutf_warn_unused size_t implementation::convert_valid_utf8_to_utf32(const cha
   return utf8_to_utf32::convert_valid(input, size,  utf32_output);
 }
 
-simdutf_warn_unused size_t implementation::convert_utf16_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
-  std::pair<const char16_t*, char*> ret = arm_convert_utf16_to_utf8(buf, len, utf8_output);
+simdutf_warn_unused size_t implementation::convert_utf16le_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
+  std::pair<const char16_t*, char*> ret = arm_convert_utf16_to_utf8<endianness::LITTLE>(buf, len, utf8_output);
   if (ret.first == nullptr) { return 0; }
   size_t saved_bytes = ret.second - utf8_output;
   if (ret.first != buf + len) {
-    const size_t scalar_saved_bytes = scalar::utf16_to_utf8::convert(
+    const size_t scalar_saved_bytes = scalar::utf16_to_utf8::convert<endianness::LITTLE>(
                                         ret.first, len - (ret.first - buf), ret.second);
     if (scalar_saved_bytes == 0) { return 0; }
     saved_bytes += scalar_saved_bytes;
@@ -12073,8 +12544,25 @@ simdutf_warn_unused size_t implementation::convert_utf16_to_utf8(const char16_t*
   return saved_bytes;
 }
 
-simdutf_warn_unused size_t implementation::convert_valid_utf16_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
-  return convert_utf16_to_utf8(buf, len, utf8_output);
+simdutf_warn_unused size_t implementation::convert_utf16be_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
+  std::pair<const char16_t*, char*> ret = arm_convert_utf16_to_utf8<endianness::BIG>(buf, len, utf8_output);
+  if (ret.first == nullptr) { return 0; }
+  size_t saved_bytes = ret.second - utf8_output;
+  if (ret.first != buf + len) {
+    const size_t scalar_saved_bytes = scalar::utf16_to_utf8::convert<endianness::BIG>(
+                                        ret.first, len - (ret.first - buf), ret.second);
+    if (scalar_saved_bytes == 0) { return 0; }
+    saved_bytes += scalar_saved_bytes;
+  }
+  return saved_bytes;
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf16le_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
+  return convert_utf16le_to_utf8(buf, len, utf8_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf16be_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
+  return convert_utf16be_to_utf8(buf, len, utf8_output);
 }
 
 simdutf_warn_unused size_t implementation::convert_utf32_to_utf8(const char32_t* buf, size_t len, char* utf8_output) const noexcept {
@@ -12090,12 +12578,25 @@ simdutf_warn_unused size_t implementation::convert_utf32_to_utf8(const char32_t*
   return saved_bytes;
 }
 
-simdutf_warn_unused size_t implementation::convert_utf16_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
-  std::pair<const char16_t*, char32_t*> ret = arm_convert_utf16_to_utf32(buf, len, utf32_output);
+simdutf_warn_unused size_t implementation::convert_utf16le_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
+  std::pair<const char16_t*, char32_t*> ret = arm_convert_utf16_to_utf32<endianness::LITTLE>(buf, len, utf32_output);
   if (ret.first == nullptr) { return 0; }
   size_t saved_bytes = ret.second - utf32_output;
   if (ret.first != buf + len) {
-    const size_t scalar_saved_bytes = scalar::utf16_to_utf32::convert(
+    const size_t scalar_saved_bytes = scalar::utf16_to_utf32::convert<endianness::LITTLE>(
+                                        ret.first, len - (ret.first - buf), ret.second);
+    if (scalar_saved_bytes == 0) { return 0; }
+    saved_bytes += scalar_saved_bytes;
+  }
+  return saved_bytes;
+}
+
+simdutf_warn_unused size_t implementation::convert_utf16be_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
+  std::pair<const char16_t*, char32_t*> ret = arm_convert_utf16_to_utf32<endianness::BIG>(buf, len, utf32_output);
+  if (ret.first == nullptr) { return 0; }
+  size_t saved_bytes = ret.second - utf32_output;
+  if (ret.first != buf + len) {
+    const size_t scalar_saved_bytes = scalar::utf16_to_utf32::convert<endianness::BIG>(
                                         ret.first, len - (ret.first - buf), ret.second);
     if (scalar_saved_bytes == 0) { return 0; }
     saved_bytes += scalar_saved_bytes;
@@ -12107,12 +12608,12 @@ simdutf_warn_unused size_t implementation::convert_valid_utf32_to_utf8(const cha
   return convert_utf32_to_utf8(buf, len, utf8_output);
 }
 
-simdutf_warn_unused size_t implementation::convert_utf32_to_utf16(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
-  std::pair<const char32_t*, char16_t*> ret = arm_convert_utf32_to_utf16(buf, len, utf16_output);
+simdutf_warn_unused size_t implementation::convert_utf32_to_utf16le(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
+  std::pair<const char32_t*, char16_t*> ret = arm_convert_utf32_to_utf16<endianness::LITTLE>(buf, len, utf16_output);
   if (ret.first == nullptr) { return 0; }
   size_t saved_bytes = ret.second - utf16_output;
   if (ret.first != buf + len) {
-    const size_t scalar_saved_bytes = scalar::utf32_to_utf16::convert(
+    const size_t scalar_saved_bytes = scalar::utf32_to_utf16::convert<endianness::LITTLE>(
                                         ret.first, len - (ret.first - buf), ret.second);
     if (scalar_saved_bytes == 0) { return 0; }
     saved_bytes += scalar_saved_bytes;
@@ -12120,28 +12621,65 @@ simdutf_warn_unused size_t implementation::convert_utf32_to_utf16(const char32_t
   return saved_bytes;
 }
 
-simdutf_warn_unused size_t implementation::convert_valid_utf32_to_utf16(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
-  return convert_utf32_to_utf16(buf, len, utf16_output);
+simdutf_warn_unused size_t implementation::convert_utf32_to_utf16be(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
+  std::pair<const char32_t*, char16_t*> ret = arm_convert_utf32_to_utf16<endianness::BIG>(buf, len, utf16_output);
+  if (ret.first == nullptr) { return 0; }
+  size_t saved_bytes = ret.second - utf16_output;
+  if (ret.first != buf + len) {
+    const size_t scalar_saved_bytes = scalar::utf32_to_utf16::convert<endianness::BIG>(
+                                        ret.first, len - (ret.first - buf), ret.second);
+    if (scalar_saved_bytes == 0) { return 0; }
+    saved_bytes += scalar_saved_bytes;
+  }
+  return saved_bytes;
 }
 
-simdutf_warn_unused size_t implementation::convert_valid_utf16_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
-  return convert_utf16_to_utf32(buf, len, utf32_output);
+simdutf_warn_unused size_t implementation::convert_valid_utf32_to_utf16le(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
+  return convert_utf32_to_utf16le(buf, len, utf16_output);
 }
 
-simdutf_warn_unused size_t implementation::count_utf16(const char16_t * input, size_t length) const noexcept {
-  return utf16::count_code_points(input, length);
+simdutf_warn_unused size_t implementation::convert_valid_utf32_to_utf16be(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
+  return convert_utf32_to_utf16be(buf, len, utf16_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf16le_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
+  return convert_utf16le_to_utf32(buf, len, utf32_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf16be_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
+  return convert_utf16be_to_utf32(buf, len, utf32_output);
+}
+
+void implementation::change_endianness_utf16(const char16_t * input, size_t length, char16_t * output) const noexcept {
+  utf16::change_endianness_utf16(input, length, output);
+}
+
+simdutf_warn_unused size_t implementation::count_utf16le(const char16_t * input, size_t length) const noexcept {
+  return utf16::count_code_points<endianness::LITTLE>(input, length);
+}
+
+simdutf_warn_unused size_t implementation::count_utf16be(const char16_t * input, size_t length) const noexcept {
+  return utf16::count_code_points<endianness::BIG>(input, length);
 }
 
 simdutf_warn_unused size_t implementation::count_utf8(const char * input, size_t length) const noexcept {
   return utf8::count_code_points(input, length);
 }
 
-simdutf_warn_unused size_t implementation::utf8_length_from_utf16(const char16_t * input, size_t length) const noexcept {
-  return utf16::utf8_length_from_utf16(input, length);
+simdutf_warn_unused size_t implementation::utf8_length_from_utf16le(const char16_t * input, size_t length) const noexcept {
+  return utf16::utf8_length_from_utf16<endianness::LITTLE>(input, length);
 }
 
-simdutf_warn_unused size_t implementation::utf32_length_from_utf16(const char16_t * input, size_t length) const noexcept {
-  return utf16::utf32_length_from_utf16(input, length);
+simdutf_warn_unused size_t implementation::utf8_length_from_utf16be(const char16_t * input, size_t length) const noexcept {
+  return utf16::utf8_length_from_utf16<endianness::BIG>(input, length);
+}
+
+simdutf_warn_unused size_t implementation::utf32_length_from_utf16le(const char16_t * input, size_t length) const noexcept {
+  return utf16::utf32_length_from_utf16<endianness::LITTLE>(input, length);
+}
+
+simdutf_warn_unused size_t implementation::utf32_length_from_utf16be(const char16_t * input, size_t length) const noexcept {
+  return utf16::utf32_length_from_utf16<endianness::BIG>(input, length);
 }
 
 simdutf_warn_unused size_t implementation::utf16_length_from_utf8(const char * input, size_t length) const noexcept {
@@ -12233,20 +12771,32 @@ simdutf_warn_unused bool implementation::validate_ascii(const char *buf, size_t 
     return scalar::ascii::validate(buf, len);
 }
 
-simdutf_warn_unused bool implementation::validate_utf16(const char16_t *buf, size_t len) const noexcept {
-    return scalar::utf16::validate(buf, len);
+simdutf_warn_unused bool implementation::validate_utf16le(const char16_t *buf, size_t len) const noexcept {
+    return scalar::utf16::validate<endianness::LITTLE>(buf, len);
+}
+
+simdutf_warn_unused bool implementation::validate_utf16be(const char16_t *buf, size_t len) const noexcept {
+    return scalar::utf16::validate<endianness::BIG>(buf, len);
 }
 
 simdutf_warn_unused bool implementation::validate_utf32(const char32_t *buf, size_t len) const noexcept {
     return scalar::utf32::validate(buf, len);
 }
 
-simdutf_warn_unused size_t implementation::convert_utf8_to_utf16(const char* buf, size_t len, char16_t* utf16_output) const noexcept {
-   return scalar::utf8_to_utf16::convert(buf, len, utf16_output);
+simdutf_warn_unused size_t implementation::convert_utf8_to_utf16le(const char* buf, size_t len, char16_t* utf16_output) const noexcept {
+   return scalar::utf8_to_utf16::convert<endianness::LITTLE>(buf, len, utf16_output);
 }
 
-simdutf_warn_unused size_t implementation::convert_valid_utf8_to_utf16(const char* buf, size_t len, char16_t* utf16_output) const noexcept {
-   return scalar::utf8_to_utf16::convert_valid(buf, len, utf16_output);
+simdutf_warn_unused size_t implementation::convert_utf8_to_utf16be(const char* buf, size_t len, char16_t* utf16_output) const noexcept {
+   return scalar::utf8_to_utf16::convert<endianness::BIG>(buf, len, utf16_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf8_to_utf16le(const char* buf, size_t len, char16_t* utf16_output) const noexcept {
+   return scalar::utf8_to_utf16::convert_valid<endianness::LITTLE>(buf, len, utf16_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf8_to_utf16be(const char* buf, size_t len, char16_t* utf16_output) const noexcept {
+   return scalar::utf8_to_utf16::convert_valid<endianness::BIG>(buf, len, utf16_output);
 }
 
 simdutf_warn_unused size_t implementation::convert_utf8_to_utf32(const char* buf, size_t len, char32_t* utf32_output) const noexcept {
@@ -12258,12 +12808,20 @@ simdutf_warn_unused size_t implementation::convert_valid_utf8_to_utf32(const cha
   return scalar::utf8_to_utf32::convert_valid(input, size,  utf32_output);
 }
 
-simdutf_warn_unused size_t implementation::convert_utf16_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
-  return scalar::utf16_to_utf8::convert(buf, len, utf8_output);
+simdutf_warn_unused size_t implementation::convert_utf16le_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
+  return scalar::utf16_to_utf8::convert<endianness::LITTLE>(buf, len, utf8_output);
 }
 
-simdutf_warn_unused size_t implementation::convert_valid_utf16_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
-  return scalar::utf16_to_utf8::convert_valid(buf, len, utf8_output);
+simdutf_warn_unused size_t implementation::convert_utf16be_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
+  return scalar::utf16_to_utf8::convert<endianness::BIG>(buf, len, utf8_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf16le_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
+  return scalar::utf16_to_utf8::convert_valid<endianness::LITTLE>(buf, len, utf8_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf16be_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
+  return scalar::utf16_to_utf8::convert_valid<endianness::BIG>(buf, len, utf8_output);
 }
 
 simdutf_warn_unused size_t implementation::convert_utf32_to_utf8(const char32_t* buf, size_t len, char* utf8_output) const noexcept {
@@ -12274,36 +12832,68 @@ simdutf_warn_unused size_t implementation::convert_valid_utf32_to_utf8(const cha
   return scalar::utf32_to_utf8::convert_valid(buf, len, utf8_output);
 }
 
-simdutf_warn_unused size_t implementation::convert_utf32_to_utf16(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
-  return scalar::utf32_to_utf16::convert(buf, len, utf16_output);
+simdutf_warn_unused size_t implementation::convert_utf32_to_utf16le(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
+  return scalar::utf32_to_utf16::convert<endianness::LITTLE>(buf, len, utf16_output);
 }
 
-simdutf_warn_unused size_t implementation::convert_valid_utf32_to_utf16(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
-  return scalar::utf32_to_utf16::convert_valid(buf, len, utf16_output);
+simdutf_warn_unused size_t implementation::convert_utf32_to_utf16be(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
+  return scalar::utf32_to_utf16::convert<endianness::BIG>(buf, len, utf16_output);
 }
 
-simdutf_warn_unused size_t implementation::convert_utf16_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
-  return scalar::utf16_to_utf32::convert(buf, len, utf32_output);
+simdutf_warn_unused size_t implementation::convert_valid_utf32_to_utf16le(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
+  return scalar::utf32_to_utf16::convert_valid<endianness::LITTLE>(buf, len, utf16_output);
 }
 
-simdutf_warn_unused size_t implementation::convert_valid_utf16_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
-  return scalar::utf16_to_utf32::convert_valid(buf, len, utf32_output);
+simdutf_warn_unused size_t implementation::convert_valid_utf32_to_utf16be(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
+  return scalar::utf32_to_utf16::convert_valid<endianness::BIG>(buf, len, utf16_output);
 }
 
-simdutf_warn_unused size_t implementation::count_utf16(const char16_t * input, size_t length) const noexcept {
-  return scalar::utf16::count_code_points(input, length);
+simdutf_warn_unused size_t implementation::convert_utf16le_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
+  return scalar::utf16_to_utf32::convert<endianness::LITTLE>(buf, len, utf32_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_utf16be_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
+  return scalar::utf16_to_utf32::convert<endianness::BIG>(buf, len, utf32_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf16le_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
+  return scalar::utf16_to_utf32::convert_valid<endianness::LITTLE>(buf, len, utf32_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf16be_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
+  return scalar::utf16_to_utf32::convert_valid<endianness::BIG>(buf, len, utf32_output);
+}
+
+void implementation::change_endianness_utf16(const char16_t * input, size_t length, char16_t * output) const noexcept {
+  scalar::utf16::change_endianness_utf16(input, length, output);
+}
+
+simdutf_warn_unused size_t implementation::count_utf16le(const char16_t * input, size_t length) const noexcept {
+  return scalar::utf16::count_code_points<endianness::LITTLE>(input, length);
+}
+
+simdutf_warn_unused size_t implementation::count_utf16be(const char16_t * input, size_t length) const noexcept {
+  return scalar::utf16::count_code_points<endianness::BIG>(input, length);
 }
 
 simdutf_warn_unused size_t implementation::count_utf8(const char * input, size_t length) const noexcept {
   return scalar::utf8::count_code_points(input, length);
 }
 
-simdutf_warn_unused size_t implementation::utf8_length_from_utf16(const char16_t * input, size_t length) const noexcept {
-  return scalar::utf16::utf8_length_from_utf16(input, length);
+simdutf_warn_unused size_t implementation::utf8_length_from_utf16le(const char16_t * input, size_t length) const noexcept {
+  return scalar::utf16::utf8_length_from_utf16<endianness::LITTLE>(input, length);
 }
 
-simdutf_warn_unused size_t implementation::utf32_length_from_utf16(const char16_t * input, size_t length) const noexcept {
-  return scalar::utf16::utf32_length_from_utf16(input, length);
+simdutf_warn_unused size_t implementation::utf8_length_from_utf16be(const char16_t * input, size_t length) const noexcept {
+  return scalar::utf16::utf8_length_from_utf16<endianness::BIG>(input, length);
+}
+
+simdutf_warn_unused size_t implementation::utf32_length_from_utf16le(const char16_t * input, size_t length) const noexcept {
+  return scalar::utf16::utf32_length_from_utf16<endianness::LITTLE>(input, length);
+}
+
+simdutf_warn_unused size_t implementation::utf32_length_from_utf16be(const char16_t * input, size_t length) const noexcept {
+  return scalar::utf16::utf32_length_from_utf16<endianness::BIG>(input, length);
 }
 
 simdutf_warn_unused size_t implementation::utf16_length_from_utf8(const char * input, size_t length) const noexcept {
@@ -12369,7 +12959,7 @@ simdutf_really_inline simd8<bool> must_be_2_3_continuation(const simd8<uint8_t> 
 }
 
 
-/* begin file src/haswell/avx2_validate_utf16le.cpp */
+/* begin file src/haswell/avx2_validate_utf16.cpp */
 /*
     In UTF-16 words in range 0xD800 to 0xDFFF have special meaning.
 
@@ -12415,7 +13005,8 @@ simdutf_really_inline simd8<bool> must_be_2_3_continuation(const simd8<uint8_t> 
    - pointer to the last unprocessed character (a scalar fallback should check the rest);
    - nullptr if an error was detected.
 */
-const char16_t* avx2_validate_utf16le(const char16_t* input, size_t size) {
+template <endianness big_endian>
+const char16_t* avx2_validate_utf16(const char16_t* input, size_t size) {
     const char16_t* end = input + size;
 
     const auto v_d8 = simd8<uint8_t>::splat(0xd8);
@@ -12427,8 +13018,13 @@ const char16_t* avx2_validate_utf16le(const char16_t* input, size_t size) {
         // 0. Load data: since the validation takes into account only higher
         //    byte of each word, we compress the two vectors into one which
         //    consists only the higher bytes.
-        const auto in0 = simd16<uint16_t>(input);
-        const auto in1 = simd16<uint16_t>(input + simd16<uint16_t>::ELEMENTS);
+        auto in0 = simd16<uint16_t>(input);
+        auto in1 = simd16<uint16_t>(input + simd16<uint16_t>::ELEMENTS);
+
+        if (big_endian) {
+            in0 = in0.swap_bytes();
+            in1 = in1.swap_bytes();
+        }
 
         const auto t0 = in0.shr<8>();
         const auto t1 = in1.shr<8>();
@@ -12484,7 +13080,7 @@ const char16_t* avx2_validate_utf16le(const char16_t* input, size_t size) {
 
     return input;
 }
-/* end file src/haswell/avx2_validate_utf16le.cpp */
+/* end file src/haswell/avx2_validate_utf16.cpp */
 
 /* begin file src/haswell/avx2_validate_utf32le.cpp */
 /* Returns:
@@ -12529,6 +13125,7 @@ const char32_t* avx2_validate_utf32le(const char32_t* input, size_t size) {
 // end of the code points. Only the least significant 12 bits of the mask
 // are accessed.
 // It returns how many bytes were consumed (up to 12).
+template <endianness big_endian>
 size_t convert_masked_utf8_to_utf16(const char *input,
                            uint64_t utf8_end_of_code_point_mask,
                            char16_t *&utf16_output) {
@@ -12542,12 +13139,19 @@ size_t convert_masked_utf8_to_utf16(const char *input,
   // This results in more instructions but, potentially, also higher speeds.
   //
   // We first try a few fast paths.
+  const __m128i swap = _mm_setr_epi8(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
   const __m128i in = _mm_loadu_si128((__m128i *)input);
   const uint16_t input_utf8_end_of_code_point_mask =
       utf8_end_of_code_point_mask & 0xfff;
   if(((utf8_end_of_code_point_mask & 0xffff) == 0xffff)) {
     // We process the data in chunks of 16 bytes.
-    _mm256_storeu_si256(reinterpret_cast<__m256i *>(utf16_output), _mm256_cvtepu8_epi16(in));
+    __m256i ascii = _mm256_cvtepu8_epi16(in);
+    if (big_endian) {
+      const __m256i swap256 = _mm256_setr_epi8(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14,
+                                  17, 16, 19, 18, 21, 20, 23, 22, 25, 24, 27, 26, 29, 28, 31, 30);
+      ascii = _mm256_shuffle_epi8(ascii, swap256);
+    }
+    _mm256_storeu_si256(reinterpret_cast<__m256i *>(utf16_output), ascii);
     utf16_output += 16; // We wrote 16 16-bit characters.
     return 16; // We consumed 16 bytes.
   }
@@ -12558,7 +13162,8 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     const __m128i perm = _mm_shuffle_epi8(in, sh);
     const __m128i ascii = _mm_and_si128(perm, _mm_set1_epi16(0x7f));
     const __m128i highbyte = _mm_and_si128(perm, _mm_set1_epi16(0x1f00));
-    const __m128i composed = _mm_or_si128(ascii, _mm_srli_epi16(highbyte, 2));
+    __m128i composed = _mm_or_si128(ascii, _mm_srli_epi16(highbyte, 2));
+    if (big_endian) composed = _mm_shuffle_epi8(composed, swap);
     _mm_storeu_si128((__m128i *)utf16_output, composed);
     utf16_output += 8; // We wrote 16 bytes, 8 code points.
     return 16;
@@ -12578,7 +13183,8 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     const __m128i highbyte_shifted = _mm_srli_epi32(highbyte, 4);
     const __m128i composed =
         _mm_or_si128(_mm_or_si128(ascii, middlebyte_shifted), highbyte_shifted);
-    const __m128i composed_repacked = _mm_packus_epi32(composed, composed);
+    __m128i composed_repacked = _mm_packus_epi32(composed, composed);
+    if (big_endian) composed_repacked = _mm_shuffle_epi8(composed_repacked, swap);
     _mm_storeu_si128((__m128i *)utf16_output, composed_repacked);
     utf16_output += 4;
     return 12;
@@ -12599,7 +13205,8 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     const __m128i perm = _mm_shuffle_epi8(in, sh);
     const __m128i ascii = _mm_and_si128(perm, _mm_set1_epi16(0x7f));
     const __m128i highbyte = _mm_and_si128(perm, _mm_set1_epi16(0x1f00));
-    const __m128i composed = _mm_or_si128(ascii, _mm_srli_epi16(highbyte, 2));
+    __m128i composed = _mm_or_si128(ascii, _mm_srli_epi16(highbyte, 2));
+    if (big_endian) composed = _mm_shuffle_epi8(composed, swap);
     _mm_storeu_si128((__m128i *)utf16_output, composed);
     utf16_output += 6; // We wrote 12 bytes, 6 code points.
   } else if (idx < 145) {
@@ -12617,7 +13224,8 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     const __m128i highbyte_shifted = _mm_srli_epi32(highbyte, 4);
     const __m128i composed =
         _mm_or_si128(_mm_or_si128(ascii, middlebyte_shifted), highbyte_shifted);
-    const __m128i composed_repacked = _mm_packus_epi32(composed, composed);
+    __m128i composed_repacked = _mm_packus_epi32(composed, composed);
+    if (big_endian) composed_repacked = _mm_shuffle_epi8(composed_repacked, swap);
     _mm_storeu_si128((__m128i *)utf16_output, composed_repacked);
     utf16_output += 4;
   } else if (idx < 209) {
@@ -12649,15 +13257,20 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     const __m128i hightenbitsadd =
         _mm_add_epi32(hightenbits, _mm_set1_epi32(0xD800));
     const __m128i lowtenbitsaddshifted = _mm_slli_epi32(lowtenbitsadd, 16);
-    const __m128i surrogates =
+    __m128i surrogates =
         _mm_or_si128(hightenbitsadd, lowtenbitsaddshifted);
     uint32_t basic_buffer[4];
+    uint32_t basic_buffer_swap[4];
+    if (big_endian) {
+      _mm_storeu_si128((__m128i *)basic_buffer_swap, _mm_shuffle_epi8(composed, swap));
+      surrogates = _mm_shuffle_epi8(surrogates, swap);
+    }
     _mm_storeu_si128((__m128i *)basic_buffer, composed);
     uint32_t surrogate_buffer[4];
     _mm_storeu_si128((__m128i *)surrogate_buffer, surrogates);
     for (size_t i = 0; i < 3; i++) {
       if (basic_buffer[i] < 65536) {
-        utf16_output[0] = uint16_t(basic_buffer[i]);
+        utf16_output[0] = big_endian ? uint16_t(basic_buffer_swap[i]) : uint16_t(basic_buffer[i]);
         utf16_output++;
       } else {
         utf16_output[0] = uint16_t(surrogate_buffer[i] & 0xffff);
@@ -12855,6 +13468,7 @@ size_t convert_masked_utf8_to_utf32(const char *input,
   Returns a pair: the first unprocessed byte from buf and utf8_output
   A scalar routing should carry on the conversion of the tail.
 */
+template <endianness big_endian>
 std::pair<const char16_t*, char*> avx2_convert_utf16_to_utf8(const char16_t* buf, size_t len, char* utf8_output) {
   const char16_t* end = buf + len;
   const __m256i v_0000 = _mm256_setzero_si256();
@@ -12865,6 +13479,11 @@ std::pair<const char16_t*, char*> avx2_convert_utf16_to_utf8(const char16_t* buf
 
   while (buf + 16 + safety_margin <= end) {
     __m256i in = _mm256_loadu_si256((__m256i*)buf);
+    if (big_endian) {
+      const __m256i swap = _mm256_setr_epi8(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14,
+                                  17, 16, 19, 18, 21, 20, 23, 22, 25, 24, 27, 26, 29, 28, 31, 30);
+      in = _mm256_shuffle_epi8(in, swap);
+    }
     // a single 16-bit UTF-16 word can yield 1, 2 or 3 UTF-8 bytes
     const __m256i v_ff80 = _mm256_set1_epi16((int16_t)0xff80);
     if(_mm256_testz_si256(in, v_ff80)) { // ASCII fast path!!!!
@@ -13053,7 +13672,7 @@ std::pair<const char16_t*, char*> avx2_convert_utf16_to_utf8(const char16_t* buf
       size_t k = 0;
       if(size_t(end - buf) < forward + 1) { forward = size_t(end - buf - 1);}
       for(; k < forward; k++) {
-        uint16_t word = buf[k];
+        uint16_t word = big_endian ? scalar::utf16::swap_bytes(buf[k]) : buf[k];
         if((word & 0xFF80)==0) {
           *utf8_output++ = char(word);
         } else if((word & 0xF800)==0) {
@@ -13066,7 +13685,7 @@ std::pair<const char16_t*, char*> avx2_convert_utf16_to_utf8(const char16_t* buf
         } else {
           // must be a surrogate pair
           uint16_t diff = uint16_t(word - 0xD800);
-          uint16_t next_word = buf[k+1];
+          uint16_t next_word = big_endian ? scalar::utf16::swap_bytes(buf[k+1]) : buf[k+1];
           k++;
           uint16_t diff2 = uint16_t(next_word - 0xDC00);
           if((diff | diff2) > 0x3FF)  { return std::make_pair(nullptr, utf8_output); }
@@ -13139,6 +13758,7 @@ std::pair<const char16_t*, char*> avx2_convert_utf16_to_utf8(const char16_t* buf
   Returns a pair: the first unprocessed byte from buf and utf32_output
   A scalar routing should carry on the conversion of the tail.
 */
+template <endianness big_endian>
 std::pair<const char16_t*, char32_t*> avx2_convert_utf16_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) {
   const char16_t* end = buf + len;
   const __m256i v_f800 = _mm256_set1_epi16((int16_t)0xf800);
@@ -13146,6 +13766,11 @@ std::pair<const char16_t*, char32_t*> avx2_convert_utf16_to_utf32(const char16_t
 
   while (buf + 16 <= end) {
     __m256i in = _mm256_loadu_si256((__m256i*)buf);
+    if (big_endian) {
+      const __m256i swap = _mm256_setr_epi8(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14,
+                                  17, 16, 19, 18, 21, 20, 23, 22, 25, 24, 27, 26, 29, 28, 31, 30);
+      in = _mm256_shuffle_epi8(in, swap);
+    }
 
     // 1. Check if there are any surrogate word in the input chunk.
     //    We have also deal with situation when there is a surrogate word
@@ -13172,14 +13797,14 @@ std::pair<const char16_t*, char32_t*> avx2_convert_utf16_to_utf32(const char16_t
       size_t k = 0;
       if(size_t(end - buf) < forward + 1) { forward = size_t(end - buf - 1);}
       for(; k < forward; k++) {
-        uint16_t word = buf[k];
+        uint16_t word = big_endian ? scalar::utf16::swap_bytes(buf[k]) : buf[k];
         if((word &0xF800 ) != 0xD800) {
           // No surrogate pair
           *utf32_output++ = char32_t(word);
         } else {
           // must be a surrogate pair
           uint16_t diff = uint16_t(word - 0xD800);
-          uint16_t next_word = buf[k+1];
+          uint16_t next_word = big_endian ? scalar::utf16::swap_bytes(buf[k+1]) : buf[k+1];
           k++;
           uint16_t diff2 = uint16_t(next_word - 0xDC00);
           if((diff | diff2) > 0x3FF)  { return std::make_pair(nullptr, utf32_output); }
@@ -13437,6 +14062,7 @@ std::pair<const char32_t*, char*> avx2_convert_utf32_to_utf8(const char32_t* buf
 /* end file src/haswell/avx2_convert_utf32_to_utf8.cpp */
 
 /* begin file src/haswell/avx2_convert_utf32_to_utf16.cpp */
+template <endianness big_endian>
 std::pair<const char32_t*, char16_t*> avx2_convert_utf32_to_utf16(const char32_t* buf, size_t len, char16_t* utf16_output) {
   const char32_t* end = buf + len;
 
@@ -13459,7 +14085,11 @@ std::pair<const char32_t*, char16_t*> avx2_convert_utf32_to_utf16(const char32_t
       const __m256i v_d800 = _mm256_set1_epi32((uint32_t)0xd800);
       forbidden_bytemask = _mm256_or_si256(forbidden_bytemask, _mm256_cmpeq_epi32(_mm256_and_si256(in, v_f800), v_d800));
 
-      const __m128i utf16_packed = _mm_packus_epi32(_mm256_castsi256_si128(in),_mm256_extractf128_si256(in,1));
+      __m128i utf16_packed = _mm_packus_epi32(_mm256_castsi256_si128(in),_mm256_extractf128_si256(in,1));
+      if (big_endian) {
+        const __m128i swap = _mm_setr_epi8(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
+        utf16_packed = _mm_shuffle_epi8(utf16_packed, swap);
+      }
       _mm_storeu_si128((__m128i*)utf16_output, utf16_packed);
       utf16_output += 8;
       buf += 8;
@@ -13472,13 +14102,19 @@ std::pair<const char32_t*, char16_t*> avx2_convert_utf32_to_utf16(const char32_t
         if((word & 0xFFFF0000)==0) {
           // will not generate a surrogate pair
           if (word >= 0xD800 && word <= 0xDFFF) { return std::make_pair(nullptr, utf16_output); }
-          *utf16_output++ = char16_t(word);
+          *utf16_output++ = big_endian ? char16_t((uint16_t(word) >> 8) | (uint16_t(word) << 8)) : char16_t(word);
         } else {
           // will generate a surrogate pair
           if (word > 0x10FFFF) { return std::make_pair(nullptr, utf16_output); }
           word -= 0x10000;
-          *utf16_output++ = char16_t(0xD800 + (word >> 10));
-          *utf16_output++ = char16_t(0xDC00 + (word & 0x3FF));
+          uint16_t high_surrogate = uint16_t(0xD800 + (word >> 10));
+          uint16_t low_surrogate = uint16_t(0xDC00 + (word & 0x3FF));
+          if (big_endian) {
+            high_surrogate = uint16_t((high_surrogate >> 8) | (high_surrogate << 8));
+            low_surrogate = uint16_t((low_surrogate >> 8) | (low_surrogate << 8));
+          }
+          *utf16_output++ = char16_t(high_surrogate);
+          *utf16_output++ = char16_t(low_surrogate);
         }
       }
       buf += k;
@@ -13850,6 +14486,7 @@ namespace utf8_to_utf16 {
 
 using namespace simd;
 
+template <endianness endian>
 simdutf_warn_unused size_t convert_valid(const char* input, size_t size,
     char16_t* utf16_output) noexcept {
   // The implementation is not specific to haswell and should be moved to the generic directory.
@@ -13861,7 +14498,7 @@ simdutf_warn_unused size_t convert_valid(const char* input, size_t size,
     // far more than 64 bytes.
     simd8x64<int8_t> in(reinterpret_cast<const int8_t *>(input + pos));
     if(in.is_ascii()) {
-      in.store_ascii_as_utf16(utf16_output);
+      in.store_ascii_as_utf16<endian>(utf16_output);
       utf16_output += 64;
       pos += 64;
     } else {
@@ -13893,7 +14530,7 @@ simdutf_warn_unused size_t convert_valid(const char* input, size_t size,
         // Thus we may allow convert_masked_utf8_to_utf16 to process
         // more bytes at a time under a fast-path mode where 16 bytes
         // are consumed at once (e.g., when encountering ASCII).
-        size_t consumed = convert_masked_utf8_to_utf16(input + pos,
+        size_t consumed = convert_masked_utf8_to_utf16<endian>(input + pos,
                             utf8_end_of_code_point_mask, utf16_output);
         pos += consumed;
         utf8_end_of_code_point_mask >>= consumed;
@@ -13904,7 +14541,7 @@ simdutf_warn_unused size_t convert_valid(const char* input, size_t size,
       // 85% to 90% efficiency.
     }
   }
-  utf16_output += scalar::utf8_to_utf16::convert_valid(input + pos, size - pos, utf16_output);
+  utf16_output += scalar::utf8_to_utf16::convert_valid<endian>(input + pos, size - pos, utf16_output);
   return utf16_output - start;
 }
 
@@ -14041,7 +14678,7 @@ using namespace simd;
     }
 
 
-
+    template <endianness endian>
     simdutf_really_inline size_t convert(const char* in, size_t size, char16_t* utf16_output) {
       size_t pos = 0;
       char16_t* start{utf16_output};
@@ -14049,7 +14686,7 @@ using namespace simd;
       while(pos + 64 + safety_margin <= size) {
         simd8x64<int8_t> input(reinterpret_cast<const int8_t *>(in + pos));
         if(input.is_ascii()) {
-          input.store_ascii_as_utf16(utf16_output);
+          input.store_ascii_as_utf16<endian>(utf16_output);
           utf16_output += 64;
           pos += 64;
         } else {
@@ -14084,7 +14721,7 @@ using namespace simd;
             // for this section of the code. Hence, there is a limit
             // to how much we can further increase this latency before
             // it seriously harms performance.
-            size_t consumed = convert_masked_utf8_to_utf16(in + pos,
+            size_t consumed = convert_masked_utf8_to_utf16<endian>(in + pos,
                             utf8_end_of_code_point_mask, utf16_output);
             pos += consumed;
             utf8_end_of_code_point_mask >>= consumed;
@@ -14097,7 +14734,7 @@ using namespace simd;
       }
       if(errors()) { return 0; }
       if(pos < size) {
-        size_t howmany  = scalar::utf8_to_utf16::convert(in + pos, size - pos, utf16_output);
+        size_t howmany  = scalar::utf8_to_utf16::convert<endian>(in + pos, size - pos, utf16_output);
         if(howmany == 0) { return 0; }
         utf16_output += howmany;
       }
@@ -14425,22 +15062,27 @@ namespace haswell {
 namespace {
 namespace utf16 {
 
+template <endianness big_endian>
 simdutf_really_inline size_t count_code_points(const char16_t* in, size_t size) {
     size_t pos = 0;
     size_t count = 0;
     for(;pos + 32 <= size; pos += 32) {
       simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
+      if (big_endian) input.swap_bytes();
       uint64_t not_pair = input.not_in_range(0xDC00, 0xDFFF);
       count += count_ones(not_pair) / 2;
     }
-    return count + scalar::utf16::count_code_points(in + pos, size - pos);
+    return count + scalar::utf16::count_code_points<big_endian>(in + pos, size - pos);
 }
+
+template <endianness big_endian>
 simdutf_really_inline size_t utf8_length_from_utf16(const char16_t* in, size_t size) {
     size_t pos = 0;
     size_t count = 0;
     // This algorithm could no doubt be improved!
     for(;pos + 32 <= size; pos += 32) {
       simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
+      if (big_endian) input.swap_bytes();
       uint64_t ascii_mask = input.lteq(0x7F);
       uint64_t twobyte_mask = input.lteq(0x7FF);
       uint64_t not_pair_mask = input.not_in_range(0xD800, 0xDFFF);
@@ -14451,18 +15093,37 @@ simdutf_really_inline size_t utf8_length_from_utf16(const char16_t* in, size_t s
       size_t fourbyte_count = 32 - count_ones(not_pair_mask) / 2;
       count += 2 * fourbyte_count + 3 * threebyte_count + 2 * twobyte_count + ascii_count;
     }
-    return count + scalar::utf16::utf8_length_from_utf16(in + pos, size - pos);
+    //printf("C: %lu S: %lu ", count, scalar::utf16::utf8_length_from_utf16<big_endian>(in + pos, size - pos));
+    return count + scalar::utf16::utf8_length_from_utf16<big_endian>(in + pos, size - pos);
 }
+
+template <endianness big_endian>
 simdutf_really_inline size_t utf32_length_from_utf16(const char16_t* in, size_t size) {
     size_t pos = 0;
     size_t count = 0;
     for(;pos + 32 <= size; pos += 32) {
       simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
+      if (big_endian) input.swap_bytes();
       uint64_t not_pair = input.not_in_range(0xDC00, 0xDFFF);
       count += count_ones(not_pair) / 2;
     }
-    return count + scalar::utf16::utf32_length_from_utf16(in + pos, size - pos);
+    return count + scalar::utf16::utf32_length_from_utf16<big_endian>(in + pos, size - pos);
 }
+
+simdutf_really_inline void change_endianness_utf16(const char16_t* in, size_t size, char16_t* output) {
+  size_t pos = 0;
+
+  while (pos + 32 <= size) {
+    simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
+    input.swap_bytes();
+    input.store(reinterpret_cast<uint16_t *>(output));
+    pos += 32;
+    output += 32;
+  }
+
+  scalar::utf16::change_endianness_utf16(in + pos, size - pos, output);
+}
+
 } // utf16
 } // unnamed namespace
 } // namespace haswell
@@ -14481,10 +15142,19 @@ simdutf_warn_unused bool implementation::validate_ascii(const char *buf, size_t 
   return haswell::utf8_validation::generic_validate_ascii(buf,len);
 }
 
-simdutf_warn_unused bool implementation::validate_utf16(const char16_t *buf, size_t len) const noexcept {
-  const char16_t* tail = avx2_validate_utf16le(buf, len);
+simdutf_warn_unused bool implementation::validate_utf16le(const char16_t *buf, size_t len) const noexcept {
+  const char16_t* tail = avx2_validate_utf16<endianness::LITTLE>(buf, len);
   if (tail) {
-    return scalar::utf16::validate(tail, len - (tail - buf));
+    return scalar::utf16::validate<endianness::LITTLE>(tail, len - (tail - buf));
+  } else {
+    return false;
+  }
+}
+
+simdutf_warn_unused bool implementation::validate_utf16be(const char16_t *buf, size_t len) const noexcept {
+  const char16_t* tail = avx2_validate_utf16<endianness::BIG>(buf, len);
+  if (tail) {
+    return scalar::utf16::validate<endianness::BIG>(tail, len - (tail - buf));
   } else {
     return false;
   }
@@ -14499,14 +15169,24 @@ simdutf_warn_unused bool implementation::validate_utf32(const char32_t *buf, siz
   }
 }
 
-simdutf_warn_unused size_t implementation::convert_utf8_to_utf16(const char* buf, size_t len, char16_t* utf16_output) const noexcept {
+simdutf_warn_unused size_t implementation::convert_utf8_to_utf16le(const char* buf, size_t len, char16_t* utf16_output) const noexcept {
   utf8_to_utf16::validating_transcoder converter;
-  return converter.convert(buf, len, utf16_output);
+  return converter.convert<endianness::LITTLE>(buf, len, utf16_output);
 }
 
-simdutf_warn_unused size_t implementation::convert_valid_utf8_to_utf16(const char* input, size_t size,
+simdutf_warn_unused size_t implementation::convert_utf8_to_utf16be(const char* buf, size_t len, char16_t* utf16_output) const noexcept {
+  utf8_to_utf16::validating_transcoder converter;
+  return converter.convert<endianness::BIG>(buf, len, utf16_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf8_to_utf16le(const char* input, size_t size,
     char16_t* utf16_output) const noexcept {
-   return utf8_to_utf16::convert_valid(input, size,  utf16_output);
+   return utf8_to_utf16::convert_valid<endianness::LITTLE>(input, size,  utf16_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf8_to_utf16be(const char* input, size_t size,
+    char16_t* utf16_output) const noexcept {
+   return utf8_to_utf16::convert_valid<endianness::BIG>(input, size,  utf16_output);
 }
 
 simdutf_warn_unused size_t implementation::convert_utf8_to_utf32(const char* buf, size_t len, char32_t* utf32_output) const noexcept {
@@ -14519,12 +15199,12 @@ simdutf_warn_unused size_t implementation::convert_valid_utf8_to_utf32(const cha
   return utf8_to_utf32::convert_valid(input, size,  utf32_output);
 }
 
-simdutf_warn_unused size_t implementation::convert_utf16_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
-  std::pair<const char16_t*, char*> ret = haswell::avx2_convert_utf16_to_utf8(buf, len, utf8_output);
+simdutf_warn_unused size_t implementation::convert_utf16le_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
+  std::pair<const char16_t*, char*> ret = haswell::avx2_convert_utf16_to_utf8<endianness::LITTLE>(buf, len, utf8_output);
   if (ret.first == nullptr) { return 0; }
   size_t saved_bytes = ret.second - utf8_output;
   if (ret.first != buf + len) {
-    const size_t scalar_saved_bytes = scalar::utf16_to_utf8::convert(
+    const size_t scalar_saved_bytes = scalar::utf16_to_utf8::convert<endianness::LITTLE>(
                                         ret.first, len - (ret.first - buf), ret.second);
     if (scalar_saved_bytes == 0) { return 0; }
     saved_bytes += scalar_saved_bytes;
@@ -14532,8 +15212,25 @@ simdutf_warn_unused size_t implementation::convert_utf16_to_utf8(const char16_t*
   return saved_bytes;
 }
 
-simdutf_warn_unused size_t implementation::convert_valid_utf16_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
-  return convert_utf16_to_utf8(buf, len, utf8_output);
+simdutf_warn_unused size_t implementation::convert_utf16be_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
+  std::pair<const char16_t*, char*> ret = haswell::avx2_convert_utf16_to_utf8<endianness::BIG>(buf, len, utf8_output);
+  if (ret.first == nullptr) { return 0; }
+  size_t saved_bytes = ret.second - utf8_output;
+  if (ret.first != buf + len) {
+    const size_t scalar_saved_bytes = scalar::utf16_to_utf8::convert<endianness::BIG>(
+                                        ret.first, len - (ret.first - buf), ret.second);
+    if (scalar_saved_bytes == 0) { return 0; }
+    saved_bytes += scalar_saved_bytes;
+  }
+  return saved_bytes;
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf16le_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
+  return convert_utf16le_to_utf8(buf, len, utf8_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf16be_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
+  return convert_utf16be_to_utf8(buf, len, utf8_output);
 }
 
 simdutf_warn_unused size_t implementation::convert_utf32_to_utf8(const char32_t* buf, size_t len, char* utf8_output) const noexcept {
@@ -14549,12 +15246,25 @@ simdutf_warn_unused size_t implementation::convert_utf32_to_utf8(const char32_t*
   return saved_bytes;
 }
 
-simdutf_warn_unused size_t implementation::convert_utf16_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
-  std::pair<const char16_t*, char32_t*> ret = haswell::avx2_convert_utf16_to_utf32(buf, len, utf32_output);
+simdutf_warn_unused size_t implementation::convert_utf16le_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
+  std::pair<const char16_t*, char32_t*> ret = haswell::avx2_convert_utf16_to_utf32<endianness::LITTLE>(buf, len, utf32_output);
   if (ret.first == nullptr) { return 0; }
   size_t saved_bytes = ret.second - utf32_output;
   if (ret.first != buf + len) {
-    const size_t scalar_saved_bytes = scalar::utf16_to_utf32::convert(
+    const size_t scalar_saved_bytes = scalar::utf16_to_utf32::convert<endianness::LITTLE>(
+                                        ret.first, len - (ret.first - buf), ret.second);
+    if (scalar_saved_bytes == 0) { return 0; }
+    saved_bytes += scalar_saved_bytes;
+  }
+  return saved_bytes;
+}
+
+simdutf_warn_unused size_t implementation::convert_utf16be_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
+  std::pair<const char16_t*, char32_t*> ret = haswell::avx2_convert_utf16_to_utf32<endianness::BIG>(buf, len, utf32_output);
+  if (ret.first == nullptr) { return 0; }
+  size_t saved_bytes = ret.second - utf32_output;
+  if (ret.first != buf + len) {
+    const size_t scalar_saved_bytes = scalar::utf16_to_utf32::convert<endianness::BIG>(
                                         ret.first, len - (ret.first - buf), ret.second);
     if (scalar_saved_bytes == 0) { return 0; }
     saved_bytes += scalar_saved_bytes;
@@ -14566,12 +15276,12 @@ simdutf_warn_unused size_t implementation::convert_valid_utf32_to_utf8(const cha
   return convert_utf32_to_utf8(buf, len, utf8_output);
 }
 
-simdutf_warn_unused size_t implementation::convert_utf32_to_utf16(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
-  std::pair<const char32_t*, char16_t*> ret = avx2_convert_utf32_to_utf16(buf, len, utf16_output);
+simdutf_warn_unused size_t implementation::convert_utf32_to_utf16le(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
+  std::pair<const char32_t*, char16_t*> ret = avx2_convert_utf32_to_utf16<endianness::LITTLE>(buf, len, utf16_output);
   if (ret.first == nullptr) { return 0; }
   size_t saved_bytes = ret.second - utf16_output;
   if (ret.first != buf + len) {
-    const size_t scalar_saved_bytes = scalar::utf32_to_utf16::convert(
+    const size_t scalar_saved_bytes = scalar::utf32_to_utf16::convert<endianness::LITTLE>(
                                         ret.first, len - (ret.first - buf), ret.second);
     if (scalar_saved_bytes == 0) { return 0; }
     saved_bytes += scalar_saved_bytes;
@@ -14579,28 +15289,65 @@ simdutf_warn_unused size_t implementation::convert_utf32_to_utf16(const char32_t
   return saved_bytes;
 }
 
-simdutf_warn_unused size_t implementation::convert_valid_utf32_to_utf16(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
-  return convert_utf32_to_utf16(buf, len, utf16_output);
+simdutf_warn_unused size_t implementation::convert_utf32_to_utf16be(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
+  std::pair<const char32_t*, char16_t*> ret = avx2_convert_utf32_to_utf16<endianness::BIG>(buf, len, utf16_output);
+  if (ret.first == nullptr) { return 0; }
+  size_t saved_bytes = ret.second - utf16_output;
+  if (ret.first != buf + len) {
+    const size_t scalar_saved_bytes = scalar::utf32_to_utf16::convert<endianness::BIG>(
+                                        ret.first, len - (ret.first - buf), ret.second);
+    if (scalar_saved_bytes == 0) { return 0; }
+    saved_bytes += scalar_saved_bytes;
+  }
+  return saved_bytes;
 }
 
-simdutf_warn_unused size_t implementation::convert_valid_utf16_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
-  return convert_utf16_to_utf32(buf, len, utf32_output);
+simdutf_warn_unused size_t implementation::convert_valid_utf32_to_utf16le(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
+  return convert_utf32_to_utf16le(buf, len, utf16_output);
 }
 
-simdutf_warn_unused size_t implementation::count_utf16(const char16_t * input, size_t length) const noexcept {
-  return utf16::count_code_points(input, length);
+simdutf_warn_unused size_t implementation::convert_valid_utf32_to_utf16be(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
+  return convert_utf32_to_utf16be(buf, len, utf16_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf16le_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
+  return convert_utf16le_to_utf32(buf, len, utf32_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf16be_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
+  return convert_utf16be_to_utf32(buf, len, utf32_output);
+}
+
+void implementation::change_endianness_utf16(const char16_t * input, size_t length, char16_t * output) const noexcept {
+  utf16::change_endianness_utf16(input, length, output);
+}
+
+simdutf_warn_unused size_t implementation::count_utf16le(const char16_t * input, size_t length) const noexcept {
+  return utf16::count_code_points<endianness::LITTLE>(input, length);
+}
+
+simdutf_warn_unused size_t implementation::count_utf16be(const char16_t * input, size_t length) const noexcept {
+  return utf16::count_code_points<endianness::BIG>(input, length);
 }
 
 simdutf_warn_unused size_t implementation::count_utf8(const char * input, size_t length) const noexcept {
   return utf8::count_code_points(input, length);
 }
 
-simdutf_warn_unused size_t implementation::utf8_length_from_utf16(const char16_t * input, size_t length) const noexcept {
-  return utf16::utf8_length_from_utf16(input, length);
+simdutf_warn_unused size_t implementation::utf8_length_from_utf16le(const char16_t * input, size_t length) const noexcept {
+  return utf16::utf8_length_from_utf16<endianness::LITTLE>(input, length);
 }
 
-simdutf_warn_unused size_t implementation::utf32_length_from_utf16(const char16_t * input, size_t length) const noexcept {
-  return utf16::utf32_length_from_utf16(input, length);
+simdutf_warn_unused size_t implementation::utf8_length_from_utf16be(const char16_t * input, size_t length) const noexcept {
+  return utf16::utf8_length_from_utf16<endianness::BIG>(input, length);
+}
+
+simdutf_warn_unused size_t implementation::utf32_length_from_utf16le(const char16_t * input, size_t length) const noexcept {
+  return utf16::utf32_length_from_utf16<endianness::LITTLE>(input, length);
+}
+
+simdutf_warn_unused size_t implementation::utf32_length_from_utf16be(const char16_t * input, size_t length) const noexcept {
+  return utf16::utf32_length_from_utf16<endianness::BIG>(input, length);
 }
 
 simdutf_warn_unused size_t implementation::utf16_length_from_utf8(const char * input, size_t length) const noexcept {
@@ -15062,6 +15809,7 @@ namespace utf8_to_utf16 {
 
 using namespace simd;
 
+template <endianness endian>
 simdutf_warn_unused size_t convert_valid(const char* input, size_t size,
     char16_t* utf16_output) noexcept {
   // The implementation is not specific to haswell and should be moved to the generic directory.
@@ -15073,7 +15821,7 @@ simdutf_warn_unused size_t convert_valid(const char* input, size_t size,
     // far more than 64 bytes.
     simd8x64<int8_t> in(reinterpret_cast<const int8_t *>(input + pos));
     if(in.is_ascii()) {
-      in.store_ascii_as_utf16(utf16_output);
+      in.store_ascii_as_utf16<endian>(utf16_output);
       utf16_output += 64;
       pos += 64;
     } else {
@@ -15105,7 +15853,7 @@ simdutf_warn_unused size_t convert_valid(const char* input, size_t size,
         // Thus we may allow convert_masked_utf8_to_utf16 to process
         // more bytes at a time under a fast-path mode where 16 bytes
         // are consumed at once (e.g., when encountering ASCII).
-        size_t consumed = convert_masked_utf8_to_utf16(input + pos,
+        size_t consumed = convert_masked_utf8_to_utf16<endian>(input + pos,
                             utf8_end_of_code_point_mask, utf16_output);
         pos += consumed;
         utf8_end_of_code_point_mask >>= consumed;
@@ -15116,7 +15864,7 @@ simdutf_warn_unused size_t convert_valid(const char* input, size_t size,
       // 85% to 90% efficiency.
     }
   }
-  utf16_output += scalar::utf8_to_utf16::convert_valid(input + pos, size - pos, utf16_output);
+  utf16_output += scalar::utf8_to_utf16::convert_valid<endian>(input + pos, size - pos, utf16_output);
   return utf16_output - start;
 }
 
@@ -15253,7 +16001,7 @@ using namespace simd;
     }
 
 
-
+    template <endianness endian>
     simdutf_really_inline size_t convert(const char* in, size_t size, char16_t* utf16_output) {
       size_t pos = 0;
       char16_t* start{utf16_output};
@@ -15261,7 +16009,7 @@ using namespace simd;
       while(pos + 64 + safety_margin <= size) {
         simd8x64<int8_t> input(reinterpret_cast<const int8_t *>(in + pos));
         if(input.is_ascii()) {
-          input.store_ascii_as_utf16(utf16_output);
+          input.store_ascii_as_utf16<endian>(utf16_output);
           utf16_output += 64;
           pos += 64;
         } else {
@@ -15296,7 +16044,7 @@ using namespace simd;
             // for this section of the code. Hence, there is a limit
             // to how much we can further increase this latency before
             // it seriously harms performance.
-            size_t consumed = convert_masked_utf8_to_utf16(in + pos,
+            size_t consumed = convert_masked_utf8_to_utf16<endian>(in + pos,
                             utf8_end_of_code_point_mask, utf16_output);
             pos += consumed;
             utf8_end_of_code_point_mask >>= consumed;
@@ -15309,7 +16057,7 @@ using namespace simd;
       }
       if(errors()) { return 0; }
       if(pos < size) {
-        size_t howmany  = scalar::utf8_to_utf16::convert(in + pos, size - pos, utf16_output);
+        size_t howmany  = scalar::utf8_to_utf16::convert<endian>(in + pos, size - pos, utf16_output);
         if(howmany == 0) { return 0; }
         utf16_output += howmany;
       }
@@ -15637,22 +16385,27 @@ namespace ppc64 {
 namespace {
 namespace utf16 {
 
+template <endianness big_endian>
 simdutf_really_inline size_t count_code_points(const char16_t* in, size_t size) {
     size_t pos = 0;
     size_t count = 0;
     for(;pos + 32 <= size; pos += 32) {
       simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
+      if (big_endian) input.swap_bytes();
       uint64_t not_pair = input.not_in_range(0xDC00, 0xDFFF);
       count += count_ones(not_pair) / 2;
     }
-    return count + scalar::utf16::count_code_points(in + pos, size - pos);
+    return count + scalar::utf16::count_code_points<big_endian>(in + pos, size - pos);
 }
+
+template <endianness big_endian>
 simdutf_really_inline size_t utf8_length_from_utf16(const char16_t* in, size_t size) {
     size_t pos = 0;
     size_t count = 0;
     // This algorithm could no doubt be improved!
     for(;pos + 32 <= size; pos += 32) {
       simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
+      if (big_endian) input.swap_bytes();
       uint64_t ascii_mask = input.lteq(0x7F);
       uint64_t twobyte_mask = input.lteq(0x7FF);
       uint64_t not_pair_mask = input.not_in_range(0xD800, 0xDFFF);
@@ -15663,18 +16416,37 @@ simdutf_really_inline size_t utf8_length_from_utf16(const char16_t* in, size_t s
       size_t fourbyte_count = 32 - count_ones(not_pair_mask) / 2;
       count += 2 * fourbyte_count + 3 * threebyte_count + 2 * twobyte_count + ascii_count;
     }
-    return count + scalar::utf16::utf8_length_from_utf16(in + pos, size - pos);
+    //printf("C: %lu S: %lu ", count, scalar::utf16::utf8_length_from_utf16<big_endian>(in + pos, size - pos));
+    return count + scalar::utf16::utf8_length_from_utf16<big_endian>(in + pos, size - pos);
 }
+
+template <endianness big_endian>
 simdutf_really_inline size_t utf32_length_from_utf16(const char16_t* in, size_t size) {
     size_t pos = 0;
     size_t count = 0;
     for(;pos + 32 <= size; pos += 32) {
       simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
+      if (big_endian) input.swap_bytes();
       uint64_t not_pair = input.not_in_range(0xDC00, 0xDFFF);
       count += count_ones(not_pair) / 2;
     }
-    return count + scalar::utf16::utf32_length_from_utf16(in + pos, size - pos);
+    return count + scalar::utf16::utf32_length_from_utf16<big_endian>(in + pos, size - pos);
 }
+
+simdutf_really_inline void change_endianness_utf16(const char16_t* in, size_t size, char16_t* output) {
+  size_t pos = 0;
+
+  while (pos + 32 <= size) {
+    simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
+    input.swap_bytes();
+    input.store(reinterpret_cast<uint16_t *>(output));
+    pos += 32;
+    output += 32;
+  }
+
+  scalar::utf16::change_endianness_utf16(in + pos, size - pos, output);
+}
+
 } // utf16
 } // unnamed namespace
 } // namespace ppc64
@@ -15695,19 +16467,31 @@ simdutf_warn_unused bool implementation::validate_ascii(const char *buf, size_t 
   return ppc64::utf8_validation::generic_validate_ascii(buf,len);
 }
 
-simdutf_warn_unused bool implementation::validate_utf16(const char16_t *buf, size_t len) const noexcept {
-  return scalar::utf16::validate(buf, len);
+simdutf_warn_unused bool implementation::validate_utf16le(const char16_t *buf, size_t len) const noexcept {
+  return scalar::utf16::validate<endianness::LITTLE>(buf, len);
+}
+
+simdutf_warn_unused bool implementation::validate_utf16be(const char16_t *buf, size_t len) const noexcept {
+  return scalar::utf16::validate<endianness::BIG>(buf, len);
 }
 
 simdutf_warn_unused bool implementation::validate_utf32(const char16_t *buf, size_t len) const noexcept {
   return scalar::utf32::validate(buf, len);
 }
 
-simdutf_warn_unused size_t implementation::convert_utf8_to_utf16(const char* /*buf*/, size_t /*len*/, char16_t* /*utf16_output*/) const noexcept {
+simdutf_warn_unused size_t implementation::convert_utf8_to_utf16le(const char* /*buf*/, size_t /*len*/, char16_t* /*utf16_output*/) const noexcept {
   return 0; // stub
 }
 
-simdutf_warn_unused size_t implementation::convert_valid_utf8_to_utf16(const char* /*buf*/, size_t /*len*/, char16_t* /*utf16_output*/) const noexcept {
+simdutf_warn_unused size_t implementation::convert_utf8_to_utf16be(const char* /*buf*/, size_t /*len*/, char16_t* /*utf16_output*/) const noexcept {
+  return 0; // stub
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf8_to_utf16le(const char* /*buf*/, size_t /*len*/, char16_t* /*utf16_output*/) const noexcept {
+  return 0; // stub
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf8_to_utf16be(const char* /*buf*/, size_t /*len*/, char16_t* /*utf16_output*/) const noexcept {
   return 0; // stub
 }
 
@@ -15719,12 +16503,20 @@ simdutf_warn_unused size_t implementation::convert_valid_utf8_to_utf32(const cha
   return 0; // stub
 }
 
-simdutf_warn_unused size_t implementation::convert_utf16_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
-  return scalar::utf16_to_utf8::convert(buf, len, utf8_output);
+simdutf_warn_unused size_t implementation::convert_utf16le_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
+  return scalar::utf16_to_utf8::convert<endianness::LITTLE>(buf, len, utf8_output);
 }
 
-simdutf_warn_unused size_t implementation::convert_valid_utf16_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
-  return scalar::utf16_to_utf8::convert_valid(buf, len, utf8_output);
+simdutf_warn_unused size_t implementation::convert_utf16be_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
+  return scalar::utf16_to_utf8::convert<endianness::BIG>(buf, len, utf8_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf16le_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
+  return scalar::utf16_to_utf8::convert_valid<endianness::LITTLE>(buf, len, utf8_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf16be_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
+  return scalar::utf16_to_utf8::convert_valid<endianness::BIG>(buf, len, utf8_output);
 }
 
 simdutf_warn_unused size_t implementation::convert_utf32_to_utf8(const char32_t* buf, size_t len, char* utf8_output) const noexcept {
@@ -15735,36 +16527,68 @@ simdutf_warn_unused size_t implementation::convert_valid_utf32_to_utf8(const cha
   return scalar::utf32_to_utf8::convert_valid(buf, len, utf8_output);
 }
 
-simdutf_warn_unused size_t implementation::convert_utf32_to_utf16(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
-  return scalar::utf32_to_utf16::convert(buf, len, utf16_output);
+simdutf_warn_unused size_t implementation::convert_utf32_to_utf16le(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
+  return scalar::utf32_to_utf16::convert<endianness::LITTLE>(buf, len, utf16_output);
 }
 
-simdutf_warn_unused size_t implementation::convert_valid_utf32_to_utf16(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
-  return scalar::utf32_to_utf16::convert_valid(buf, len, utf16_output);
+simdutf_warn_unused size_t implementation::convert_utf32_to_utf16be(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
+  return scalar::utf32_to_utf16::convert<endianness::BIG>(buf, len, utf16_output);
 }
 
-simdutf_warn_unused size_t implementation::convert_utf16_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
-  return scalar::utf16_to_utf32::convert(buf, len, utf32_output);
+simdutf_warn_unused size_t implementation::convert_valid_utf32_to_utf16le(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
+  return scalar::utf32_to_utf16::convert_valid<endianness::LITTLE>(buf, len, utf16_output);
 }
 
-simdutf_warn_unused size_t implementation::convert_valid_utf16_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
-  return scalar::utf16_to_utf32::convert_valid(buf, len, utf32_output);
+simdutf_warn_unused size_t implementation::convert_valid_utf32_to_utf16be(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
+  return scalar::utf32_to_utf16::convert_valid<endianness::BIG>(buf, len, utf16_output);
 }
 
-simdutf_warn_unused size_t implementation::count_utf16(const char16_t * input, size_t length) const noexcept {
-  return scalar::utf16::count_code_points(input, length);
+simdutf_warn_unused size_t implementation::convert_utf16le_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
+  return scalar::utf16_to_utf32::convert<endianness::LITTLE>(buf, len, utf32_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_utf16be_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
+  return scalar::utf16_to_utf32::convert<endianness::BIG>(buf, len, utf32_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf16le_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
+  return scalar::utf16_to_utf32::convert_valid<endianness::LITTLE>(buf, len, utf32_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf16be_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
+  return scalar::utf16_to_utf32::convert_valid<endianness::BIG>(buf, len, utf32_output);
+}
+
+void implementation::change_endianness_utf16(const char16_t * input, size_t length, char16_t * output) const noexcept {
+  scalar::utf16::change_endianness_utf16(input, length, output);
+}
+
+simdutf_warn_unused size_t implementation::count_utf16le(const char16_t * input, size_t length) const noexcept {
+  return scalar::utf16::count_code_points<endianness::LITTLE>(input, length);
+}
+
+simdutf_warn_unused size_t implementation::count_utf16be(const char16_t * input, size_t length) const noexcept {
+  return scalar::utf16::count_code_points<endianness::BIG>(input, length);
 }
 
 simdutf_warn_unused size_t implementation::count_utf8(const char * input, size_t length) const noexcept {
   return utf8::count_code_points(input, length);
 }
 
-simdutf_warn_unused size_t implementation::utf8_length_from_utf16(const char16_t * input, size_t length) const noexcept {
-  return scalar::utf16::utf8_length_from_utf16(input, length);
+simdutf_warn_unused size_t implementation::utf8_length_from_utf16le(const char16_t * input, size_t length) const noexcept {
+  return scalar::utf16::utf8_length_from_utf16<endianness::LITTLE>(input, length);
 }
 
-simdutf_warn_unused size_t implementation::utf32_length_from_utf16(const char16_t * input, size_t length) const noexcept {
-  return scalar::utf16::utf32_length_from_utf16(input, length);
+simdutf_warn_unused size_t implementation::utf8_length_from_utf16be(const char16_t * input, size_t length) const noexcept {
+  return scalar::utf16::utf8_length_from_utf16<endianness::BIG>(input, length);
+}
+
+simdutf_warn_unused size_t implementation::utf32_length_from_utf16le(const char16_t * input, size_t length) const noexcept {
+  return scalar::utf16::utf32_length_from_utf16<endianness::LITTLE>(input, length);
+}
+
+simdutf_warn_unused size_t implementation::utf32_length_from_utf16be(const char16_t * input, size_t length) const noexcept {
+  return scalar::utf16::utf32_length_from_utf16<endianness::BIG>(input, length);
 }
 
 simdutf_warn_unused size_t implementation::utf16_length_from_utf8(const char * input, size_t length) const noexcept {
@@ -15830,7 +16654,7 @@ simdutf_really_inline simd8<bool> must_be_2_3_continuation(const simd8<uint8_t> 
 }
 
 
-/* begin file src/westmere/sse_validate_utf16le.cpp */
+/* begin file src/westmere/sse_validate_utf16.cpp */
 /*
     In UTF-16 words in range 0xD800 to 0xDFFF have special meaning.
 
@@ -15876,7 +16700,8 @@ simdutf_really_inline simd8<bool> must_be_2_3_continuation(const simd8<uint8_t> 
    - pointer to the last unprocessed character (a scalar fallback should check the rest);
    - nullptr if an error was detected.
 */
-const char16_t* sse_validate_utf16le(const char16_t* input, size_t size) {
+template <endianness big_endian>
+const char16_t* sse_validate_utf16(const char16_t* input, size_t size) {
     const char16_t* end = input + size;
 
     const auto v_d8 = simd8<uint8_t>::splat(0xd8);
@@ -15888,8 +16713,12 @@ const char16_t* sse_validate_utf16le(const char16_t* input, size_t size) {
         // 0. Load data: since the validation takes into account only higher
         //    byte of each word, we compress the two vectors into one which
         //    consists only the higher bytes.
-        const auto in0 = simd16<uint16_t>(input);
-        const auto in1 = simd16<uint16_t>(input + simd16<uint16_t>::SIZE / sizeof(char16_t));
+        auto in0 = simd16<uint16_t>(input);
+        auto in1 = simd16<uint16_t>(input + simd16<uint16_t>::SIZE / sizeof(char16_t));
+        if (big_endian) {
+            in0 = in0.swap_bytes();
+            in1 = in1.swap_bytes();
+        }
 
         const auto t0 = in0.shr<8>();
         const auto t1 = in1.shr<8>();
@@ -15945,7 +16774,7 @@ const char16_t* sse_validate_utf16le(const char16_t* input, size_t size) {
 
     return input;
 }
-/* end file src/westmere/sse_validate_utf16le.cpp */
+/* end file src/westmere/sse_validate_utf16.cpp */
 
 /* begin file src/westmere/sse_validate_utf32le.cpp */
 /* Returns:
@@ -15990,6 +16819,7 @@ const char32_t* sse_validate_utf32le(const char32_t* input, size_t size) {
 // end of the code points. Only the least significant 12 bits of the mask
 // are accessed.
 // It returns how many bytes were consumed (up to 12).
+template <endianness big_endian>
 size_t convert_masked_utf8_to_utf16(const char *input,
                            uint64_t utf8_end_of_code_point_mask,
                            char16_t *&utf16_output) {
@@ -16003,13 +16833,20 @@ size_t convert_masked_utf8_to_utf16(const char *input,
   // This results in more instructions but, potentially, also higher speeds.
   //
   // We first try a few fast paths.
+  const __m128i swap = _mm_setr_epi8(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
   const __m128i in = _mm_loadu_si128((__m128i *)input);
   const uint16_t input_utf8_end_of_code_point_mask =
       utf8_end_of_code_point_mask & 0xfff;
   if(((utf8_end_of_code_point_mask & 0xffff) == 0xffff)) {
     // We process the data in chunks of 16 bytes.
-    _mm_storeu_si128(reinterpret_cast<__m128i *>(utf16_output), _mm_cvtepu8_epi16(in));
-    _mm_storeu_si128(reinterpret_cast<__m128i *>(utf16_output + 8), _mm_cvtepu8_epi16(_mm_srli_si128(in,8)));
+    __m128i ascii_first = _mm_cvtepu8_epi16(in);
+    __m128i ascii_second = _mm_cvtepu8_epi16(_mm_srli_si128(in,8));
+    if (big_endian) {
+      ascii_first = _mm_shuffle_epi8(ascii_first, swap);
+      ascii_second = _mm_shuffle_epi8(ascii_second, swap);
+    }
+    _mm_storeu_si128(reinterpret_cast<__m128i *>(utf16_output), ascii_first);
+    _mm_storeu_si128(reinterpret_cast<__m128i *>(utf16_output + 8), ascii_second);
     utf16_output += 16; // We wrote 16 16-bit characters.
     return 16; // We consumed 16 bytes.
   }
@@ -16020,7 +16857,8 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     const __m128i perm = _mm_shuffle_epi8(in, sh);
     const __m128i ascii = _mm_and_si128(perm, _mm_set1_epi16(0x7f));
     const __m128i highbyte = _mm_and_si128(perm, _mm_set1_epi16(0x1f00));
-    const __m128i composed = _mm_or_si128(ascii, _mm_srli_epi16(highbyte, 2));
+    __m128i composed = _mm_or_si128(ascii, _mm_srli_epi16(highbyte, 2));
+    if (big_endian) composed = _mm_shuffle_epi8(composed, swap);
     _mm_storeu_si128((__m128i *)utf16_output, composed);
     utf16_output += 8; // We wrote 16 bytes, 8 code points.
     return 16;
@@ -16040,7 +16878,8 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     const __m128i highbyte_shifted = _mm_srli_epi32(highbyte, 4);
     const __m128i composed =
         _mm_or_si128(_mm_or_si128(ascii, middlebyte_shifted), highbyte_shifted);
-    const __m128i composed_repacked = _mm_packus_epi32(composed, composed);
+    __m128i composed_repacked = _mm_packus_epi32(composed, composed);
+    if (big_endian) composed_repacked = _mm_shuffle_epi8(composed_repacked, swap);
     _mm_storeu_si128((__m128i *)utf16_output, composed_repacked);
     utf16_output += 4;
     return 12;
@@ -16062,7 +16901,8 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     const __m128i perm = _mm_shuffle_epi8(in, sh);
     const __m128i ascii = _mm_and_si128(perm, _mm_set1_epi16(0x7f));
     const __m128i highbyte = _mm_and_si128(perm, _mm_set1_epi16(0x1f00));
-    const __m128i composed = _mm_or_si128(ascii, _mm_srli_epi16(highbyte, 2));
+    __m128i composed = _mm_or_si128(ascii, _mm_srli_epi16(highbyte, 2));
+    if (big_endian) composed = _mm_shuffle_epi8(composed, swap);
     _mm_storeu_si128((__m128i *)utf16_output, composed);
     utf16_output += 6; // We wrote 12 bytes, 6 code points.
   } else if (idx < 145) {
@@ -16080,7 +16920,8 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     const __m128i highbyte_shifted = _mm_srli_epi32(highbyte, 4);
     const __m128i composed =
         _mm_or_si128(_mm_or_si128(ascii, middlebyte_shifted), highbyte_shifted);
-    const __m128i composed_repacked = _mm_packus_epi32(composed, composed);
+     __m128i composed_repacked = _mm_packus_epi32(composed, composed);
+    if (big_endian) composed_repacked = _mm_shuffle_epi8(composed_repacked, swap);
     _mm_storeu_si128((__m128i *)utf16_output, composed_repacked);
     utf16_output += 4;
   } else if (idx < 209) {
@@ -16112,15 +16953,20 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     const __m128i hightenbitsadd =
         _mm_add_epi32(hightenbits, _mm_set1_epi32(0xD800));
     const __m128i lowtenbitsaddshifted = _mm_slli_epi32(lowtenbitsadd, 16);
-    const __m128i surrogates =
+    __m128i surrogates =
         _mm_or_si128(hightenbitsadd, lowtenbitsaddshifted);
     uint32_t basic_buffer[4];
+    uint32_t basic_buffer_swap[4];
+    if (big_endian) {
+      _mm_storeu_si128((__m128i *)basic_buffer_swap, _mm_shuffle_epi8(composed, swap));
+      surrogates = _mm_shuffle_epi8(surrogates, swap);
+    }
     _mm_storeu_si128((__m128i *)basic_buffer, composed);
     uint32_t surrogate_buffer[4];
     _mm_storeu_si128((__m128i *)surrogate_buffer, surrogates);
     for (size_t i = 0; i < 3; i++) {
       if (basic_buffer[i] < 65536) {
-        utf16_output[0] = uint16_t(basic_buffer[i]);
+        utf16_output[0] = big_endian ? uint16_t(basic_buffer_swap[i]) : uint16_t(basic_buffer[i]);
         utf16_output++;
       } else {
         utf16_output[0] = uint16_t(surrogate_buffer[i] & 0xffff);
@@ -16321,6 +17167,7 @@ size_t convert_masked_utf8_to_utf32(const char *input,
   Returns a pair: the first unprocessed byte from buf and utf8_output
   A scalar routing should carry on the conversion of the tail.
 */
+template <endianness big_endian>
 std::pair<const char16_t*, char*> sse_convert_utf16_to_utf8(const char16_t* buf, size_t len, char* utf8_output) {
 
   const char16_t* end = buf + len;
@@ -16331,10 +17178,18 @@ std::pair<const char16_t*, char*> sse_convert_utf16_to_utf8(const char16_t* buf,
   const __m128i v_c080 = _mm_set1_epi16((int16_t)0xc080);
   while (buf + 16 <= end) {
     __m128i in = _mm_loadu_si128((__m128i*)buf);
+    if (big_endian) {
+      const __m128i swap = _mm_setr_epi8(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
+      in = _mm_shuffle_epi8(in, swap);
+    }
     // a single 16-bit UTF-16 word can yield 1, 2 or 3 UTF-8 bytes
     const __m128i v_ff80 = _mm_set1_epi16((int16_t)0xff80);
     if(_mm_testz_si128(in, v_ff80)) { // ASCII fast path!!!!
         __m128i nextin = _mm_loadu_si128((__m128i*)buf+1);
+        if (big_endian) {
+          const __m128i swap = _mm_setr_epi8(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
+          nextin = _mm_shuffle_epi8(nextin, swap);
+        }
         if(!_mm_testz_si128(nextin, v_ff80)) {
           // 1. pack the bytes
           // obviously suboptimal.
@@ -16512,7 +17367,7 @@ std::pair<const char16_t*, char*> sse_convert_utf16_to_utf8(const char16_t* buf,
       size_t k = 0;
       if(size_t(end - buf) < forward + 1) { forward = size_t(end - buf - 1);}
       for(; k < forward; k++) {
-        uint16_t word = buf[k];
+        uint16_t word = big_endian ? scalar::utf16::swap_bytes(buf[k]) : buf[k];
         if((word & 0xFF80)==0) {
           *utf8_output++ = char(word);
         } else if((word & 0xF800)==0) {
@@ -16525,7 +17380,7 @@ std::pair<const char16_t*, char*> sse_convert_utf16_to_utf8(const char16_t* buf,
         } else {
           // must be a surrogate pair
           uint16_t diff = uint16_t(word - 0xD800);
-          uint16_t next_word = buf[k+1];
+          uint16_t next_word = big_endian ? scalar::utf16::swap_bytes(buf[k+1]) : buf[k+1];
           k++;
           uint16_t diff2 = uint16_t(next_word - 0xDC00);
           if((diff | diff2) > 0x3FF)  { return std::make_pair(nullptr, utf8_output); }
@@ -16598,6 +17453,7 @@ std::pair<const char16_t*, char*> sse_convert_utf16_to_utf8(const char16_t* buf,
   Returns a pair: the first unprocessed byte from buf and utf8_output
   A scalar routing should carry on the conversion of the tail.
 */
+template <endianness big_endian>
 std::pair<const char16_t*, char32_t*> sse_convert_utf16_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) {
   const char16_t* end = buf + len;
 
@@ -16606,6 +17462,11 @@ std::pair<const char16_t*, char32_t*> sse_convert_utf16_to_utf32(const char16_t*
 
   while (buf + 16 <= end) {
     __m128i in = _mm_loadu_si128((__m128i*)buf);
+
+    if (big_endian) {
+      const __m128i swap = _mm_setr_epi8(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
+      in = _mm_shuffle_epi8(in, swap);
+    }
 
     // 1. Check if there are any surrogate word in the input chunk.
     //    We have also deal with situation when there is a surrogate word
@@ -16632,13 +17493,13 @@ std::pair<const char16_t*, char32_t*> sse_convert_utf16_to_utf32(const char16_t*
       size_t k = 0;
       if(size_t(end - buf) < forward + 1) { forward = size_t(end - buf - 1);}
       for(; k < forward; k++) {
-        uint16_t word = buf[k];
+        uint16_t word = big_endian ? scalar::utf16::swap_bytes(buf[k]) : buf[k];
         if((word &0xF800 ) != 0xD800) {
           *utf32_output++ = char32_t(word);
         } else {
           // must be a surrogate pair
           uint16_t diff = uint16_t(word - 0xD800);
-          uint16_t next_word = buf[k+1];
+          uint16_t next_word = big_endian ? scalar::utf16::swap_bytes(buf[k+1]) : buf[k+1];
           k++;
           uint16_t diff2 = uint16_t(next_word - 0xDC00);
           if((diff | diff2) > 0x3FF)  { return std::make_pair(nullptr, utf32_output); }
@@ -16896,6 +17757,7 @@ std::pair<const char32_t*, char*> sse_convert_utf32_to_utf8(const char32_t* buf,
 /* end file src/westmere/sse_convert_utf32_to_utf8.cpp */
 
 /* begin file src/westmere/sse_convert_utf32_to_utf16.cpp */
+template <endianness big_endian>
 std::pair<const char32_t*, char16_t*> sse_convert_utf32_to_utf16(const char32_t* buf, size_t len, char16_t* utf16_output) {
 
   const char32_t* end = buf + len;
@@ -16913,11 +17775,16 @@ std::pair<const char32_t*, char16_t*> sse_convert_utf32_to_utf16(const char32_t*
     // Check if no bits set above 16th
     if (saturation_bitmask == 0xffff) {
       // Pack UTF-32 to UTF-16
-      const __m128i utf16_packed = _mm_packus_epi32(in, nextin);
+      __m128i utf16_packed = _mm_packus_epi32(in, nextin);
 
       const __m128i v_f800 = _mm_set1_epi16((uint16_t)0xf800);
       const __m128i v_d800 = _mm_set1_epi16((uint16_t)0xd800);
       forbidden_bytemask = _mm_or_si128(forbidden_bytemask, _mm_cmpeq_epi16(_mm_and_si128(utf16_packed, v_f800), v_d800));
+
+      if (big_endian) {
+        const __m128i swap = _mm_setr_epi8(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
+        utf16_packed = _mm_shuffle_epi8(utf16_packed, swap);
+      }
 
       _mm_storeu_si128((__m128i*)utf16_output, utf16_packed);
       utf16_output += 8;
@@ -16931,13 +17798,19 @@ std::pair<const char32_t*, char16_t*> sse_convert_utf32_to_utf16(const char32_t*
         if((word & 0xFFFF0000)==0) {
           // will not generate a surrogate pair
           if (word >= 0xD800 && word <= 0xDFFF) { return std::make_pair(nullptr, utf16_output); }
-          *utf16_output++ = char16_t(word);
+          *utf16_output++ = big_endian ? char16_t((uint16_t(word) >> 8) | (uint16_t(word) << 8)) : char16_t(word);
         } else {
           // will generate a surrogate pair
           if (word > 0x10FFFF) { return std::make_pair(nullptr, utf16_output); }
           word -= 0x10000;
-          *utf16_output++ = char16_t(0xD800 + (word >> 10));
-          *utf16_output++ = char16_t(0xDC00 + (word & 0x3FF));
+          uint16_t high_surrogate = uint16_t(0xD800 + (word >> 10));
+          uint16_t low_surrogate = uint16_t(0xDC00 + (word & 0x3FF));
+          if (big_endian) {
+            high_surrogate = uint16_t((high_surrogate >> 8) | (high_surrogate << 8));
+            low_surrogate = uint16_t((low_surrogate >> 8) | (low_surrogate << 8));
+          }
+          *utf16_output++ = char16_t(high_surrogate);
+          *utf16_output++ = char16_t(low_surrogate);
         }
       }
       buf += k;
@@ -17310,6 +18183,7 @@ namespace utf8_to_utf16 {
 
 using namespace simd;
 
+template <endianness endian>
 simdutf_warn_unused size_t convert_valid(const char* input, size_t size,
     char16_t* utf16_output) noexcept {
   // The implementation is not specific to haswell and should be moved to the generic directory.
@@ -17321,7 +18195,7 @@ simdutf_warn_unused size_t convert_valid(const char* input, size_t size,
     // far more than 64 bytes.
     simd8x64<int8_t> in(reinterpret_cast<const int8_t *>(input + pos));
     if(in.is_ascii()) {
-      in.store_ascii_as_utf16(utf16_output);
+      in.store_ascii_as_utf16<endian>(utf16_output);
       utf16_output += 64;
       pos += 64;
     } else {
@@ -17353,7 +18227,7 @@ simdutf_warn_unused size_t convert_valid(const char* input, size_t size,
         // Thus we may allow convert_masked_utf8_to_utf16 to process
         // more bytes at a time under a fast-path mode where 16 bytes
         // are consumed at once (e.g., when encountering ASCII).
-        size_t consumed = convert_masked_utf8_to_utf16(input + pos,
+        size_t consumed = convert_masked_utf8_to_utf16<endian>(input + pos,
                             utf8_end_of_code_point_mask, utf16_output);
         pos += consumed;
         utf8_end_of_code_point_mask >>= consumed;
@@ -17364,7 +18238,7 @@ simdutf_warn_unused size_t convert_valid(const char* input, size_t size,
       // 85% to 90% efficiency.
     }
   }
-  utf16_output += scalar::utf8_to_utf16::convert_valid(input + pos, size - pos, utf16_output);
+  utf16_output += scalar::utf8_to_utf16::convert_valid<endian>(input + pos, size - pos, utf16_output);
   return utf16_output - start;
 }
 
@@ -17501,7 +18375,7 @@ using namespace simd;
     }
 
 
-
+    template <endianness endian>
     simdutf_really_inline size_t convert(const char* in, size_t size, char16_t* utf16_output) {
       size_t pos = 0;
       char16_t* start{utf16_output};
@@ -17509,7 +18383,7 @@ using namespace simd;
       while(pos + 64 + safety_margin <= size) {
         simd8x64<int8_t> input(reinterpret_cast<const int8_t *>(in + pos));
         if(input.is_ascii()) {
-          input.store_ascii_as_utf16(utf16_output);
+          input.store_ascii_as_utf16<endian>(utf16_output);
           utf16_output += 64;
           pos += 64;
         } else {
@@ -17544,7 +18418,7 @@ using namespace simd;
             // for this section of the code. Hence, there is a limit
             // to how much we can further increase this latency before
             // it seriously harms performance.
-            size_t consumed = convert_masked_utf8_to_utf16(in + pos,
+            size_t consumed = convert_masked_utf8_to_utf16<endian>(in + pos,
                             utf8_end_of_code_point_mask, utf16_output);
             pos += consumed;
             utf8_end_of_code_point_mask >>= consumed;
@@ -17557,7 +18431,7 @@ using namespace simd;
       }
       if(errors()) { return 0; }
       if(pos < size) {
-        size_t howmany  = scalar::utf8_to_utf16::convert(in + pos, size - pos, utf16_output);
+        size_t howmany  = scalar::utf8_to_utf16::convert<endian>(in + pos, size - pos, utf16_output);
         if(howmany == 0) { return 0; }
         utf16_output += howmany;
       }
@@ -17885,22 +18759,27 @@ namespace westmere {
 namespace {
 namespace utf16 {
 
+template <endianness big_endian>
 simdutf_really_inline size_t count_code_points(const char16_t* in, size_t size) {
     size_t pos = 0;
     size_t count = 0;
     for(;pos + 32 <= size; pos += 32) {
       simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
+      if (big_endian) input.swap_bytes();
       uint64_t not_pair = input.not_in_range(0xDC00, 0xDFFF);
       count += count_ones(not_pair) / 2;
     }
-    return count + scalar::utf16::count_code_points(in + pos, size - pos);
+    return count + scalar::utf16::count_code_points<big_endian>(in + pos, size - pos);
 }
+
+template <endianness big_endian>
 simdutf_really_inline size_t utf8_length_from_utf16(const char16_t* in, size_t size) {
     size_t pos = 0;
     size_t count = 0;
     // This algorithm could no doubt be improved!
     for(;pos + 32 <= size; pos += 32) {
       simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
+      if (big_endian) input.swap_bytes();
       uint64_t ascii_mask = input.lteq(0x7F);
       uint64_t twobyte_mask = input.lteq(0x7FF);
       uint64_t not_pair_mask = input.not_in_range(0xD800, 0xDFFF);
@@ -17911,18 +18790,37 @@ simdutf_really_inline size_t utf8_length_from_utf16(const char16_t* in, size_t s
       size_t fourbyte_count = 32 - count_ones(not_pair_mask) / 2;
       count += 2 * fourbyte_count + 3 * threebyte_count + 2 * twobyte_count + ascii_count;
     }
-    return count + scalar::utf16::utf8_length_from_utf16(in + pos, size - pos);
+    //printf("C: %lu S: %lu ", count, scalar::utf16::utf8_length_from_utf16<big_endian>(in + pos, size - pos));
+    return count + scalar::utf16::utf8_length_from_utf16<big_endian>(in + pos, size - pos);
 }
+
+template <endianness big_endian>
 simdutf_really_inline size_t utf32_length_from_utf16(const char16_t* in, size_t size) {
     size_t pos = 0;
     size_t count = 0;
     for(;pos + 32 <= size; pos += 32) {
       simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
+      if (big_endian) input.swap_bytes();
       uint64_t not_pair = input.not_in_range(0xDC00, 0xDFFF);
       count += count_ones(not_pair) / 2;
     }
-    return count + scalar::utf16::utf32_length_from_utf16(in + pos, size - pos);
+    return count + scalar::utf16::utf32_length_from_utf16<big_endian>(in + pos, size - pos);
 }
+
+simdutf_really_inline void change_endianness_utf16(const char16_t* in, size_t size, char16_t* output) {
+  size_t pos = 0;
+
+  while (pos + 32 <= size) {
+    simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
+    input.swap_bytes();
+    input.store(reinterpret_cast<uint16_t *>(output));
+    pos += 32;
+    output += 32;
+  }
+
+  scalar::utf16::change_endianness_utf16(in + pos, size - pos, output);
+}
+
 } // utf16
 } // unnamed namespace
 } // namespace westmere
@@ -17943,10 +18841,19 @@ simdutf_warn_unused bool implementation::validate_ascii(const char *buf, size_t 
   return westmere::utf8_validation::generic_validate_ascii(buf, len);
 }
 
-simdutf_warn_unused bool implementation::validate_utf16(const char16_t *buf, size_t len) const noexcept {
-  const char16_t* tail = sse_validate_utf16le(buf, len);
+simdutf_warn_unused bool implementation::validate_utf16le(const char16_t *buf, size_t len) const noexcept {
+  const char16_t* tail = sse_validate_utf16<endianness::LITTLE>(buf, len);
   if (tail) {
-    return scalar::utf16::validate(tail, len - (tail - buf));
+    return scalar::utf16::validate<endianness::LITTLE>(tail, len - (tail - buf));
+  } else {
+    return false;
+  }
+}
+
+simdutf_warn_unused bool implementation::validate_utf16be(const char16_t *buf, size_t len) const noexcept {
+  const char16_t* tail = sse_validate_utf16<endianness::BIG>(buf, len);
+  if (tail) {
+    return scalar::utf16::validate<endianness::BIG>(tail, len - (tail - buf));
   } else {
     return false;
   }
@@ -17961,14 +18868,24 @@ simdutf_warn_unused bool implementation::validate_utf32(const char32_t *buf, siz
   }
 }
 
-simdutf_warn_unused size_t implementation::convert_utf8_to_utf16(const char* buf, size_t len, char16_t* utf16_output) const noexcept {
+simdutf_warn_unused size_t implementation::convert_utf8_to_utf16le(const char* buf, size_t len, char16_t* utf16_output) const noexcept {
   utf8_to_utf16::validating_transcoder converter;
-  return converter.convert(buf, len, utf16_output);
+  return converter.convert<endianness::LITTLE>(buf, len, utf16_output);
 }
 
-simdutf_warn_unused size_t implementation::convert_valid_utf8_to_utf16(const char* input, size_t size,
+simdutf_warn_unused size_t implementation::convert_utf8_to_utf16be(const char* buf, size_t len, char16_t* utf16_output) const noexcept {
+  utf8_to_utf16::validating_transcoder converter;
+  return converter.convert<endianness::BIG>(buf, len, utf16_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf8_to_utf16le(const char* input, size_t size,
     char16_t* utf16_output) const noexcept {
-  return utf8_to_utf16::convert_valid(input, size,  utf16_output);
+  return utf8_to_utf16::convert_valid<endianness::LITTLE>(input, size,  utf16_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf8_to_utf16be(const char* input, size_t size,
+    char16_t* utf16_output) const noexcept {
+  return utf8_to_utf16::convert_valid<endianness::BIG>(input, size,  utf16_output);
 }
 
 simdutf_warn_unused size_t implementation::convert_utf8_to_utf32(const char* buf, size_t len, char32_t* utf32_output) const noexcept {
@@ -17981,12 +18898,12 @@ simdutf_warn_unused size_t implementation::convert_valid_utf8_to_utf32(const cha
   return utf8_to_utf32::convert_valid(input, size,  utf32_output);
 }
 
-simdutf_warn_unused size_t implementation::convert_utf16_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
-  std::pair<const char16_t*, char*> ret = sse_convert_utf16_to_utf8(buf, len, utf8_output);
+simdutf_warn_unused size_t implementation::convert_utf16le_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
+  std::pair<const char16_t*, char*> ret = sse_convert_utf16_to_utf8<endianness::LITTLE>(buf, len, utf8_output);
   if (ret.first == nullptr) { return 0; }
   size_t saved_bytes = ret.second - utf8_output;
   if (ret.first != buf + len) {
-    const size_t scalar_saved_bytes = scalar::utf16_to_utf8::convert(
+    const size_t scalar_saved_bytes = scalar::utf16_to_utf8::convert<endianness::LITTLE>(
                                         ret.first, len - (ret.first - buf), ret.second);
     if (scalar_saved_bytes == 0) { return 0; }
     saved_bytes += scalar_saved_bytes;
@@ -17994,8 +18911,25 @@ simdutf_warn_unused size_t implementation::convert_utf16_to_utf8(const char16_t*
   return saved_bytes;
 }
 
-simdutf_warn_unused size_t implementation::convert_valid_utf16_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
-  return convert_utf16_to_utf8(buf, len, utf8_output);
+simdutf_warn_unused size_t implementation::convert_utf16be_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
+  std::pair<const char16_t*, char*> ret = sse_convert_utf16_to_utf8<endianness::BIG>(buf, len, utf8_output);
+  if (ret.first == nullptr) { return 0; }
+  size_t saved_bytes = ret.second - utf8_output;
+  if (ret.first != buf + len) {
+    const size_t scalar_saved_bytes = scalar::utf16_to_utf8::convert<endianness::BIG>(
+                                        ret.first, len - (ret.first - buf), ret.second);
+    if (scalar_saved_bytes == 0) { return 0; }
+    saved_bytes += scalar_saved_bytes;
+  }
+  return saved_bytes;
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf16le_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
+  return convert_utf16le_to_utf8(buf, len, utf8_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf16be_to_utf8(const char16_t* buf, size_t len, char* utf8_output) const noexcept {
+  return convert_utf16be_to_utf8(buf, len, utf8_output);
 }
 
 simdutf_warn_unused size_t implementation::convert_utf32_to_utf8(const char32_t* buf, size_t len, char* utf8_output) const noexcept {
@@ -18011,12 +18945,25 @@ simdutf_warn_unused size_t implementation::convert_utf32_to_utf8(const char32_t*
   return saved_bytes;
 }
 
-simdutf_warn_unused size_t implementation::convert_utf16_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
-  std::pair<const char16_t*, char32_t*> ret = sse_convert_utf16_to_utf32(buf, len, utf32_output);
+simdutf_warn_unused size_t implementation::convert_utf16le_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
+  std::pair<const char16_t*, char32_t*> ret = sse_convert_utf16_to_utf32<endianness::LITTLE>(buf, len, utf32_output);
   if (ret.first == nullptr) { return 0; }
   size_t saved_bytes = ret.second - utf32_output;
   if (ret.first != buf + len) {
-    const size_t scalar_saved_bytes = scalar::utf16_to_utf32::convert(
+    const size_t scalar_saved_bytes = scalar::utf16_to_utf32::convert<endianness::LITTLE>(
+                                        ret.first, len - (ret.first - buf), ret.second);
+    if (scalar_saved_bytes == 0) { return 0; }
+    saved_bytes += scalar_saved_bytes;
+  }
+  return saved_bytes;
+}
+
+simdutf_warn_unused size_t implementation::convert_utf16be_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
+  std::pair<const char16_t*, char32_t*> ret = sse_convert_utf16_to_utf32<endianness::BIG>(buf, len, utf32_output);
+  if (ret.first == nullptr) { return 0; }
+  size_t saved_bytes = ret.second - utf32_output;
+  if (ret.first != buf + len) {
+    const size_t scalar_saved_bytes = scalar::utf16_to_utf32::convert<endianness::BIG>(
                                         ret.first, len - (ret.first - buf), ret.second);
     if (scalar_saved_bytes == 0) { return 0; }
     saved_bytes += scalar_saved_bytes;
@@ -18028,12 +18975,12 @@ simdutf_warn_unused size_t implementation::convert_valid_utf32_to_utf8(const cha
   return convert_utf32_to_utf8(buf, len, utf8_output);
 }
 
-simdutf_warn_unused size_t implementation::convert_utf32_to_utf16(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
-  std::pair<const char32_t*, char16_t*> ret = sse_convert_utf32_to_utf16(buf, len, utf16_output);
+simdutf_warn_unused size_t implementation::convert_utf32_to_utf16le(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
+  std::pair<const char32_t*, char16_t*> ret = sse_convert_utf32_to_utf16<endianness::LITTLE>(buf, len, utf16_output);
   if (ret.first == nullptr) { return 0; }
   size_t saved_bytes = ret.second - utf16_output;
   if (ret.first != buf + len) {
-    const size_t scalar_saved_bytes = scalar::utf32_to_utf16::convert(
+    const size_t scalar_saved_bytes = scalar::utf32_to_utf16::convert<endianness::LITTLE>(
                                         ret.first, len - (ret.first - buf), ret.second);
     if (scalar_saved_bytes == 0) { return 0; }
     saved_bytes += scalar_saved_bytes;
@@ -18041,28 +18988,65 @@ simdutf_warn_unused size_t implementation::convert_utf32_to_utf16(const char32_t
   return saved_bytes;
 }
 
-simdutf_warn_unused size_t implementation::convert_valid_utf32_to_utf16(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
-  return convert_utf32_to_utf16(buf, len, utf16_output);
+simdutf_warn_unused size_t implementation::convert_utf32_to_utf16be(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
+  std::pair<const char32_t*, char16_t*> ret = sse_convert_utf32_to_utf16<endianness::BIG>(buf, len, utf16_output);
+  if (ret.first == nullptr) { return 0; }
+  size_t saved_bytes = ret.second - utf16_output;
+  if (ret.first != buf + len) {
+    const size_t scalar_saved_bytes = scalar::utf32_to_utf16::convert<endianness::BIG>(
+                                        ret.first, len - (ret.first - buf), ret.second);
+    if (scalar_saved_bytes == 0) { return 0; }
+    saved_bytes += scalar_saved_bytes;
+  }
+  return saved_bytes;
 }
 
-simdutf_warn_unused size_t implementation::convert_valid_utf16_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
-  return convert_utf16_to_utf32(buf, len, utf32_output);
+simdutf_warn_unused size_t implementation::convert_valid_utf32_to_utf16le(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
+  return convert_utf32_to_utf16le(buf, len, utf16_output);
 }
 
-simdutf_warn_unused size_t implementation::count_utf16(const char16_t * input, size_t length) const noexcept {
-  return utf16::count_code_points(input, length);
+simdutf_warn_unused size_t implementation::convert_valid_utf32_to_utf16be(const char32_t* buf, size_t len, char16_t* utf16_output) const noexcept {
+  return convert_utf32_to_utf16be(buf, len, utf16_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf16le_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
+  return convert_utf16le_to_utf32(buf, len, utf32_output);
+}
+
+simdutf_warn_unused size_t implementation::convert_valid_utf16be_to_utf32(const char16_t* buf, size_t len, char32_t* utf32_output) const noexcept {
+  return convert_utf16be_to_utf32(buf, len, utf32_output);
+}
+
+void implementation::change_endianness_utf16(const char16_t * input, size_t length, char16_t * output) const noexcept {
+  utf16::change_endianness_utf16(input, length, output);
+}
+
+simdutf_warn_unused size_t implementation::count_utf16le(const char16_t * input, size_t length) const noexcept {
+  return utf16::count_code_points<endianness::LITTLE>(input, length);
+}
+
+simdutf_warn_unused size_t implementation::count_utf16be(const char16_t * input, size_t length) const noexcept {
+  return utf16::count_code_points<endianness::BIG>(input, length);
 }
 
 simdutf_warn_unused size_t implementation::count_utf8(const char * input, size_t length) const noexcept {
   return utf8::count_code_points(input, length);
 }
 
-simdutf_warn_unused size_t implementation::utf8_length_from_utf16(const char16_t * input, size_t length) const noexcept {
-  return utf16::utf8_length_from_utf16(input, length);
+simdutf_warn_unused size_t implementation::utf8_length_from_utf16le(const char16_t * input, size_t length) const noexcept {
+  return utf16::utf8_length_from_utf16<endianness::LITTLE>(input, length);
 }
 
-simdutf_warn_unused size_t implementation::utf32_length_from_utf16(const char16_t * input, size_t length) const noexcept {
-  return utf16::utf32_length_from_utf16(input, length);
+simdutf_warn_unused size_t implementation::utf8_length_from_utf16be(const char16_t * input, size_t length) const noexcept {
+  return utf16::utf8_length_from_utf16<endianness::BIG>(input, length);
+}
+
+simdutf_warn_unused size_t implementation::utf32_length_from_utf16le(const char16_t * input, size_t length) const noexcept {
+  return utf16::utf32_length_from_utf16<endianness::LITTLE>(input, length);
+}
+
+simdutf_warn_unused size_t implementation::utf32_length_from_utf16be(const char16_t * input, size_t length) const noexcept {
+  return utf16::utf32_length_from_utf16<endianness::BIG>(input, length);
 }
 
 simdutf_warn_unused size_t implementation::utf16_length_from_utf8(const char * input, size_t length) const noexcept {
