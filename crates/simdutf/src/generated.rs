@@ -288,14 +288,14 @@ pub unsafe fn utf32_length_from_utf16le(src: &[u16]) -> usize {
 /// Returns the number of written code units; 0 if the input is not a valid UTF-8 string
 ///
 /// # Safety
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u8>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u16>()` bytes, where the `count` is the number of code units ([`u16`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_utf8_to_utf16(src: &[u8], dst: *mut u16) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_utf8_to_utf16(buf, len, dst)
+pub unsafe fn convert_utf8_to_utf16(src: *const u8, len: usize, dst: *mut u16) -> usize {
+    crate::bindings::simdutf_convert_utf8_to_utf16(src, len, dst)
 }
 
 /// Convert possibly broken UTF-8 string into UTF-16BE string.
@@ -306,14 +306,14 @@ pub unsafe fn convert_utf8_to_utf16(src: &[u8], dst: *mut u16) -> usize {
 /// Returns the number of written code units; 0 if the input is not a valid UTF-8 string
 ///
 /// # Safety
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u8>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u16>()` bytes, where the `count` is the number of code units ([`u16`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_utf8_to_utf16be(src: &[u8], dst: *mut u16) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_utf8_to_utf16be(buf, len, dst)
+pub unsafe fn convert_utf8_to_utf16be(src: *const u8, len: usize, dst: *mut u16) -> usize {
+    crate::bindings::simdutf_convert_utf8_to_utf16be(src, len, dst)
 }
 
 /// Convert possibly broken UTF-8 string into UTF-16LE string.
@@ -324,14 +324,14 @@ pub unsafe fn convert_utf8_to_utf16be(src: &[u8], dst: *mut u16) -> usize {
 /// Returns the number of written code units; 0 if the input is not a valid UTF-8 string
 ///
 /// # Safety
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u8>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u16>()` bytes, where the `count` is the number of code units ([`u16`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_utf8_to_utf16le(src: &[u8], dst: *mut u16) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_utf8_to_utf16le(buf, len, dst)
+pub unsafe fn convert_utf8_to_utf16le(src: *const u8, len: usize, dst: *mut u16) -> usize {
+    crate::bindings::simdutf_convert_utf8_to_utf16le(src, len, dst)
 }
 
 /// Convert possibly broken UTF-8 string into UTF-32 string.
@@ -342,14 +342,14 @@ pub unsafe fn convert_utf8_to_utf16le(src: &[u8], dst: *mut u16) -> usize {
 /// Returns the number of written code units; 0 if the input is not a valid UTF-8 string
 ///
 /// # Safety
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u8>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u32>()` bytes, where the `count` is the number of code units ([`u32`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_utf8_to_utf32(src: &[u8], dst: *mut u32) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_utf8_to_utf32(buf, len, dst)
+pub unsafe fn convert_utf8_to_utf32(src: *const u8, len: usize, dst: *mut u32) -> usize {
+    crate::bindings::simdutf_convert_utf8_to_utf32(src, len, dst)
 }
 
 /// Convert possibly broken UTF-16 string into UTF-8 string.
@@ -364,14 +364,14 @@ pub unsafe fn convert_utf8_to_utf32(src: &[u8], dst: *mut u32) -> usize {
 /// This function is not BOM-aware.
 ///
 /// # Safety
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_utf16_to_utf8(src: &[u16], dst: *mut u8) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_utf16_to_utf8(buf, len, dst)
+pub unsafe fn convert_utf16_to_utf8(src: *const u16, len: usize, dst: *mut u8) -> usize {
+    crate::bindings::simdutf_convert_utf16_to_utf8(src, len, dst)
 }
 
 /// Convert possibly broken UTF-16 string into UTF-32 string.
@@ -386,14 +386,14 @@ pub unsafe fn convert_utf16_to_utf8(src: &[u16], dst: *mut u8) -> usize {
 /// This function is not BOM-aware.
 ///
 /// # Safety
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u32>()` bytes, where the `count` is the number of code units ([`u32`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_utf16_to_utf32(src: &[u16], dst: *mut u32) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_utf16_to_utf32(buf, len, dst)
+pub unsafe fn convert_utf16_to_utf32(src: *const u16, len: usize, dst: *mut u32) -> usize {
+    crate::bindings::simdutf_convert_utf16_to_utf32(src, len, dst)
 }
 
 /// Convert possibly broken UTF-16BE string into UTF-8 string.
@@ -406,14 +406,14 @@ pub unsafe fn convert_utf16_to_utf32(src: &[u16], dst: *mut u32) -> usize {
 /// This function is not BOM-aware.
 ///
 /// # Safety
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_utf16be_to_utf8(src: &[u16], dst: *mut u8) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_utf16be_to_utf8(buf, len, dst)
+pub unsafe fn convert_utf16be_to_utf8(src: *const u16, len: usize, dst: *mut u8) -> usize {
+    crate::bindings::simdutf_convert_utf16be_to_utf8(src, len, dst)
 }
 
 /// Convert possibly broken UTF-16BE string into UTF-32 string.
@@ -426,14 +426,14 @@ pub unsafe fn convert_utf16be_to_utf8(src: &[u16], dst: *mut u8) -> usize {
 /// This function is not BOM-aware.
 ///
 /// # Safety
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u32>()` bytes, where the `count` is the number of code units ([`u32`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_utf16be_to_utf32(src: &[u16], dst: *mut u32) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_utf16be_to_utf32(buf, len, dst)
+pub unsafe fn convert_utf16be_to_utf32(src: *const u16, len: usize, dst: *mut u32) -> usize {
+    crate::bindings::simdutf_convert_utf16be_to_utf32(src, len, dst)
 }
 
 /// Convert possibly broken UTF-16LE string into UTF-8 string.
@@ -446,14 +446,14 @@ pub unsafe fn convert_utf16be_to_utf32(src: &[u16], dst: *mut u32) -> usize {
 /// This function is not BOM-aware.
 ///
 /// # Safety
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_utf16le_to_utf8(src: &[u16], dst: *mut u8) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_utf16le_to_utf8(buf, len, dst)
+pub unsafe fn convert_utf16le_to_utf8(src: *const u16, len: usize, dst: *mut u8) -> usize {
+    crate::bindings::simdutf_convert_utf16le_to_utf8(src, len, dst)
 }
 
 /// Convert possibly broken UTF-16LE string into UTF-32 string.
@@ -466,14 +466,14 @@ pub unsafe fn convert_utf16le_to_utf8(src: &[u16], dst: *mut u8) -> usize {
 /// This function is not BOM-aware.
 ///
 /// # Safety
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u32>()` bytes, where the `count` is the number of code units ([`u32`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_utf16le_to_utf32(src: &[u16], dst: *mut u32) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_utf16le_to_utf32(buf, len, dst)
+pub unsafe fn convert_utf16le_to_utf32(src: *const u16, len: usize, dst: *mut u32) -> usize {
+    crate::bindings::simdutf_convert_utf16le_to_utf32(src, len, dst)
 }
 
 /// Convert possibly broken UTF-32 string into UTF-8 string.
@@ -486,14 +486,14 @@ pub unsafe fn convert_utf16le_to_utf32(src: &[u16], dst: *mut u32) -> usize {
 /// This function uses native endianness.
 ///
 /// # Safety
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u32>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_utf32_to_utf8(src: &[u32], dst: *mut u8) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_utf32_to_utf8(buf, len, dst)
+pub unsafe fn convert_utf32_to_utf8(src: *const u32, len: usize, dst: *mut u8) -> usize {
+    crate::bindings::simdutf_convert_utf32_to_utf8(src, len, dst)
 }
 
 /// Convert possibly broken UTF-32 string into UTF-16 string.
@@ -506,14 +506,14 @@ pub unsafe fn convert_utf32_to_utf8(src: &[u32], dst: *mut u8) -> usize {
 /// This function uses native endianness.
 ///
 /// # Safety
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u32>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u16>()` bytes, where the `count` is the number of code units ([`u16`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_utf32_to_utf16(src: &[u32], dst: *mut u16) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_utf32_to_utf16(buf, len, dst)
+pub unsafe fn convert_utf32_to_utf16(src: *const u32, len: usize, dst: *mut u16) -> usize {
+    crate::bindings::simdutf_convert_utf32_to_utf16(src, len, dst)
 }
 
 /// Convert possibly broken UTF-32 string into UTF-16BE string.
@@ -526,14 +526,14 @@ pub unsafe fn convert_utf32_to_utf16(src: &[u32], dst: *mut u16) -> usize {
 /// This function uses native endianness.
 ///
 /// # Safety
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u32>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u16>()` bytes, where the `count` is the number of code units ([`u16`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_utf32_to_utf16be(src: &[u32], dst: *mut u16) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_utf32_to_utf16be(buf, len, dst)
+pub unsafe fn convert_utf32_to_utf16be(src: *const u32, len: usize, dst: *mut u16) -> usize {
+    crate::bindings::simdutf_convert_utf32_to_utf16be(src, len, dst)
 }
 
 /// Convert possibly broken UTF-32 string into UTF-16LE string.
@@ -546,14 +546,14 @@ pub unsafe fn convert_utf32_to_utf16be(src: &[u32], dst: *mut u16) -> usize {
 /// This function uses native endianness.
 ///
 /// # Safety
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u32>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u16>()` bytes, where the `count` is the number of code units ([`u16`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_utf32_to_utf16le(src: &[u32], dst: *mut u16) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_utf32_to_utf16le(buf, len, dst)
+pub unsafe fn convert_utf32_to_utf16le(src: *const u32, len: usize, dst: *mut u16) -> usize {
+    crate::bindings::simdutf_convert_utf32_to_utf16le(src, len, dst)
 }
 
 /// Convert valid UTF-8 string into UTF-16 string.
@@ -562,14 +562,14 @@ pub unsafe fn convert_utf32_to_utf16le(src: &[u32], dst: *mut u16) -> usize {
 ///
 /// # Safety
 /// + The input string must be valid UTF-8.
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u8>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u16>()` bytes, where the `count` is the number of code units ([`u16`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_valid_utf8_to_utf16(src: &[u8], dst: *mut u16) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_valid_utf8_to_utf16(buf, len, dst)
+pub unsafe fn convert_valid_utf8_to_utf16(src: *const u8, len: usize, dst: *mut u16) -> usize {
+    crate::bindings::simdutf_convert_valid_utf8_to_utf16(src, len, dst)
 }
 
 /// Convert valid UTF-8 string into UTF-16BE string.
@@ -578,14 +578,14 @@ pub unsafe fn convert_valid_utf8_to_utf16(src: &[u8], dst: *mut u16) -> usize {
 ///
 /// # Safety
 /// + The input string must be valid UTF-8.
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u8>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u16>()` bytes, where the `count` is the number of code units ([`u16`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_valid_utf8_to_utf16be(src: &[u8], dst: *mut u16) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_valid_utf8_to_utf16be(buf, len, dst)
+pub unsafe fn convert_valid_utf8_to_utf16be(src: *const u8, len: usize, dst: *mut u16) -> usize {
+    crate::bindings::simdutf_convert_valid_utf8_to_utf16be(src, len, dst)
 }
 
 /// Convert valid UTF-8 string into UTF-16LE string.
@@ -594,14 +594,14 @@ pub unsafe fn convert_valid_utf8_to_utf16be(src: &[u8], dst: *mut u16) -> usize 
 ///
 /// # Safety
 /// + The input string must be valid UTF-8.
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u8>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u16>()` bytes, where the `count` is the number of code units ([`u16`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_valid_utf8_to_utf16le(src: &[u8], dst: *mut u16) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_valid_utf8_to_utf16le(buf, len, dst)
+pub unsafe fn convert_valid_utf8_to_utf16le(src: *const u8, len: usize, dst: *mut u16) -> usize {
+    crate::bindings::simdutf_convert_valid_utf8_to_utf16le(src, len, dst)
 }
 
 /// Convert valid UTF-8 string into UTF-32 string.
@@ -610,14 +610,14 @@ pub unsafe fn convert_valid_utf8_to_utf16le(src: &[u8], dst: *mut u16) -> usize 
 ///
 /// # Safety
 /// + The input string must be valid UTF-8.
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u8>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u32>()` bytes, where the `count` is the number of code units ([`u32`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_valid_utf8_to_utf32(src: &[u8], dst: *mut u32) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_valid_utf8_to_utf32(buf, len, dst)
+pub unsafe fn convert_valid_utf8_to_utf32(src: *const u8, len: usize, dst: *mut u32) -> usize {
+    crate::bindings::simdutf_convert_valid_utf8_to_utf32(src, len, dst)
 }
 
 /// Convert valid UTF-16 string into UTF-8 string.
@@ -630,14 +630,14 @@ pub unsafe fn convert_valid_utf8_to_utf32(src: &[u8], dst: *mut u32) -> usize {
 ///
 /// # Safety
 /// + The input string must be valid UTF-16.
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_valid_utf16_to_utf8(src: &[u16], dst: *mut u8) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_valid_utf16_to_utf8(buf, len, dst)
+pub unsafe fn convert_valid_utf16_to_utf8(src: *const u16, len: usize, dst: *mut u8) -> usize {
+    crate::bindings::simdutf_convert_valid_utf16_to_utf8(src, len, dst)
 }
 
 /// Convert valid UTF-16 string into UTF-32 string.
@@ -650,14 +650,14 @@ pub unsafe fn convert_valid_utf16_to_utf8(src: &[u16], dst: *mut u8) -> usize {
 ///
 /// # Safety
 /// + The input string must be valid UTF-16.
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u32>()` bytes, where the `count` is the number of code units ([`u32`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_valid_utf16_to_utf32(src: &[u16], dst: *mut u32) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_valid_utf16_to_utf32(buf, len, dst)
+pub unsafe fn convert_valid_utf16_to_utf32(src: *const u16, len: usize, dst: *mut u32) -> usize {
+    crate::bindings::simdutf_convert_valid_utf16_to_utf32(src, len, dst)
 }
 
 /// Convert valid UTF-16BE string into UTF-8 string.
@@ -668,14 +668,14 @@ pub unsafe fn convert_valid_utf16_to_utf32(src: &[u16], dst: *mut u32) -> usize 
 ///
 /// # Safety
 /// + The input string must be valid UTF-16BE.
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_valid_utf16be_to_utf8(src: &[u16], dst: *mut u8) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_valid_utf16be_to_utf8(buf, len, dst)
+pub unsafe fn convert_valid_utf16be_to_utf8(src: *const u16, len: usize, dst: *mut u8) -> usize {
+    crate::bindings::simdutf_convert_valid_utf16be_to_utf8(src, len, dst)
 }
 
 /// Convert valid UTF-16BE string into UTF-32 string.
@@ -686,14 +686,14 @@ pub unsafe fn convert_valid_utf16be_to_utf8(src: &[u16], dst: *mut u8) -> usize 
 ///
 /// # Safety
 /// + The input string must be valid UTF-16BE.
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u32>()` bytes, where the `count` is the number of code units ([`u32`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_valid_utf16be_to_utf32(src: &[u16], dst: *mut u32) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_valid_utf16be_to_utf32(buf, len, dst)
+pub unsafe fn convert_valid_utf16be_to_utf32(src: *const u16, len: usize, dst: *mut u32) -> usize {
+    crate::bindings::simdutf_convert_valid_utf16be_to_utf32(src, len, dst)
 }
 
 /// Convert valid UTF-16LE string into UTF-8 string.
@@ -704,14 +704,14 @@ pub unsafe fn convert_valid_utf16be_to_utf32(src: &[u16], dst: *mut u32) -> usiz
 ///
 /// # Safety
 /// + The input string must be valid UTF-16LE.
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_valid_utf16le_to_utf8(src: &[u16], dst: *mut u8) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_valid_utf16le_to_utf8(buf, len, dst)
+pub unsafe fn convert_valid_utf16le_to_utf8(src: *const u16, len: usize, dst: *mut u8) -> usize {
+    crate::bindings::simdutf_convert_valid_utf16le_to_utf8(src, len, dst)
 }
 
 /// Convert valid UTF-16LE string into UTF-32 string.
@@ -722,14 +722,14 @@ pub unsafe fn convert_valid_utf16le_to_utf8(src: &[u16], dst: *mut u8) -> usize 
 ///
 /// # Safety
 /// + The input string must be valid UTF-16LE.
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u32>()` bytes, where the `count` is the number of code units ([`u32`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_valid_utf16le_to_utf32(src: &[u16], dst: *mut u32) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_valid_utf16le_to_utf32(buf, len, dst)
+pub unsafe fn convert_valid_utf16le_to_utf32(src: *const u16, len: usize, dst: *mut u32) -> usize {
+    crate::bindings::simdutf_convert_valid_utf16le_to_utf32(src, len, dst)
 }
 
 /// Convert valid UTF-32 string into UTF-8 string.
@@ -740,14 +740,14 @@ pub unsafe fn convert_valid_utf16le_to_utf32(src: &[u16], dst: *mut u32) -> usiz
 ///
 /// # Safety
 /// + The input string must be valid UTF-32.
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u32>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_valid_utf32_to_utf8(src: &[u32], dst: *mut u8) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_valid_utf32_to_utf8(buf, len, dst)
+pub unsafe fn convert_valid_utf32_to_utf8(src: *const u32, len: usize, dst: *mut u8) -> usize {
+    crate::bindings::simdutf_convert_valid_utf32_to_utf8(src, len, dst)
 }
 
 /// Convert valid UTF-32 string into UTF-16 string.
@@ -758,14 +758,14 @@ pub unsafe fn convert_valid_utf32_to_utf8(src: &[u32], dst: *mut u8) -> usize {
 ///
 /// # Safety
 /// + The input string must be valid UTF-32.
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u32>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u16>()` bytes, where the `count` is the number of code units ([`u16`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_valid_utf32_to_utf16(src: &[u32], dst: *mut u16) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_valid_utf32_to_utf16(buf, len, dst)
+pub unsafe fn convert_valid_utf32_to_utf16(src: *const u32, len: usize, dst: *mut u16) -> usize {
+    crate::bindings::simdutf_convert_valid_utf32_to_utf16(src, len, dst)
 }
 
 /// Convert valid UTF-32 string into UTF-16BE string.
@@ -776,14 +776,14 @@ pub unsafe fn convert_valid_utf32_to_utf16(src: &[u32], dst: *mut u16) -> usize 
 ///
 /// # Safety
 /// + The input string must be valid UTF-32.
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u32>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u16>()` bytes, where the `count` is the number of code units ([`u16`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_valid_utf32_to_utf16be(src: &[u32], dst: *mut u16) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_valid_utf32_to_utf16be(buf, len, dst)
+pub unsafe fn convert_valid_utf32_to_utf16be(src: *const u32, len: usize, dst: *mut u16) -> usize {
+    crate::bindings::simdutf_convert_valid_utf32_to_utf16be(src, len, dst)
 }
 
 /// Convert valid UTF-32 string into UTF-16LE string.
@@ -794,12 +794,12 @@ pub unsafe fn convert_valid_utf32_to_utf16be(src: &[u32], dst: *mut u16) -> usiz
 ///
 /// # Safety
 /// + The input string must be valid UTF-32.
-/// + `dst` must be non-null and properly aligned.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u32>()` bytes
 /// + `dst` must be valid for writes of `count * size_of::<u16>()` bytes, where the `count` is the number of code units ([`u16`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
 #[inline]
 #[must_use]
-pub unsafe fn convert_valid_utf32_to_utf16le(src: &[u32], dst: *mut u16) -> usize {
-    let len = src.len();
-    let buf = src.as_ptr();
-    crate::bindings::simdutf_convert_valid_utf32_to_utf16le(buf, len, dst)
+pub unsafe fn convert_valid_utf32_to_utf16le(src: *const u32, len: usize, dst: *mut u16) -> usize {
+    crate::bindings::simdutf_convert_valid_utf32_to_utf16le(src, len, dst)
 }
