@@ -4,6 +4,11 @@
 
 extern "C" {
 
+struct simdutfrs_result_t {
+    uint32_t error;
+    size_t count;
+};
+
 void simdutf_change_endianness_utf16(const char16_t *src, size_t len,
                                      char16_t *dst) {
     return simdutf::change_endianness_utf16(src, len, dst);
