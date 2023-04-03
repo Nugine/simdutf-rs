@@ -1,9 +1,9 @@
 mod common;
 mod gen;
 
+mod api;
 mod bindings;
 mod cpp;
-mod validate;
 
 use self::gen::Codegen;
 
@@ -19,8 +19,8 @@ fn main() {
         bindings::codegen(&mut gen);
     }
     {
-        let path = "crates/simdutf/src/validate.rs";
+        let path = "crates/simdutf/src/generated.rs";
         let mut gen = Codegen::create_file(path).unwrap();
-        validate::codegen(&mut gen);
+        api::codegen(&mut gen);
     }
 }

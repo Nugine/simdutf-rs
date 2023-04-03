@@ -1,2 +1,2 @@
-cpp/simdutf.h   linguist-vendored
-cpp/simdutf.cpp linguist-vendored
+crates/simdutf/cpp/simdutf.h   linguist-vendored
+crates/simdutf/cpp/simdutf.cpp linguist-vendored

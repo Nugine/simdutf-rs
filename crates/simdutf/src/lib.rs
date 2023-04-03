@@ -14,5 +14,5 @@
 
 mod bindings;
 
-mod validate;
-pub use self::validate::*;
+mod generated;
+pub use self::generated::*;
