@@ -803,19 +803,3 @@ pub unsafe fn convert_valid_utf32_to_utf16be(src: *const u32, len: usize, dst: *
 pub unsafe fn convert_valid_utf32_to_utf16le(src: *const u32, len: usize, dst: *mut u16) -> usize {
     crate::bindings::simdutf_convert_valid_utf32_to_utf16le(src, len, dst)
 }
-
-/// Change the endianness of UTF-16 string.
-///
-/// This function does not validate the input.
-///
-/// This function is not BOM-aware.
-///
-/// # Safety
-/// + `src` and `dst` must be non-null and properly aligned.
-/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes.
-/// + `dst` must be valid for writes of `len * size_of::<u16>()` bytes.
-/// + `src` and `dst` can alias.
-#[inline]
-pub unsafe fn change_endianness_utf16(src: *const u16, len: usize, dst: *mut u16) {
-    crate::bindings::simdutf_change_endianness_utf16(src, len, dst);
-}

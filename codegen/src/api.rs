@@ -13,7 +13,6 @@ pub fn codegen(g: &mut Codegen) {
     codegen_count(g);
     codegen_transcoding_length(g);
     codegen_transcoding_convert(g);
-    codegen_change_endianness(g);
 }
 
 fn decl_ne_and_bom(g: &mut Codegen, encoding: &str) {
@@ -176,30 +175,4 @@ fn codegen_transcoding_convert(g: &mut Codegen) {
         g.ln("}");
         g.lf();
     })
-}
-
-fn codegen_change_endianness(g: &mut Codegen) {
-    g.lines([
-        "/// Change the endianness of UTF-16 string.",
-        "///",
-        "/// This function does not validate the input.",
-        "///",
-        "/// This function is not BOM-aware.",
-        "///",
-    ]);
-
-    g.lines([
-        "/// # Safety",
-        "/// + `src` and `dst` must be non-null and properly aligned.",
-        "/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes.",
-        "/// + `dst` must be valid for writes of `len * size_of::<u16>()` bytes.",
-        "/// + `src` and `dst` can alias.",
-    ]);
-
-    g.lines([
-        "#[inline]",
-        "pub unsafe fn change_endianness_utf16(src: *const u16, len: usize, dst: *mut u16) {",
-        "crate::bindings::simdutf_change_endianness_utf16(src, len, dst);",
-        "}",
-    ])
 }

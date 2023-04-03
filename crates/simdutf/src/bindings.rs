@@ -54,5 +54,4 @@ extern "C" {
     pub fn simdutf_convert_valid_utf32_to_utf16be(src: *const u32, len: usize, dst: *mut u16) -> usize;
     pub fn simdutf_convert_valid_utf32_to_utf16le(src: *const u32, len: usize, dst: *mut u16) -> usize;
 
-    pub fn simdutf_change_endianness_utf16(src: *const u16, len: usize, dst: *mut u16);
 }

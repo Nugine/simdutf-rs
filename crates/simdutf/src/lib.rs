@@ -16,3 +16,6 @@ mod bindings;
 
 mod generated;
 pub use self::generated::*;
+
+mod extra;
+pub use self::extra::*;
