@@ -16,5 +16,15 @@ pub fn codegen(g: &mut Codegen) {
         g.lf();
     }
 
+    for encoding in ENCODINGS {
+        if matches!(encoding, "ascii" | "utf32") {
+            continue;
+        }
+
+        let ch = map_rs_char_type(encoding);
+        g.ln(f!("pub fn simdutf_count_{encoding}(buf: *const {ch}, len: usize) -> usize;"));
+        g.lf();
+    }
+
     g.ln("}");
 }

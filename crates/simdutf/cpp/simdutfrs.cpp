@@ -26,4 +26,20 @@ bool simdutf_validate_utf16le(const char16_t *buf, size_t len) {
 bool simdutf_validate_utf32(const char32_t *buf, size_t len) {
     return simdutf::validate_utf32(buf, len);
 }
+
+size_t simdutf_count_utf8(const char *buf, size_t len) {
+    return simdutf::count_utf8(buf, len);
+}
+
+size_t simdutf_count_utf16(const char16_t *buf, size_t len) {
+    return simdutf::count_utf16(buf, len);
+}
+
+size_t simdutf_count_utf16be(const char16_t *buf, size_t len) {
+    return simdutf::count_utf16be(buf, len);
+}
+
+size_t simdutf_count_utf16le(const char16_t *buf, size_t len) {
+    return simdutf::count_utf16le(buf, len);
+}
 }

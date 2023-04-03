@@ -20,5 +20,17 @@ pub fn codegen(g: &mut Codegen) {
         g.lf();
     }
 
+    for encoding in ENCODINGS {
+        if matches!(encoding, "ascii" | "utf32") {
+            continue;
+        }
+
+        let ch = map_cpp_char_type(encoding);
+        g.ln(f!("size_t simdutf_count_{encoding}(const {ch}* buf, size_t len) {{"));
+        g.ln(f!("    return simdutf::count_{encoding}(buf, len);"));
+        g.ln("}");
+        g.lf();
+    }
+
     g.ln("}");
 }
