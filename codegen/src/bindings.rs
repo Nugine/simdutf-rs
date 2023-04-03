@@ -36,6 +36,17 @@ pub fn codegen_cpp(g: &mut Codegen) {
         g.lf();
     });
 
+    for_each_transcoding_convert(|from, to| {
+        let from_ch = map_cpp_char_type(from);
+        let to_ch = map_cpp_char_type(to);
+        g.ln(f!(
+            "size_t simdutf_convert_{from}_to_{to}(const {from_ch}* src, size_t len, {to_ch}* dst) {{"
+        ));
+        g.ln(f!("    return simdutf::convert_{from}_to_{to}(src, len, dst);"));
+        g.ln("}");
+        g.lf();
+    });
+
     g.ln("}");
 }
 
@@ -63,6 +74,14 @@ pub fn codegen_rust(g: &mut Codegen) {
         g.ln(f!("pub fn simdutf_{to}_length_from_{from}(buf: *const {from_ch}, len: usize) -> usize;"));
     });
     g.lf();
+
+    for_each_transcoding_convert(|from, to| {
+        let from_ch = map_rs_char_type(from);
+        let to_ch = map_rs_char_type(to);
+        g.ln(f!(
+            "pub fn simdutf_convert_{from}_to_{to}(src: *const {from_ch}, len: usize, dst: *mut {to_ch}) -> usize;"
+        ));
+    });
 
     g.ln("}");
 }

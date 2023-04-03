@@ -12,6 +12,7 @@ pub fn codegen(g: &mut Codegen) {
     codegen_validate(g);
     codegen_count(g);
     codegen_transcoding_length(g);
+    codegen_transcoding_convert(g);
 }
 
 fn decl_ne_and_bom(g: &mut Codegen, encoding: &str) {
@@ -28,9 +29,7 @@ fn decl_ne_and_bom(g: &mut Codegen, encoding: &str) {
 
 fn decl_assume(g: &mut Codegen, encoding: &str) {
     let doc_name = map_doc_name(encoding);
-
-    g.ln("/// # Safety");
-    g.ln(f!("/// This function assumes that the input string is valid {doc_name}."));
+    g.ln(f!("/// + The input string must be valid {doc_name}."));
 }
 
 fn codegen_validate(g: &mut Codegen) {
@@ -47,9 +46,9 @@ fn codegen_validate(g: &mut Codegen) {
 
         g.ln("#[inline]");
         g.ln("#[must_use]");
-        g.ln(f!("pub fn validate_{encoding}(data: &[{ch}]) -> bool {{"));
-        g.ln("let len = data.len();");
-        g.ln("let buf = data.as_ptr();");
+        g.ln(f!("pub fn validate_{encoding}(src: &[{ch}]) -> bool {{"));
+        g.ln("let len = src.len();");
+        g.ln("let buf = src.as_ptr();");
         g.ln(f!("unsafe {{ crate::bindings::simdutf_validate_{encoding}(buf, len) }}"));
         g.ln("}");
         g.lf();
@@ -65,13 +64,15 @@ fn codegen_count(g: &mut Codegen) {
         g.ln("///");
 
         decl_ne_and_bom(g, encoding);
+
+        g.ln("/// # Safety");
         decl_assume(g, encoding);
 
         g.ln("#[inline]");
         g.ln("#[must_use]");
-        g.ln(f!("pub unsafe fn count_{encoding}(data: &[{ch}]) -> usize {{"));
-        g.ln("let len = data.len();");
-        g.ln("let buf = data.as_ptr();");
+        g.ln(f!("pub unsafe fn count_{encoding}(src: &[{ch}]) -> usize {{"));
+        g.ln("let len = src.len();");
+        g.ln("let buf = src.as_ptr();");
         g.ln(f!("crate::bindings::simdutf_count_{encoding}(buf, len)"));
         g.ln("}");
         g.lf();
@@ -94,14 +95,51 @@ fn codegen_transcoding_length(g: &mut Codegen) {
         }
 
         decl_ne_and_bom(g, from);
+
+        g.ln("/// # Safety");
         decl_assume(g, from);
 
         g.ln("#[inline]");
         g.ln("#[must_use]");
-        g.ln(f!("pub unsafe fn {to}_length_from_{from}(data: &[{from_ch}]) -> usize {{"));
-        g.ln("let len = data.len();");
-        g.ln("let buf = data.as_ptr();");
+        g.ln(f!("pub unsafe fn {to}_length_from_{from}(src: &[{from_ch}]) -> usize {{"));
+        g.ln("let len = src.len();");
+        g.ln("let buf = src.as_ptr();");
         g.ln(f!("crate::bindings::simdutf_{to}_length_from_{from}(buf, len)"));
+        g.ln("}");
+        g.lf();
+    })
+}
+
+fn codegen_transcoding_convert(g: &mut Codegen) {
+    for_each_transcoding_convert(|from, to| {
+        let from_ch = map_rs_char_type(from);
+        let to_ch = map_rs_char_type(to);
+        let from_doc_name = map_doc_name(from);
+        let to_doc_name = map_doc_name(to);
+
+        g.ln(f!("/// Convert possibly broken {from_doc_name} string into {to_doc_name} string."));
+        g.ln("///");
+        g.ln("/// During the conversion also validation of the input string is done.");
+        g.ln("/// This function is suitable to work with inputs from untrusted sources.");
+        g.ln("///");
+        g.ln(f!("/// Returns the number of written code units; \
+            0 if the input is not a valid {from_doc_name} string"));
+        g.ln("///");
+
+        decl_ne_and_bom(g, from);
+
+        g.ln("/// # Safety");
+        g.ln("/// + `dst` must be non-null and properly aligned.");
+        g.ln(f!("/// + `dst` must be valid for writes of `count * size_of::<{to_ch}>()` bytes, \
+            where the `count` is the number of code units ([`{to_ch}`]) after successful conversion."));
+
+        g.ln("#[inline]");
+        g.ln("#[must_use]");
+        g.ln(f!("pub unsafe fn \
+                convert_{from}_to_{to}(src: &[{from_ch}], dst: *mut {to_ch}) -> usize {{"));
+        g.ln("let len = src.len();");
+        g.ln("let buf = src.as_ptr();");
+        g.ln(f!("crate::bindings::simdutf_convert_{from}_to_{to}(buf, len, dst)"));
         g.ln("}");
         g.lf();
     })

@@ -24,4 +24,18 @@ extern "C" {
     pub fn simdutf_utf32_length_from_utf16be(buf: *const u16, len: usize) -> usize;
     pub fn simdutf_utf32_length_from_utf16le(buf: *const u16, len: usize) -> usize;
 
+    pub fn simdutf_convert_utf8_to_utf16(src: *const u8, len: usize, dst: *mut u16) -> usize;
+    pub fn simdutf_convert_utf8_to_utf16be(src: *const u8, len: usize, dst: *mut u16) -> usize;
+    pub fn simdutf_convert_utf8_to_utf16le(src: *const u8, len: usize, dst: *mut u16) -> usize;
+    pub fn simdutf_convert_utf8_to_utf32(src: *const u8, len: usize, dst: *mut u32) -> usize;
+    pub fn simdutf_convert_utf16_to_utf8(src: *const u16, len: usize, dst: *mut u8) -> usize;
+    pub fn simdutf_convert_utf16_to_utf32(src: *const u16, len: usize, dst: *mut u32) -> usize;
+    pub fn simdutf_convert_utf16be_to_utf8(src: *const u16, len: usize, dst: *mut u8) -> usize;
+    pub fn simdutf_convert_utf16be_to_utf32(src: *const u16, len: usize, dst: *mut u32) -> usize;
+    pub fn simdutf_convert_utf16le_to_utf8(src: *const u16, len: usize, dst: *mut u8) -> usize;
+    pub fn simdutf_convert_utf16le_to_utf32(src: *const u16, len: usize, dst: *mut u32) -> usize;
+    pub fn simdutf_convert_utf32_to_utf8(src: *const u32, len: usize, dst: *mut u8) -> usize;
+    pub fn simdutf_convert_utf32_to_utf16(src: *const u32, len: usize, dst: *mut u16) -> usize;
+    pub fn simdutf_convert_utf32_to_utf16be(src: *const u32, len: usize, dst: *mut u16) -> usize;
+    pub fn simdutf_convert_utf32_to_utf16le(src: *const u32, len: usize, dst: *mut u16) -> usize;
 }

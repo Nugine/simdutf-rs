@@ -70,3 +70,20 @@ pub fn for_each_transcoding_length(mut f: impl FnMut(&str, &str)) {
         }
     }
 }
+
+pub fn for_each_transcoding_convert(mut f: impl FnMut(&str, &str)) {
+    for from in ENCODINGS {
+        for to in ENCODINGS {
+            if from == "ascii" || to == "ascii" {
+                continue;
+            }
+            if from == to {
+                continue;
+            }
+            if from.starts_with("utf16") && to.starts_with("utf16") {
+                continue;
+            }
+            f(from, to)
+        }
+    }
+}
