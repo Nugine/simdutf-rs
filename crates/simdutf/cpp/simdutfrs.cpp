@@ -31,37 +31,37 @@ bool simdutf_validate_utf32(const char32_t *buf, size_t len) {
 simdutfrs_result_t simdutf_validate_ascii_with_errors(const char *buf,
                                                       size_t len) {
     const simdutf::result ans = simdutf::validate_ascii_with_errors(buf, len);
-    return {.error = static_cast<uint32_t>(ans.error), .count = ans.count};
+    return {static_cast<uint32_t>(ans.error), ans.count};
 }
 
 simdutfrs_result_t simdutf_validate_utf8_with_errors(const char *buf,
                                                      size_t len) {
     const simdutf::result ans = simdutf::validate_utf8_with_errors(buf, len);
-    return {.error = static_cast<uint32_t>(ans.error), .count = ans.count};
+    return {static_cast<uint32_t>(ans.error), ans.count};
 }
 
 simdutfrs_result_t simdutf_validate_utf16_with_errors(const char16_t *buf,
                                                       size_t len) {
     const simdutf::result ans = simdutf::validate_utf16_with_errors(buf, len);
-    return {.error = static_cast<uint32_t>(ans.error), .count = ans.count};
+    return {static_cast<uint32_t>(ans.error), ans.count};
 }
 
 simdutfrs_result_t simdutf_validate_utf16be_with_errors(const char16_t *buf,
                                                         size_t len) {
     const simdutf::result ans = simdutf::validate_utf16be_with_errors(buf, len);
-    return {.error = static_cast<uint32_t>(ans.error), .count = ans.count};
+    return {static_cast<uint32_t>(ans.error), ans.count};
 }
 
 simdutfrs_result_t simdutf_validate_utf16le_with_errors(const char16_t *buf,
                                                         size_t len) {
     const simdutf::result ans = simdutf::validate_utf16le_with_errors(buf, len);
-    return {.error = static_cast<uint32_t>(ans.error), .count = ans.count};
+    return {static_cast<uint32_t>(ans.error), ans.count};
 }
 
 simdutfrs_result_t simdutf_validate_utf32_with_errors(const char32_t *buf,
                                                       size_t len) {
     const simdutf::result ans = simdutf::validate_utf32_with_errors(buf, len);
-    return {.error = static_cast<uint32_t>(ans.error), .count = ans.count};
+    return {static_cast<uint32_t>(ans.error), ans.count};
 }
 
 size_t simdutf_count_utf8(const char *buf, size_t len) {
@@ -195,7 +195,7 @@ simdutfrs_result_t simdutf_convert_utf8_to_utf16_with_errors(const char *src,
                                                              char16_t *dst) {
     const simdutf::result ans =
         simdutf::convert_utf8_to_utf16_with_errors(src, len, dst);
-    return {.error = static_cast<uint32_t>(ans.error), .count = ans.count};
+    return {static_cast<uint32_t>(ans.error), ans.count};
 }
 
 simdutfrs_result_t simdutf_convert_utf8_to_utf16be_with_errors(const char *src,
@@ -203,7 +203,7 @@ simdutfrs_result_t simdutf_convert_utf8_to_utf16be_with_errors(const char *src,
                                                                char16_t *dst) {
     const simdutf::result ans =
         simdutf::convert_utf8_to_utf16be_with_errors(src, len, dst);
-    return {.error = static_cast<uint32_t>(ans.error), .count = ans.count};
+    return {static_cast<uint32_t>(ans.error), ans.count};
 }
 
 simdutfrs_result_t simdutf_convert_utf8_to_utf16le_with_errors(const char *src,
@@ -211,7 +211,7 @@ simdutfrs_result_t simdutf_convert_utf8_to_utf16le_with_errors(const char *src,
                                                                char16_t *dst) {
     const simdutf::result ans =
         simdutf::convert_utf8_to_utf16le_with_errors(src, len, dst);
-    return {.error = static_cast<uint32_t>(ans.error), .count = ans.count};
+    return {static_cast<uint32_t>(ans.error), ans.count};
 }
 
 simdutfrs_result_t simdutf_convert_utf8_to_utf32_with_errors(const char *src,
@@ -219,7 +219,7 @@ simdutfrs_result_t simdutf_convert_utf8_to_utf32_with_errors(const char *src,
                                                              char32_t *dst) {
     const simdutf::result ans =
         simdutf::convert_utf8_to_utf32_with_errors(src, len, dst);
-    return {.error = static_cast<uint32_t>(ans.error), .count = ans.count};
+    return {static_cast<uint32_t>(ans.error), ans.count};
 }
 
 simdutfrs_result_t
@@ -227,7 +227,7 @@ simdutf_convert_utf16_to_utf8_with_errors(const char16_t *src, size_t len,
                                           char *dst) {
     const simdutf::result ans =
         simdutf::convert_utf16_to_utf8_with_errors(src, len, dst);
-    return {.error = static_cast<uint32_t>(ans.error), .count = ans.count};
+    return {static_cast<uint32_t>(ans.error), ans.count};
 }
 
 simdutfrs_result_t
@@ -235,7 +235,7 @@ simdutf_convert_utf16_to_utf32_with_errors(const char16_t *src, size_t len,
                                            char32_t *dst) {
     const simdutf::result ans =
         simdutf::convert_utf16_to_utf32_with_errors(src, len, dst);
-    return {.error = static_cast<uint32_t>(ans.error), .count = ans.count};
+    return {static_cast<uint32_t>(ans.error), ans.count};
 }
 
 simdutfrs_result_t
@@ -243,7 +243,7 @@ simdutf_convert_utf16be_to_utf8_with_errors(const char16_t *src, size_t len,
                                             char *dst) {
     const simdutf::result ans =
         simdutf::convert_utf16be_to_utf8_with_errors(src, len, dst);
-    return {.error = static_cast<uint32_t>(ans.error), .count = ans.count};
+    return {static_cast<uint32_t>(ans.error), ans.count};
 }
 
 simdutfrs_result_t
@@ -251,7 +251,7 @@ simdutf_convert_utf16be_to_utf32_with_errors(const char16_t *src, size_t len,
                                              char32_t *dst) {
     const simdutf::result ans =
         simdutf::convert_utf16be_to_utf32_with_errors(src, len, dst);
-    return {.error = static_cast<uint32_t>(ans.error), .count = ans.count};
+    return {static_cast<uint32_t>(ans.error), ans.count};
 }
 
 simdutfrs_result_t
@@ -259,7 +259,7 @@ simdutf_convert_utf16le_to_utf8_with_errors(const char16_t *src, size_t len,
                                             char *dst) {
     const simdutf::result ans =
         simdutf::convert_utf16le_to_utf8_with_errors(src, len, dst);
-    return {.error = static_cast<uint32_t>(ans.error), .count = ans.count};
+    return {static_cast<uint32_t>(ans.error), ans.count};
 }
 
 simdutfrs_result_t
@@ -267,7 +267,7 @@ simdutf_convert_utf16le_to_utf32_with_errors(const char16_t *src, size_t len,
                                              char32_t *dst) {
     const simdutf::result ans =
         simdutf::convert_utf16le_to_utf32_with_errors(src, len, dst);
-    return {.error = static_cast<uint32_t>(ans.error), .count = ans.count};
+    return {static_cast<uint32_t>(ans.error), ans.count};
 }
 
 simdutfrs_result_t
@@ -275,7 +275,7 @@ simdutf_convert_utf32_to_utf8_with_errors(const char32_t *src, size_t len,
                                           char *dst) {
     const simdutf::result ans =
         simdutf::convert_utf32_to_utf8_with_errors(src, len, dst);
-    return {.error = static_cast<uint32_t>(ans.error), .count = ans.count};
+    return {static_cast<uint32_t>(ans.error), ans.count};
 }
 
 simdutfrs_result_t
@@ -283,7 +283,7 @@ simdutf_convert_utf32_to_utf16_with_errors(const char32_t *src, size_t len,
                                            char16_t *dst) {
     const simdutf::result ans =
         simdutf::convert_utf32_to_utf16_with_errors(src, len, dst);
-    return {.error = static_cast<uint32_t>(ans.error), .count = ans.count};
+    return {static_cast<uint32_t>(ans.error), ans.count};
 }
 
 simdutfrs_result_t
@@ -291,7 +291,7 @@ simdutf_convert_utf32_to_utf16be_with_errors(const char32_t *src, size_t len,
                                              char16_t *dst) {
     const simdutf::result ans =
         simdutf::convert_utf32_to_utf16be_with_errors(src, len, dst);
-    return {.error = static_cast<uint32_t>(ans.error), .count = ans.count};
+    return {static_cast<uint32_t>(ans.error), ans.count};
 }
 
 simdutfrs_result_t
@@ -299,7 +299,7 @@ simdutf_convert_utf32_to_utf16le_with_errors(const char32_t *src, size_t len,
                                              char16_t *dst) {
     const simdutf::result ans =
         simdutf::convert_utf32_to_utf16le_with_errors(src, len, dst);
-    return {.error = static_cast<uint32_t>(ans.error), .count = ans.count};
+    return {static_cast<uint32_t>(ans.error), ans.count};
 }
 
 size_t simdutf_convert_valid_utf8_to_utf16(const char *src, size_t len,

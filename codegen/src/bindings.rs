@@ -27,7 +27,7 @@ pub fn codegen_cpp(g: &mut Codegen) {
             "simdutfrs_result_t simdutf_validate_{encoding}_with_errors(const {ch}* buf, size_t len) {{"
         ));
         g.ln(f!("    const simdutf::result ans = simdutf::validate_{encoding}_with_errors(buf, len);"));
-        g.ln("    return { .error = static_cast<uint32_t>(ans.error), .count = ans.count };");
+        g.ln("    return { static_cast<uint32_t>(ans.error), ans.count };");
         g.ln("}");
         g.lf();
     });
@@ -68,7 +68,7 @@ pub fn codegen_cpp(g: &mut Codegen) {
         ));
         g.ln(f!("const simdutf::result ans = \
             simdutf::convert_{from}_to_{to}_with_errors(src, len, dst);"));
-        g.ln("    return { .error = static_cast<uint32_t>(ans.error), .count = ans.count };");
+        g.ln("    return { static_cast<uint32_t>(ans.error), ans.count };");
         g.ln("}");
         g.lf();
     });
