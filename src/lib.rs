@@ -11,11 +11,3 @@
     clippy::must_use_candidate
 )]
 #![cfg_attr(not(test), no_std)]
-
-mod bindings;
-
-mod api;
-pub use self::api::*;
-
-#[cfg(test)]
-mod tests;
