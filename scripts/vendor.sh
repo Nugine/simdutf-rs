@@ -3,8 +3,8 @@ pushd ./simdutf
     python3 ./singleheader/amalgamate.py
 popd
 
-cp ./simdutf/singleheader/simdutf.h   ./cpp
-cp ./simdutf/singleheader/simdutf.cpp ./cpp
+cp ./simdutf/singleheader/simdutf.h   ./crates/simdutf/cpp
+cp ./simdutf/singleheader/simdutf.cpp ./crates/simdutf/cpp
 
 pushd ./cpp
     sed -i 's/^\/\/ dofile.*//g' simdutf.h
