@@ -32,6 +32,13 @@ fn decl_assume(g: &mut Codegen, encoding: &str) {
     g.ln(f!("/// + The input string must be valid {doc_name}."));
 }
 
+fn decl_dst(g: &mut Codegen, encoding: &str) {
+    let to_ch = map_rs_char_type(encoding);
+    g.ln("/// + `dst` must be non-null and properly aligned.");
+    g.ln(f!("/// + `dst` must be valid for writes of `count * size_of::<{to_ch}>()` bytes, \
+        where the `count` is the number of code units ([`{to_ch}`]) after successful conversion."));
+}
+
 fn codegen_validate(g: &mut Codegen) {
     for_each_validate(|encoding| {
         let ch = map_rs_char_type(encoding);
@@ -129,9 +136,7 @@ fn codegen_transcoding_convert(g: &mut Codegen) {
         decl_ne_and_bom(g, from);
 
         g.ln("/// # Safety");
-        g.ln("/// + `dst` must be non-null and properly aligned.");
-        g.ln(f!("/// + `dst` must be valid for writes of `count * size_of::<{to_ch}>()` bytes, \
-            where the `count` is the number of code units ([`{to_ch}`]) after successful conversion."));
+        decl_dst(g, to);
 
         g.ln("#[inline]");
         g.ln("#[must_use]");
@@ -140,6 +145,34 @@ fn codegen_transcoding_convert(g: &mut Codegen) {
         g.ln("let len = src.len();");
         g.ln("let buf = src.as_ptr();");
         g.ln(f!("crate::bindings::simdutf_convert_{from}_to_{to}(buf, len, dst)"));
+        g.ln("}");
+        g.lf();
+    });
+
+    for_each_transcoding_convert(|from, to| {
+        let from_ch = map_rs_char_type(from);
+        let to_ch = map_rs_char_type(to);
+        let from_doc_name = map_doc_name(from);
+        let to_doc_name = map_doc_name(to);
+
+        g.ln(f!("/// Convert valid {from_doc_name} string into {to_doc_name} string."));
+        g.ln("///");
+        g.ln("/// Returns the number of written code units.");
+        g.ln("///");
+
+        decl_ne_and_bom(g, from);
+
+        g.ln("/// # Safety");
+        decl_assume(g, from);
+        decl_dst(g, to);
+
+        g.ln("#[inline]");
+        g.ln("#[must_use]");
+        g.ln(f!("pub unsafe fn \
+                convert_valid_{from}_to_{to}(src: &[{from_ch}], dst: *mut {to_ch}) -> usize {{"));
+        g.ln("let len = src.len();");
+        g.ln("let buf = src.as_ptr();");
+        g.ln(f!("crate::bindings::simdutf_convert_valid_{from}_to_{to}(buf, len, dst)"));
         g.ln("}");
         g.lf();
     })

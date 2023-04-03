@@ -555,3 +555,251 @@ pub unsafe fn convert_utf32_to_utf16le(src: &[u32], dst: *mut u16) -> usize {
     let buf = src.as_ptr();
     crate::bindings::simdutf_convert_utf32_to_utf16le(buf, len, dst)
 }
+
+/// Convert valid UTF-8 string into UTF-16 string.
+///
+/// Returns the number of written code units.
+///
+/// # Safety
+/// + The input string must be valid UTF-8.
+/// + `dst` must be non-null and properly aligned.
+/// + `dst` must be valid for writes of `count * size_of::<u16>()` bytes, where the `count` is the number of code units ([`u16`]) after successful conversion.
+#[inline]
+#[must_use]
+pub unsafe fn convert_valid_utf8_to_utf16(src: &[u8], dst: *mut u16) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    crate::bindings::simdutf_convert_valid_utf8_to_utf16(buf, len, dst)
+}
+
+/// Convert valid UTF-8 string into UTF-16BE string.
+///
+/// Returns the number of written code units.
+///
+/// # Safety
+/// + The input string must be valid UTF-8.
+/// + `dst` must be non-null and properly aligned.
+/// + `dst` must be valid for writes of `count * size_of::<u16>()` bytes, where the `count` is the number of code units ([`u16`]) after successful conversion.
+#[inline]
+#[must_use]
+pub unsafe fn convert_valid_utf8_to_utf16be(src: &[u8], dst: *mut u16) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    crate::bindings::simdutf_convert_valid_utf8_to_utf16be(buf, len, dst)
+}
+
+/// Convert valid UTF-8 string into UTF-16LE string.
+///
+/// Returns the number of written code units.
+///
+/// # Safety
+/// + The input string must be valid UTF-8.
+/// + `dst` must be non-null and properly aligned.
+/// + `dst` must be valid for writes of `count * size_of::<u16>()` bytes, where the `count` is the number of code units ([`u16`]) after successful conversion.
+#[inline]
+#[must_use]
+pub unsafe fn convert_valid_utf8_to_utf16le(src: &[u8], dst: *mut u16) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    crate::bindings::simdutf_convert_valid_utf8_to_utf16le(buf, len, dst)
+}
+
+/// Convert valid UTF-8 string into UTF-32 string.
+///
+/// Returns the number of written code units.
+///
+/// # Safety
+/// + The input string must be valid UTF-8.
+/// + `dst` must be non-null and properly aligned.
+/// + `dst` must be valid for writes of `count * size_of::<u32>()` bytes, where the `count` is the number of code units ([`u32`]) after successful conversion.
+#[inline]
+#[must_use]
+pub unsafe fn convert_valid_utf8_to_utf32(src: &[u8], dst: *mut u32) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    crate::bindings::simdutf_convert_valid_utf8_to_utf32(buf, len, dst)
+}
+
+/// Convert valid UTF-16 string into UTF-8 string.
+///
+/// Returns the number of written code units.
+///
+/// This function uses native endianness.
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// + The input string must be valid UTF-16.
+/// + `dst` must be non-null and properly aligned.
+/// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+#[inline]
+#[must_use]
+pub unsafe fn convert_valid_utf16_to_utf8(src: &[u16], dst: *mut u8) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    crate::bindings::simdutf_convert_valid_utf16_to_utf8(buf, len, dst)
+}
+
+/// Convert valid UTF-16 string into UTF-32 string.
+///
+/// Returns the number of written code units.
+///
+/// This function uses native endianness.
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// + The input string must be valid UTF-16.
+/// + `dst` must be non-null and properly aligned.
+/// + `dst` must be valid for writes of `count * size_of::<u32>()` bytes, where the `count` is the number of code units ([`u32`]) after successful conversion.
+#[inline]
+#[must_use]
+pub unsafe fn convert_valid_utf16_to_utf32(src: &[u16], dst: *mut u32) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    crate::bindings::simdutf_convert_valid_utf16_to_utf32(buf, len, dst)
+}
+
+/// Convert valid UTF-16BE string into UTF-8 string.
+///
+/// Returns the number of written code units.
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// + The input string must be valid UTF-16BE.
+/// + `dst` must be non-null and properly aligned.
+/// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+#[inline]
+#[must_use]
+pub unsafe fn convert_valid_utf16be_to_utf8(src: &[u16], dst: *mut u8) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    crate::bindings::simdutf_convert_valid_utf16be_to_utf8(buf, len, dst)
+}
+
+/// Convert valid UTF-16BE string into UTF-32 string.
+///
+/// Returns the number of written code units.
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// + The input string must be valid UTF-16BE.
+/// + `dst` must be non-null and properly aligned.
+/// + `dst` must be valid for writes of `count * size_of::<u32>()` bytes, where the `count` is the number of code units ([`u32`]) after successful conversion.
+#[inline]
+#[must_use]
+pub unsafe fn convert_valid_utf16be_to_utf32(src: &[u16], dst: *mut u32) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    crate::bindings::simdutf_convert_valid_utf16be_to_utf32(buf, len, dst)
+}
+
+/// Convert valid UTF-16LE string into UTF-8 string.
+///
+/// Returns the number of written code units.
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// + The input string must be valid UTF-16LE.
+/// + `dst` must be non-null and properly aligned.
+/// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+#[inline]
+#[must_use]
+pub unsafe fn convert_valid_utf16le_to_utf8(src: &[u16], dst: *mut u8) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    crate::bindings::simdutf_convert_valid_utf16le_to_utf8(buf, len, dst)
+}
+
+/// Convert valid UTF-16LE string into UTF-32 string.
+///
+/// Returns the number of written code units.
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// + The input string must be valid UTF-16LE.
+/// + `dst` must be non-null and properly aligned.
+/// + `dst` must be valid for writes of `count * size_of::<u32>()` bytes, where the `count` is the number of code units ([`u32`]) after successful conversion.
+#[inline]
+#[must_use]
+pub unsafe fn convert_valid_utf16le_to_utf32(src: &[u16], dst: *mut u32) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    crate::bindings::simdutf_convert_valid_utf16le_to_utf32(buf, len, dst)
+}
+
+/// Convert valid UTF-32 string into UTF-8 string.
+///
+/// Returns the number of written code units.
+///
+/// This function uses native endianness.
+///
+/// # Safety
+/// + The input string must be valid UTF-32.
+/// + `dst` must be non-null and properly aligned.
+/// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+#[inline]
+#[must_use]
+pub unsafe fn convert_valid_utf32_to_utf8(src: &[u32], dst: *mut u8) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    crate::bindings::simdutf_convert_valid_utf32_to_utf8(buf, len, dst)
+}
+
+/// Convert valid UTF-32 string into UTF-16 string.
+///
+/// Returns the number of written code units.
+///
+/// This function uses native endianness.
+///
+/// # Safety
+/// + The input string must be valid UTF-32.
+/// + `dst` must be non-null and properly aligned.
+/// + `dst` must be valid for writes of `count * size_of::<u16>()` bytes, where the `count` is the number of code units ([`u16`]) after successful conversion.
+#[inline]
+#[must_use]
+pub unsafe fn convert_valid_utf32_to_utf16(src: &[u32], dst: *mut u16) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    crate::bindings::simdutf_convert_valid_utf32_to_utf16(buf, len, dst)
+}
+
+/// Convert valid UTF-32 string into UTF-16BE string.
+///
+/// Returns the number of written code units.
+///
+/// This function uses native endianness.
+///
+/// # Safety
+/// + The input string must be valid UTF-32.
+/// + `dst` must be non-null and properly aligned.
+/// + `dst` must be valid for writes of `count * size_of::<u16>()` bytes, where the `count` is the number of code units ([`u16`]) after successful conversion.
+#[inline]
+#[must_use]
+pub unsafe fn convert_valid_utf32_to_utf16be(src: &[u32], dst: *mut u16) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    crate::bindings::simdutf_convert_valid_utf32_to_utf16be(buf, len, dst)
+}
+
+/// Convert valid UTF-32 string into UTF-16LE string.
+///
+/// Returns the number of written code units.
+///
+/// This function uses native endianness.
+///
+/// # Safety
+/// + The input string must be valid UTF-32.
+/// + `dst` must be non-null and properly aligned.
+/// + `dst` must be valid for writes of `count * size_of::<u16>()` bytes, where the `count` is the number of code units ([`u16`]) after successful conversion.
+#[inline]
+#[must_use]
+pub unsafe fn convert_valid_utf32_to_utf16le(src: &[u32], dst: *mut u16) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    crate::bindings::simdutf_convert_valid_utf32_to_utf16le(buf, len, dst)
+}
