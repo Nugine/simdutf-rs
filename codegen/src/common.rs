@@ -36,11 +36,37 @@ pub fn map_doc_name(encoding: &str) -> &str {
     }
 }
 
-// pub fn map_length_unit(encoding: &str) -> &str {
-//     match encoding {
-//         "ascii" | "utf8" => "bytes",
-//         "utf16" | "utf16be" | "utf16le" => "number of 2-byte words ([`u16`])",
-//         "utf32" => "number of 4-byte words ([`u32`])",
-//         _ => unimplemented!(),
-//     }
-// }
+pub fn for_each_validate(mut f: impl FnMut(&str)) {
+    for encoding in ENCODINGS {
+        f(encoding);
+    }
+}
+
+pub fn for_each_count(mut f: impl FnMut(&str)) {
+    for encoding in ENCODINGS {
+        if matches!(encoding, "ascii" | "utf32") {
+            continue;
+        }
+        f(encoding);
+    }
+}
+
+pub fn for_each_transcoding_length(mut f: impl FnMut(&str, &str)) {
+    for to in ENCODINGS {
+        for from in ENCODINGS {
+            if from == "ascii" || to == "ascii" {
+                continue;
+            }
+            if from == to {
+                continue;
+            }
+            if matches!(to, "utf16le" | "utf16be") {
+                continue;
+            }
+            if from.starts_with("utf16") && to.starts_with("utf16") {
+                continue;
+            }
+            f(from, to)
+        }
+    }
+}

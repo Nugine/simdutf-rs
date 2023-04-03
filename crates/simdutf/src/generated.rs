@@ -76,7 +76,7 @@ pub fn validate_utf32(data: &[u32]) -> bool {
     unsafe { crate::bindings::simdutf_validate_utf32(buf, len) }
 }
 
-/// Count the number of code points (characters) in the UTF-8 string.
+/// Count the number of code points in the UTF-8 string.
 ///
 /// # Safety
 /// This function assumes that the input string is valid UTF-8.
@@ -85,10 +85,10 @@ pub fn validate_utf32(data: &[u32]) -> bool {
 pub unsafe fn count_utf8(data: &[u8]) -> usize {
     let len = data.len();
     let buf = data.as_ptr();
-    unsafe { crate::bindings::simdutf_count_utf8(buf, len) }
+    crate::bindings::simdutf_count_utf8(buf, len)
 }
 
-/// Count the number of code points (characters) in the UTF-16 string.
+/// Count the number of code points in the UTF-16 string.
 ///
 /// This function uses native endianness.
 ///
@@ -101,10 +101,10 @@ pub unsafe fn count_utf8(data: &[u8]) -> usize {
 pub unsafe fn count_utf16(data: &[u16]) -> usize {
     let len = data.len();
     let buf = data.as_ptr();
-    unsafe { crate::bindings::simdutf_count_utf16(buf, len) }
+    crate::bindings::simdutf_count_utf16(buf, len)
 }
 
-/// Count the number of code points (characters) in the UTF-16BE string.
+/// Count the number of code points in the UTF-16BE string.
 ///
 /// This function is not BOM-aware.
 ///
@@ -115,10 +115,10 @@ pub unsafe fn count_utf16(data: &[u16]) -> usize {
 pub unsafe fn count_utf16be(data: &[u16]) -> usize {
     let len = data.len();
     let buf = data.as_ptr();
-    unsafe { crate::bindings::simdutf_count_utf16be(buf, len) }
+    crate::bindings::simdutf_count_utf16be(buf, len)
 }
 
-/// Count the number of code points (characters) in the UTF-16LE string.
+/// Count the number of code points in the UTF-16LE string.
 ///
 /// This function is not BOM-aware.
 ///
@@ -129,5 +129,145 @@ pub unsafe fn count_utf16be(data: &[u16]) -> usize {
 pub unsafe fn count_utf16le(data: &[u16]) -> usize {
     let len = data.len();
     let buf = data.as_ptr();
-    unsafe { crate::bindings::simdutf_count_utf16le(buf, len) }
+    crate::bindings::simdutf_count_utf16le(buf, len)
+}
+
+/// Compute the number of code points that this UTF-16 string would require in UTF-8 format.
+///
+/// This function uses native endianness.
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// This function assumes that the input string is valid UTF-16.
+#[inline]
+#[must_use]
+pub unsafe fn utf8_length_from_utf16(data: &[u16]) -> usize {
+    let len = data.len();
+    let buf = data.as_ptr();
+    crate::bindings::simdutf_utf8_length_from_utf16(buf, len)
+}
+
+/// Compute the number of code points that this UTF-16BE string would require in UTF-8 format.
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// This function assumes that the input string is valid UTF-16BE.
+#[inline]
+#[must_use]
+pub unsafe fn utf8_length_from_utf16be(data: &[u16]) -> usize {
+    let len = data.len();
+    let buf = data.as_ptr();
+    crate::bindings::simdutf_utf8_length_from_utf16be(buf, len)
+}
+
+/// Compute the number of code points that this UTF-16LE string would require in UTF-8 format.
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// This function assumes that the input string is valid UTF-16LE.
+#[inline]
+#[must_use]
+pub unsafe fn utf8_length_from_utf16le(data: &[u16]) -> usize {
+    let len = data.len();
+    let buf = data.as_ptr();
+    crate::bindings::simdutf_utf8_length_from_utf16le(buf, len)
+}
+
+/// Compute the number of code points that this UTF-32 string would require in UTF-8 format.
+///
+/// This function uses native endianness.
+///
+/// # Safety
+/// This function assumes that the input string is valid UTF-32.
+#[inline]
+#[must_use]
+pub unsafe fn utf8_length_from_utf32(data: &[u32]) -> usize {
+    let len = data.len();
+    let buf = data.as_ptr();
+    crate::bindings::simdutf_utf8_length_from_utf32(buf, len)
+}
+
+/// Compute the number of code points that this UTF-8 string would require in UTF-16 format.
+///
+/// # Safety
+/// This function assumes that the input string is valid UTF-8.
+#[inline]
+#[must_use]
+pub unsafe fn utf16_length_from_utf8(data: &[u8]) -> usize {
+    let len = data.len();
+    let buf = data.as_ptr();
+    crate::bindings::simdutf_utf16_length_from_utf8(buf, len)
+}
+
+/// Compute the number of code points that this UTF-32 string would require in UTF-16 format.
+///
+/// This function uses native endianness.
+///
+/// # Safety
+/// This function assumes that the input string is valid UTF-32.
+#[inline]
+#[must_use]
+pub unsafe fn utf16_length_from_utf32(data: &[u32]) -> usize {
+    let len = data.len();
+    let buf = data.as_ptr();
+    crate::bindings::simdutf_utf16_length_from_utf32(buf, len)
+}
+
+/// Compute the number of code points that this UTF-8 string would require in UTF-32 format.
+///
+/// # Safety
+/// This function assumes that the input string is valid UTF-8.
+#[inline]
+#[must_use]
+pub unsafe fn utf32_length_from_utf8(data: &[u8]) -> usize {
+    let len = data.len();
+    let buf = data.as_ptr();
+    crate::bindings::simdutf_utf32_length_from_utf8(buf, len)
+}
+
+/// Compute the number of code points that this UTF-16 string would require in UTF-32 format.
+///
+/// This function uses native endianness.
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// This function assumes that the input string is valid UTF-16.
+#[inline]
+#[must_use]
+pub unsafe fn utf32_length_from_utf16(data: &[u16]) -> usize {
+    let len = data.len();
+    let buf = data.as_ptr();
+    crate::bindings::simdutf_utf32_length_from_utf16(buf, len)
+}
+
+/// Compute the number of code points that this UTF-16BE string would require in UTF-32 format.
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// This function assumes that the input string is valid UTF-16BE.
+#[inline]
+#[must_use]
+pub unsafe fn utf32_length_from_utf16be(data: &[u16]) -> usize {
+    let len = data.len();
+    let buf = data.as_ptr();
+    crate::bindings::simdutf_utf32_length_from_utf16be(buf, len)
+}
+
+/// Compute the number of code points that this UTF-16LE string would require in UTF-32 format.
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// This function assumes that the input string is valid UTF-16LE.
+#[inline]
+#[must_use]
+pub unsafe fn utf32_length_from_utf16le(data: &[u16]) -> usize {
+    let len = data.len();
+    let buf = data.as_ptr();
+    crate::bindings::simdutf_utf32_length_from_utf16le(buf, len)
 }
