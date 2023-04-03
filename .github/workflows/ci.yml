@@ -18,12 +18,10 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: stable
-          target: ${{ matrix.target }}
-          override: true
       - name: Rust test
         run: |
           cargo test
@@ -32,16 +30,11 @@ jobs:
   develop:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: stable
-          target: ${{ matrix.target }}
-          override: true
-      - name: Rust components
-        run: |
-          rustup component add rustfmt
-          rustup component add clippy
+          components: rustfmt, clippy
       - name: Rust check
         run: |
           cargo fmt --all -- --check
