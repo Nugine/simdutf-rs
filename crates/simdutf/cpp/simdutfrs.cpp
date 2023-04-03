@@ -222,4 +222,9 @@ size_t simdutf_convert_valid_utf32_to_utf16le(const char32_t *src, size_t len,
                                               char16_t *dst) {
     return simdutf::convert_valid_utf32_to_utf16le(src, len, dst);
 }
+
+void simdutf_change_endianness_utf16(const char16_t *src, size_t len,
+                                     char16_t *dst) {
+    simdutf::change_endianness_utf16(src, len, dst);
+}
 }

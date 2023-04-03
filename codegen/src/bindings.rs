@@ -58,6 +58,14 @@ pub fn codegen_cpp(g: &mut Codegen) {
         g.lf();
     });
 
+    {
+        g.lines([
+            "void simdutf_change_endianness_utf16(const char16_t* src, size_t len, char16_t* dst) {",
+            "    simdutf::change_endianness_utf16(src, len, dst);",
+            "}",
+        ])
+    }
+
     g.ln("}");
 }
 
@@ -103,6 +111,10 @@ pub fn codegen_rust(g: &mut Codegen) {
         ));
     });
     g.lf();
+
+    {
+        g.ln("pub fn simdutf_change_endianness_utf16(src: *const u16, len: usize, dst: *mut u16);");
+    }
 
     g.ln("}");
 }
