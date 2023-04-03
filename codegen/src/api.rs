@@ -84,8 +84,14 @@ fn codegen_transcoding_length(g: &mut Codegen) {
         let from_doc_name = map_doc_name(from);
         let to_doc_name = map_doc_name(to);
 
-        g.ln(f!("/// Compute the number of code points that this {from_doc_name} string would require in {to_doc_name} format."));
+        g.ln(f!("/// Count the number of code units that \
+             the {from_doc_name} string would require in {to_doc_name} format."));
         g.ln("///");
+
+        if to == "utf32" {
+            g.ln(f!("/// This function is equivalent to [`count_{from}`]."));
+            g.ln("///");
+        }
 
         decl_ne_and_bom(g, from);
         decl_assume(g, from);

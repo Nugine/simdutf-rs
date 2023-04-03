@@ -132,7 +132,7 @@ pub unsafe fn count_utf16le(data: &[u16]) -> usize {
     crate::bindings::simdutf_count_utf16le(buf, len)
 }
 
-/// Compute the number of code points that this UTF-16 string would require in UTF-8 format.
+/// Count the number of code units that the UTF-16 string would require in UTF-8 format.
 ///
 /// This function uses native endianness.
 ///
@@ -148,7 +148,7 @@ pub unsafe fn utf8_length_from_utf16(data: &[u16]) -> usize {
     crate::bindings::simdutf_utf8_length_from_utf16(buf, len)
 }
 
-/// Compute the number of code points that this UTF-16BE string would require in UTF-8 format.
+/// Count the number of code units that the UTF-16BE string would require in UTF-8 format.
 ///
 /// This function is not BOM-aware.
 ///
@@ -162,7 +162,7 @@ pub unsafe fn utf8_length_from_utf16be(data: &[u16]) -> usize {
     crate::bindings::simdutf_utf8_length_from_utf16be(buf, len)
 }
 
-/// Compute the number of code points that this UTF-16LE string would require in UTF-8 format.
+/// Count the number of code units that the UTF-16LE string would require in UTF-8 format.
 ///
 /// This function is not BOM-aware.
 ///
@@ -176,7 +176,7 @@ pub unsafe fn utf8_length_from_utf16le(data: &[u16]) -> usize {
     crate::bindings::simdutf_utf8_length_from_utf16le(buf, len)
 }
 
-/// Compute the number of code points that this UTF-32 string would require in UTF-8 format.
+/// Count the number of code units that the UTF-32 string would require in UTF-8 format.
 ///
 /// This function uses native endianness.
 ///
@@ -190,7 +190,7 @@ pub unsafe fn utf8_length_from_utf32(data: &[u32]) -> usize {
     crate::bindings::simdutf_utf8_length_from_utf32(buf, len)
 }
 
-/// Compute the number of code points that this UTF-8 string would require in UTF-16 format.
+/// Count the number of code units that the UTF-8 string would require in UTF-16 format.
 ///
 /// # Safety
 /// This function assumes that the input string is valid UTF-8.
@@ -202,7 +202,7 @@ pub unsafe fn utf16_length_from_utf8(data: &[u8]) -> usize {
     crate::bindings::simdutf_utf16_length_from_utf8(buf, len)
 }
 
-/// Compute the number of code points that this UTF-32 string would require in UTF-16 format.
+/// Count the number of code units that the UTF-32 string would require in UTF-16 format.
 ///
 /// This function uses native endianness.
 ///
@@ -216,7 +216,9 @@ pub unsafe fn utf16_length_from_utf32(data: &[u32]) -> usize {
     crate::bindings::simdutf_utf16_length_from_utf32(buf, len)
 }
 
-/// Compute the number of code points that this UTF-8 string would require in UTF-32 format.
+/// Count the number of code units that the UTF-8 string would require in UTF-32 format.
+///
+/// This function is equivalent to [`count_utf8`].
 ///
 /// # Safety
 /// This function assumes that the input string is valid UTF-8.
@@ -228,7 +230,9 @@ pub unsafe fn utf32_length_from_utf8(data: &[u8]) -> usize {
     crate::bindings::simdutf_utf32_length_from_utf8(buf, len)
 }
 
-/// Compute the number of code points that this UTF-16 string would require in UTF-32 format.
+/// Count the number of code units that the UTF-16 string would require in UTF-32 format.
+///
+/// This function is equivalent to [`count_utf16`].
 ///
 /// This function uses native endianness.
 ///
@@ -244,7 +248,9 @@ pub unsafe fn utf32_length_from_utf16(data: &[u16]) -> usize {
     crate::bindings::simdutf_utf32_length_from_utf16(buf, len)
 }
 
-/// Compute the number of code points that this UTF-16BE string would require in UTF-32 format.
+/// Count the number of code units that the UTF-16BE string would require in UTF-32 format.
+///
+/// This function is equivalent to [`count_utf16be`].
 ///
 /// This function is not BOM-aware.
 ///
@@ -258,7 +264,9 @@ pub unsafe fn utf32_length_from_utf16be(data: &[u16]) -> usize {
     crate::bindings::simdutf_utf32_length_from_utf16be(buf, len)
 }
 
-/// Compute the number of code points that this UTF-16LE string would require in UTF-32 format.
+/// Count the number of code units that the UTF-16LE string would require in UTF-32 format.
+///
+/// This function is equivalent to [`count_utf16le`].
 ///
 /// This function is not BOM-aware.
 ///
