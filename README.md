@@ -6,7 +6,7 @@
 
 Unicode validation and transcoding at billions of characters per second.
 
-This crate is the rust binding of [simdutf](https://github.com/simdutf/simdutf).
+This crate is the Rust binding of [simdutf](https://github.com/simdutf/simdutf).
 
 [crates.io]: https://crates.io/crates/simdutf
 [Latest Version]: https://img.shields.io/crates/v/simdutf.svg

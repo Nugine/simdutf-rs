@@ -1,6 +1,6 @@
 //! Unicode validation and transcoding at billions of characters per second.
 //!
-//! This crate is the rust binding of [simdutf](https://github.com/simdutf/simdutf).
+//! This crate is the Rust binding of [simdutf](https://github.com/simdutf/simdutf).
 
 #![deny(
     missing_docs,
@@ -11,3 +11,8 @@
     clippy::must_use_candidate
 )]
 #![cfg_attr(not(test), no_std)]
+
+mod bindings;
+
+mod validate;
+pub use self::validate::*;

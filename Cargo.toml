@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/*"]
+members = ["crates/*", "codegen"]
 
 [profile.release]
 lto = "fat"
