@@ -53,7 +53,7 @@ fn test_utf8_to_utf16() {
         {
             let output = &buf;
             let expected = &utf16;
-            assert_eq!(output, &*expected);
+            assert_eq!(output, expected);
         }
 
         {
