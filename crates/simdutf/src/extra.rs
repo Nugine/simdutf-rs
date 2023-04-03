@@ -47,9 +47,12 @@ bitflags::bitflags! {
 }
 
 /// Autodetect the encoding of the input.
+///
+/// This function returns a single encoding.
+///
 #[inline]
 #[must_use]
-pub fn autodetect_encoding(src: &[u8]) -> Encoding {
+pub fn autodetect_single_encoding(src: &[u8]) -> Encoding {
     unsafe {
         let ans = simdutf_autodetect_encoding(src.as_ptr(), src.len());
         Encoding::from_bits_retain(ans)
@@ -61,7 +64,7 @@ pub fn autodetect_encoding(src: &[u8]) -> Encoding {
 /// This function returns a bitset of possible encodings.
 #[inline]
 #[must_use]
-pub fn detect_encodings(src: &[u8]) -> Encoding {
+pub fn autodetect_encodings(src: &[u8]) -> Encoding {
     unsafe {
         let ans = simdutf_detect_encodings(src.as_ptr(), src.len());
         Encoding::from_bits_retain(ans)
