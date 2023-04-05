@@ -41,3 +41,20 @@ fn utf8_to_utf16() {
         assert_eq!(&buf, &utf16);
     }
 }
+
+#[test]
+fn utf16_to_utf8() {
+    let expected = "hello你好";
+    let input: Vec<u16> = expected.encode_utf16().collect();
+
+    let mut buf = vec![0; expected.len()];
+    let written = unsafe {
+        let len = input.len();
+        let src = input.as_ptr();
+        let dst = buf.as_mut_ptr();
+        simdutf::convert_valid_utf16_to_utf8(src, len, dst)
+    };
+
+    assert_eq!(written, expected.len());
+    assert_eq!(&buf[..written], expected.as_bytes());
+}
