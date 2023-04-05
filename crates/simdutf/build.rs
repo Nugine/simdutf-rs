@@ -1,8 +1,6 @@
 fn cpp11(cc: &mut cc::Build) {
     cc.cpp(true);
-    if cfg!(all(windows, target_env = "msvc")) {
-        cc.flag("/std:c++11");
-    } else {
+    if cfg!(not(all(windows, target_env = "msvc"))) {
         cc.flag("-std=c++11");
     }
 }
