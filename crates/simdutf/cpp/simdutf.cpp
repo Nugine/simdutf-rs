@@ -1,4 +1,4 @@
-/* auto-generated on 2023-04-02 19:38:07 -0400. Do not edit! */
+/* auto-generated on 2023-04-04 14:27:50 -0400. Do not edit! */
 
 /* begin file src/simdutf.cpp */
 #include "simdutf.h"
@@ -11299,8 +11299,10 @@ template <endianness endian>
 inline result rewind_and_convert_with_errors(size_t prior_bytes, const char* buf, size_t len, char16_t* utf16_output) {
   size_t extra_len{0};
   // We potentially need to go back in time and find a leading byte.
-  size_t how_far_back = 3; // 3 bytes in the past + current position
-  if(how_far_back >= prior_bytes) { how_far_back = prior_bytes; }
+  // In theory '3' would be sufficient, but sometimes the error can go back quite far.
+  size_t how_far_back = prior_bytes;
+  // size_t how_far_back = 3; // 3 bytes in the past + current position
+  // if(how_far_back >= prior_bytes) { how_far_back = prior_bytes; }
   bool found_leading_bytes{false};
   // important: it is i <= how_far_back and not 'i < how_far_back'.
   for(size_t i = 0; i <= how_far_back; i++) {
@@ -14231,7 +14233,7 @@ simdutf_warn_unused size_t convert_valid(const char* input, size_t size,
         utf8_end_of_code_point_mask >>= consumed;
       }
       // At this point there may remain between 0 and 12 bytes in the
-      // 64-byte block.These bytes will be processed again. So we have an
+      // 64-byte block. These bytes will be processed again. So we have an
       // 80% efficiency (in the worst case). In practice we expect an
       // 85% to 90% efficiency.
     }
@@ -14377,7 +14379,19 @@ using namespace simd;
     simdutf_really_inline size_t convert(const char* in, size_t size, char16_t* utf16_output) {
       size_t pos = 0;
       char16_t* start{utf16_output};
-      const size_t safety_margin = 16; // to avoid overruns!
+      // In the worst case, we have the haswell kernel which can cause an overflow of
+      // 8 bytes when calling convert_masked_utf8_to_utf16. If you skip the last 16 bytes,
+      // and if the data is valid, then it is entirely safe because 16 UTF-8 bytes generate
+      // much more than 8 bytes. However, you cannot generally assume that you have valid
+      // UTF-8 input, so we are going to go back from the end counting 8 leading bytes,
+      // to give us a good margin.
+      size_t leading_byte = 0;
+      size_t margin = size;
+      for(; margin > 0 && leading_byte < 8; margin--) {
+        leading_byte += (int8_t(in[margin-1]) > -65);
+      }
+      // If the input is long enough, then we have that margin-1 is the eight last leading byte.
+      const size_t safety_margin = size - margin + 1; // to avoid overruns!
       while(pos + 64 + safety_margin <= size) {
         simd8x64<int8_t> input(reinterpret_cast<const int8_t *>(in + pos));
         if(input.is_ascii()) {
@@ -14422,7 +14436,7 @@ using namespace simd;
             utf8_end_of_code_point_mask >>= consumed;
           }
           // At this point there may remain between 0 and 12 bytes in the
-          // 64-byte block.These bytes will be processed again. So we have an
+          // 64-byte block. These bytes will be processed again. So we have an
           // 80% efficiency (in the worst case). In practice we expect an
           // 85% to 90% efficiency.
         }
@@ -14440,7 +14454,19 @@ using namespace simd;
     simdutf_really_inline result convert_with_errors(const char* in, size_t size, char16_t* utf16_output) {
       size_t pos = 0;
       char16_t* start{utf16_output};
-      const size_t safety_margin = 16; // to avoid overruns!
+      // In the worst case, we have the haswell kernel which can cause an overflow of
+      // 8 bytes when calling convert_masked_utf8_to_utf16. If you skip the last 16 bytes,
+      // and if the data is valid, then it is entirely safe because 16 UTF-8 bytes generate
+      // much more than 8 bytes. However, you cannot generally assume that you have valid
+      // UTF-8 input, so we are going to go back from the end counting 8 leading bytes,
+      // to give us a good margin.
+      size_t leading_byte = 0;
+      size_t margin = size;
+      for(; margin > 0 && leading_byte < 8; margin--) {
+        leading_byte += (int8_t(in[margin-1]) > -65);
+      }
+      // If the input is long enough, then we have that margin-1 is the eight last leading byte.
+      const size_t safety_margin = size - margin + 1; // to avoid overruns!
       while(pos + 64 + safety_margin <= size) {
         simd8x64<int8_t> input(reinterpret_cast<const int8_t *>(in + pos));
         if(input.is_ascii()) {
@@ -14492,7 +14518,7 @@ using namespace simd;
             utf8_end_of_code_point_mask >>= consumed;
           }
           // At this point there may remain between 0 and 12 bytes in the
-          // 64-byte block.These bytes will be processed again. So we have an
+          // 64-byte block. These bytes will be processed again. So we have an
           // 80% efficiency (in the worst case). In practice we expect an
           // 85% to 90% efficiency.
         }
@@ -14707,7 +14733,19 @@ using namespace simd;
     simdutf_really_inline size_t convert(const char* in, size_t size, char32_t* utf32_output) {
       size_t pos = 0;
       char32_t* start{utf32_output};
-      const size_t safety_margin = 16; // to avoid overruns!
+      // In the worst case, we have the haswell kernel which can cause an overflow of
+      // 8 bytes when calling convert_masked_utf8_to_utf32. If you skip the last 16 bytes,
+      // and if the data is valid, then it is entirely safe because 16 UTF-8 bytes generate
+      // much more than 8 bytes. However, you cannot generally assume that you have valid
+      // UTF-8 input, so we are going to go back from the end counting 4 leading bytes,
+      // to give us a good margin.
+      size_t leading_byte = 0;
+      size_t margin = size;
+      for(; margin > 0 && leading_byte < 4; margin--) {
+        leading_byte += (int8_t(in[margin-1]) > -65);
+      }
+      // If the input is long enough, then we have that margin-1 is the fourth last leading byte.
+      const size_t safety_margin = size - margin + 1; // to avoid overruns!
       while(pos + 64 + safety_margin <= size) {
         simd8x64<int8_t> input(reinterpret_cast<const int8_t *>(in + pos));
         if(input.is_ascii()) {
@@ -14752,7 +14790,7 @@ using namespace simd;
             utf8_end_of_code_point_mask >>= consumed;
           }
           // At this point there may remain between 0 and 12 bytes in the
-          // 64-byte block.These bytes will be processed again. So we have an
+          // 64-byte block. These bytes will be processed again. So we have an
           // 80% efficiency (in the worst case). In practice we expect an
           // 85% to 90% efficiency.
         }
@@ -14769,7 +14807,19 @@ using namespace simd;
     simdutf_really_inline result convert_with_errors(const char* in, size_t size, char32_t* utf32_output) {
       size_t pos = 0;
       char32_t* start{utf32_output};
-      const size_t safety_margin = 16; // to avoid overruns!
+      // In the worst case, we have the haswell kernel which can cause an overflow of
+      // 8 bytes when calling convert_masked_utf8_to_utf32. If you skip the last 16 bytes,
+      // and if the data is valid, then it is entirely safe because 16 UTF-8 bytes generate
+      // much more than 8 bytes. However, you cannot generally assume that you have valid
+      // UTF-8 input, so we are going to go back from the end counting 4 leading bytes,
+      // to give us a good margin.
+      size_t leading_byte = 0;
+      size_t margin = size;
+      for(; margin > 0 && leading_byte < 4; margin--) {
+        leading_byte += (int8_t(in[margin-1]) > -65);
+      }
+      // If the input is long enough, then we have that margin-1 is the fourth last leading byte.
+      const size_t safety_margin = size - margin + 1; // to avoid overruns!
       while(pos + 64 + safety_margin <= size) {
         simd8x64<int8_t> input(reinterpret_cast<const int8_t *>(in + pos));
         if(input.is_ascii()) {
@@ -14819,7 +14869,7 @@ using namespace simd;
             utf8_end_of_code_point_mask >>= consumed;
           }
           // At this point there may remain between 0 and 12 bytes in the
-          // 64-byte block.These bytes will be processed again. So we have an
+          // 64-byte block. These bytes will be processed again. So we have an
           // 80% efficiency (in the worst case). In practice we expect an
           // 85% to 90% efficiency.
         }
@@ -19797,7 +19847,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     __m128i composed = _mm_or_si128(ascii, _mm_srli_epi16(highbyte, 2));
     if (big_endian) composed = _mm_shuffle_epi8(composed, swap);
     _mm_storeu_si128((__m128i *)utf16_output, composed);
-    utf16_output += 6; // We wrote 12 bytes, 6 code points.
+    utf16_output += 6; // We wrote 12 bytes, 6 code points. There is a potential overflow of 4 bytes.
   } else if (idx < 145) {
     // FOUR (4) input code-words
     const __m128i sh =
@@ -19816,7 +19866,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     __m128i composed_repacked = _mm_packus_epi32(composed, composed);
     if (big_endian) composed_repacked = _mm_shuffle_epi8(composed_repacked, swap);
     _mm_storeu_si128((__m128i *)utf16_output, composed_repacked);
-    utf16_output += 4;
+    utf16_output += 4; // Here we overflow by 8 bytes.
   } else if (idx < 209) {
     // TWO (2) input code-words
     const __m128i sh =
@@ -19955,7 +20005,8 @@ size_t convert_masked_utf8_to_utf32(const char *input,
     const __m128i highbyte = _mm_and_si128(perm, _mm_set1_epi16(0x1f00));
     const __m128i composed = _mm_or_si128(ascii, _mm_srli_epi16(highbyte, 2));
     _mm256_storeu_si256((__m256i *)utf32_output, _mm256_cvtepu16_epi32(composed));
-    utf32_output += 6; // We wrote 12 bytes, 6 code points.
+    utf32_output += 6; // We wrote 24 bytes, 6 code points. There is a potential
+    // overflow of 32 - 24 = 8 bytes.
   } else if (idx < 145) {
     // FOUR (4) input code-words
     const __m128i sh =
@@ -19993,7 +20044,7 @@ size_t convert_masked_utf8_to_utf32(const char *input,
         _mm_or_si128(_mm_or_si128(ascii, middlebyte_shifted),
                      _mm_or_si128(highbyte_shifted, middlehighbyte_shifted));
     _mm_storeu_si128((__m128i *)utf32_output, composed);
-    utf32_output += 3;
+    utf32_output += 3; // We wrote 3 * 4 bytes, there is a potential overflow of 4 bytes.
   } else {
     // here we know that there is an error but we do not handle errors
   }
@@ -21810,7 +21861,7 @@ simdutf_warn_unused size_t convert_valid(const char* input, size_t size,
         utf8_end_of_code_point_mask >>= consumed;
       }
       // At this point there may remain between 0 and 12 bytes in the
-      // 64-byte block.These bytes will be processed again. So we have an
+      // 64-byte block. These bytes will be processed again. So we have an
       // 80% efficiency (in the worst case). In practice we expect an
       // 85% to 90% efficiency.
     }
@@ -21956,7 +22007,19 @@ using namespace simd;
     simdutf_really_inline size_t convert(const char* in, size_t size, char16_t* utf16_output) {
       size_t pos = 0;
       char16_t* start{utf16_output};
-      const size_t safety_margin = 16; // to avoid overruns!
+      // In the worst case, we have the haswell kernel which can cause an overflow of
+      // 8 bytes when calling convert_masked_utf8_to_utf16. If you skip the last 16 bytes,
+      // and if the data is valid, then it is entirely safe because 16 UTF-8 bytes generate
+      // much more than 8 bytes. However, you cannot generally assume that you have valid
+      // UTF-8 input, so we are going to go back from the end counting 8 leading bytes,
+      // to give us a good margin.
+      size_t leading_byte = 0;
+      size_t margin = size;
+      for(; margin > 0 && leading_byte < 8; margin--) {
+        leading_byte += (int8_t(in[margin-1]) > -65);
+      }
+      // If the input is long enough, then we have that margin-1 is the eight last leading byte.
+      const size_t safety_margin = size - margin + 1; // to avoid overruns!
       while(pos + 64 + safety_margin <= size) {
         simd8x64<int8_t> input(reinterpret_cast<const int8_t *>(in + pos));
         if(input.is_ascii()) {
@@ -22001,7 +22064,7 @@ using namespace simd;
             utf8_end_of_code_point_mask >>= consumed;
           }
           // At this point there may remain between 0 and 12 bytes in the
-          // 64-byte block.These bytes will be processed again. So we have an
+          // 64-byte block. These bytes will be processed again. So we have an
           // 80% efficiency (in the worst case). In practice we expect an
           // 85% to 90% efficiency.
         }
@@ -22019,7 +22082,19 @@ using namespace simd;
     simdutf_really_inline result convert_with_errors(const char* in, size_t size, char16_t* utf16_output) {
       size_t pos = 0;
       char16_t* start{utf16_output};
-      const size_t safety_margin = 16; // to avoid overruns!
+      // In the worst case, we have the haswell kernel which can cause an overflow of
+      // 8 bytes when calling convert_masked_utf8_to_utf16. If you skip the last 16 bytes,
+      // and if the data is valid, then it is entirely safe because 16 UTF-8 bytes generate
+      // much more than 8 bytes. However, you cannot generally assume that you have valid
+      // UTF-8 input, so we are going to go back from the end counting 8 leading bytes,
+      // to give us a good margin.
+      size_t leading_byte = 0;
+      size_t margin = size;
+      for(; margin > 0 && leading_byte < 8; margin--) {
+        leading_byte += (int8_t(in[margin-1]) > -65);
+      }
+      // If the input is long enough, then we have that margin-1 is the eight last leading byte.
+      const size_t safety_margin = size - margin + 1; // to avoid overruns!
       while(pos + 64 + safety_margin <= size) {
         simd8x64<int8_t> input(reinterpret_cast<const int8_t *>(in + pos));
         if(input.is_ascii()) {
@@ -22071,7 +22146,7 @@ using namespace simd;
             utf8_end_of_code_point_mask >>= consumed;
           }
           // At this point there may remain between 0 and 12 bytes in the
-          // 64-byte block.These bytes will be processed again. So we have an
+          // 64-byte block. These bytes will be processed again. So we have an
           // 80% efficiency (in the worst case). In practice we expect an
           // 85% to 90% efficiency.
         }
@@ -22286,7 +22361,19 @@ using namespace simd;
     simdutf_really_inline size_t convert(const char* in, size_t size, char32_t* utf32_output) {
       size_t pos = 0;
       char32_t* start{utf32_output};
-      const size_t safety_margin = 16; // to avoid overruns!
+      // In the worst case, we have the haswell kernel which can cause an overflow of
+      // 8 bytes when calling convert_masked_utf8_to_utf32. If you skip the last 16 bytes,
+      // and if the data is valid, then it is entirely safe because 16 UTF-8 bytes generate
+      // much more than 8 bytes. However, you cannot generally assume that you have valid
+      // UTF-8 input, so we are going to go back from the end counting 4 leading bytes,
+      // to give us a good margin.
+      size_t leading_byte = 0;
+      size_t margin = size;
+      for(; margin > 0 && leading_byte < 4; margin--) {
+        leading_byte += (int8_t(in[margin-1]) > -65);
+      }
+      // If the input is long enough, then we have that margin-1 is the fourth last leading byte.
+      const size_t safety_margin = size - margin + 1; // to avoid overruns!
       while(pos + 64 + safety_margin <= size) {
         simd8x64<int8_t> input(reinterpret_cast<const int8_t *>(in + pos));
         if(input.is_ascii()) {
@@ -22331,7 +22418,7 @@ using namespace simd;
             utf8_end_of_code_point_mask >>= consumed;
           }
           // At this point there may remain between 0 and 12 bytes in the
-          // 64-byte block.These bytes will be processed again. So we have an
+          // 64-byte block. These bytes will be processed again. So we have an
           // 80% efficiency (in the worst case). In practice we expect an
           // 85% to 90% efficiency.
         }
@@ -22348,7 +22435,19 @@ using namespace simd;
     simdutf_really_inline result convert_with_errors(const char* in, size_t size, char32_t* utf32_output) {
       size_t pos = 0;
       char32_t* start{utf32_output};
-      const size_t safety_margin = 16; // to avoid overruns!
+      // In the worst case, we have the haswell kernel which can cause an overflow of
+      // 8 bytes when calling convert_masked_utf8_to_utf32. If you skip the last 16 bytes,
+      // and if the data is valid, then it is entirely safe because 16 UTF-8 bytes generate
+      // much more than 8 bytes. However, you cannot generally assume that you have valid
+      // UTF-8 input, so we are going to go back from the end counting 4 leading bytes,
+      // to give us a good margin.
+      size_t leading_byte = 0;
+      size_t margin = size;
+      for(; margin > 0 && leading_byte < 4; margin--) {
+        leading_byte += (int8_t(in[margin-1]) > -65);
+      }
+      // If the input is long enough, then we have that margin-1 is the fourth last leading byte.
+      const size_t safety_margin = size - margin + 1; // to avoid overruns!
       while(pos + 64 + safety_margin <= size) {
         simd8x64<int8_t> input(reinterpret_cast<const int8_t *>(in + pos));
         if(input.is_ascii()) {
@@ -22398,7 +22497,7 @@ using namespace simd;
             utf8_end_of_code_point_mask >>= consumed;
           }
           // At this point there may remain between 0 and 12 bytes in the
-          // 64-byte block.These bytes will be processed again. So we have an
+          // 64-byte block. These bytes will be processed again. So we have an
           // 80% efficiency (in the worst case). In practice we expect an
           // 85% to 90% efficiency.
         }
@@ -23539,7 +23638,7 @@ simdutf_warn_unused size_t convert_valid(const char* input, size_t size,
         utf8_end_of_code_point_mask >>= consumed;
       }
       // At this point there may remain between 0 and 12 bytes in the
-      // 64-byte block.These bytes will be processed again. So we have an
+      // 64-byte block. These bytes will be processed again. So we have an
       // 80% efficiency (in the worst case). In practice we expect an
       // 85% to 90% efficiency.
     }
@@ -23685,7 +23784,19 @@ using namespace simd;
     simdutf_really_inline size_t convert(const char* in, size_t size, char16_t* utf16_output) {
       size_t pos = 0;
       char16_t* start{utf16_output};
-      const size_t safety_margin = 16; // to avoid overruns!
+      // In the worst case, we have the haswell kernel which can cause an overflow of
+      // 8 bytes when calling convert_masked_utf8_to_utf16. If you skip the last 16 bytes,
+      // and if the data is valid, then it is entirely safe because 16 UTF-8 bytes generate
+      // much more than 8 bytes. However, you cannot generally assume that you have valid
+      // UTF-8 input, so we are going to go back from the end counting 8 leading bytes,
+      // to give us a good margin.
+      size_t leading_byte = 0;
+      size_t margin = size;
+      for(; margin > 0 && leading_byte < 8; margin--) {
+        leading_byte += (int8_t(in[margin-1]) > -65);
+      }
+      // If the input is long enough, then we have that margin-1 is the eight last leading byte.
+      const size_t safety_margin = size - margin + 1; // to avoid overruns!
       while(pos + 64 + safety_margin <= size) {
         simd8x64<int8_t> input(reinterpret_cast<const int8_t *>(in + pos));
         if(input.is_ascii()) {
@@ -23730,7 +23841,7 @@ using namespace simd;
             utf8_end_of_code_point_mask >>= consumed;
           }
           // At this point there may remain between 0 and 12 bytes in the
-          // 64-byte block.These bytes will be processed again. So we have an
+          // 64-byte block. These bytes will be processed again. So we have an
           // 80% efficiency (in the worst case). In practice we expect an
           // 85% to 90% efficiency.
         }
@@ -23748,7 +23859,19 @@ using namespace simd;
     simdutf_really_inline result convert_with_errors(const char* in, size_t size, char16_t* utf16_output) {
       size_t pos = 0;
       char16_t* start{utf16_output};
-      const size_t safety_margin = 16; // to avoid overruns!
+      // In the worst case, we have the haswell kernel which can cause an overflow of
+      // 8 bytes when calling convert_masked_utf8_to_utf16. If you skip the last 16 bytes,
+      // and if the data is valid, then it is entirely safe because 16 UTF-8 bytes generate
+      // much more than 8 bytes. However, you cannot generally assume that you have valid
+      // UTF-8 input, so we are going to go back from the end counting 8 leading bytes,
+      // to give us a good margin.
+      size_t leading_byte = 0;
+      size_t margin = size;
+      for(; margin > 0 && leading_byte < 8; margin--) {
+        leading_byte += (int8_t(in[margin-1]) > -65);
+      }
+      // If the input is long enough, then we have that margin-1 is the eight last leading byte.
+      const size_t safety_margin = size - margin + 1; // to avoid overruns!
       while(pos + 64 + safety_margin <= size) {
         simd8x64<int8_t> input(reinterpret_cast<const int8_t *>(in + pos));
         if(input.is_ascii()) {
@@ -23800,7 +23923,7 @@ using namespace simd;
             utf8_end_of_code_point_mask >>= consumed;
           }
           // At this point there may remain between 0 and 12 bytes in the
-          // 64-byte block.These bytes will be processed again. So we have an
+          // 64-byte block. These bytes will be processed again. So we have an
           // 80% efficiency (in the worst case). In practice we expect an
           // 85% to 90% efficiency.
         }
@@ -24015,7 +24138,19 @@ using namespace simd;
     simdutf_really_inline size_t convert(const char* in, size_t size, char32_t* utf32_output) {
       size_t pos = 0;
       char32_t* start{utf32_output};
-      const size_t safety_margin = 16; // to avoid overruns!
+      // In the worst case, we have the haswell kernel which can cause an overflow of
+      // 8 bytes when calling convert_masked_utf8_to_utf32. If you skip the last 16 bytes,
+      // and if the data is valid, then it is entirely safe because 16 UTF-8 bytes generate
+      // much more than 8 bytes. However, you cannot generally assume that you have valid
+      // UTF-8 input, so we are going to go back from the end counting 4 leading bytes,
+      // to give us a good margin.
+      size_t leading_byte = 0;
+      size_t margin = size;
+      for(; margin > 0 && leading_byte < 4; margin--) {
+        leading_byte += (int8_t(in[margin-1]) > -65);
+      }
+      // If the input is long enough, then we have that margin-1 is the fourth last leading byte.
+      const size_t safety_margin = size - margin + 1; // to avoid overruns!
       while(pos + 64 + safety_margin <= size) {
         simd8x64<int8_t> input(reinterpret_cast<const int8_t *>(in + pos));
         if(input.is_ascii()) {
@@ -24060,7 +24195,7 @@ using namespace simd;
             utf8_end_of_code_point_mask >>= consumed;
           }
           // At this point there may remain between 0 and 12 bytes in the
-          // 64-byte block.These bytes will be processed again. So we have an
+          // 64-byte block. These bytes will be processed again. So we have an
           // 80% efficiency (in the worst case). In practice we expect an
           // 85% to 90% efficiency.
         }
@@ -24077,7 +24212,19 @@ using namespace simd;
     simdutf_really_inline result convert_with_errors(const char* in, size_t size, char32_t* utf32_output) {
       size_t pos = 0;
       char32_t* start{utf32_output};
-      const size_t safety_margin = 16; // to avoid overruns!
+      // In the worst case, we have the haswell kernel which can cause an overflow of
+      // 8 bytes when calling convert_masked_utf8_to_utf32. If you skip the last 16 bytes,
+      // and if the data is valid, then it is entirely safe because 16 UTF-8 bytes generate
+      // much more than 8 bytes. However, you cannot generally assume that you have valid
+      // UTF-8 input, so we are going to go back from the end counting 4 leading bytes,
+      // to give us a good margin.
+      size_t leading_byte = 0;
+      size_t margin = size;
+      for(; margin > 0 && leading_byte < 4; margin--) {
+        leading_byte += (int8_t(in[margin-1]) > -65);
+      }
+      // If the input is long enough, then we have that margin-1 is the fourth last leading byte.
+      const size_t safety_margin = size - margin + 1; // to avoid overruns!
       while(pos + 64 + safety_margin <= size) {
         simd8x64<int8_t> input(reinterpret_cast<const int8_t *>(in + pos));
         if(input.is_ascii()) {
@@ -24127,7 +24274,7 @@ using namespace simd;
             utf8_end_of_code_point_mask >>= consumed;
           }
           // At this point there may remain between 0 and 12 bytes in the
-          // 64-byte block.These bytes will be processed again. So we have an
+          // 64-byte block. These bytes will be processed again. So we have an
           // 80% efficiency (in the worst case). In practice we expect an
           // 85% to 90% efficiency.
         }
@@ -27140,7 +27287,7 @@ simdutf_warn_unused size_t convert_valid(const char* input, size_t size,
         utf8_end_of_code_point_mask >>= consumed;
       }
       // At this point there may remain between 0 and 12 bytes in the
-      // 64-byte block.These bytes will be processed again. So we have an
+      // 64-byte block. These bytes will be processed again. So we have an
       // 80% efficiency (in the worst case). In practice we expect an
       // 85% to 90% efficiency.
     }
@@ -27286,7 +27433,19 @@ using namespace simd;
     simdutf_really_inline size_t convert(const char* in, size_t size, char16_t* utf16_output) {
       size_t pos = 0;
       char16_t* start{utf16_output};
-      const size_t safety_margin = 16; // to avoid overruns!
+      // In the worst case, we have the haswell kernel which can cause an overflow of
+      // 8 bytes when calling convert_masked_utf8_to_utf16. If you skip the last 16 bytes,
+      // and if the data is valid, then it is entirely safe because 16 UTF-8 bytes generate
+      // much more than 8 bytes. However, you cannot generally assume that you have valid
+      // UTF-8 input, so we are going to go back from the end counting 8 leading bytes,
+      // to give us a good margin.
+      size_t leading_byte = 0;
+      size_t margin = size;
+      for(; margin > 0 && leading_byte < 8; margin--) {
+        leading_byte += (int8_t(in[margin-1]) > -65);
+      }
+      // If the input is long enough, then we have that margin-1 is the eight last leading byte.
+      const size_t safety_margin = size - margin + 1; // to avoid overruns!
       while(pos + 64 + safety_margin <= size) {
         simd8x64<int8_t> input(reinterpret_cast<const int8_t *>(in + pos));
         if(input.is_ascii()) {
@@ -27331,7 +27490,7 @@ using namespace simd;
             utf8_end_of_code_point_mask >>= consumed;
           }
           // At this point there may remain between 0 and 12 bytes in the
-          // 64-byte block.These bytes will be processed again. So we have an
+          // 64-byte block. These bytes will be processed again. So we have an
           // 80% efficiency (in the worst case). In practice we expect an
           // 85% to 90% efficiency.
         }
@@ -27349,7 +27508,19 @@ using namespace simd;
     simdutf_really_inline result convert_with_errors(const char* in, size_t size, char16_t* utf16_output) {
       size_t pos = 0;
       char16_t* start{utf16_output};
-      const size_t safety_margin = 16; // to avoid overruns!
+      // In the worst case, we have the haswell kernel which can cause an overflow of
+      // 8 bytes when calling convert_masked_utf8_to_utf16. If you skip the last 16 bytes,
+      // and if the data is valid, then it is entirely safe because 16 UTF-8 bytes generate
+      // much more than 8 bytes. However, you cannot generally assume that you have valid
+      // UTF-8 input, so we are going to go back from the end counting 8 leading bytes,
+      // to give us a good margin.
+      size_t leading_byte = 0;
+      size_t margin = size;
+      for(; margin > 0 && leading_byte < 8; margin--) {
+        leading_byte += (int8_t(in[margin-1]) > -65);
+      }
+      // If the input is long enough, then we have that margin-1 is the eight last leading byte.
+      const size_t safety_margin = size - margin + 1; // to avoid overruns!
       while(pos + 64 + safety_margin <= size) {
         simd8x64<int8_t> input(reinterpret_cast<const int8_t *>(in + pos));
         if(input.is_ascii()) {
@@ -27401,7 +27572,7 @@ using namespace simd;
             utf8_end_of_code_point_mask >>= consumed;
           }
           // At this point there may remain between 0 and 12 bytes in the
-          // 64-byte block.These bytes will be processed again. So we have an
+          // 64-byte block. These bytes will be processed again. So we have an
           // 80% efficiency (in the worst case). In practice we expect an
           // 85% to 90% efficiency.
         }
@@ -27616,7 +27787,19 @@ using namespace simd;
     simdutf_really_inline size_t convert(const char* in, size_t size, char32_t* utf32_output) {
       size_t pos = 0;
       char32_t* start{utf32_output};
-      const size_t safety_margin = 16; // to avoid overruns!
+      // In the worst case, we have the haswell kernel which can cause an overflow of
+      // 8 bytes when calling convert_masked_utf8_to_utf32. If you skip the last 16 bytes,
+      // and if the data is valid, then it is entirely safe because 16 UTF-8 bytes generate
+      // much more than 8 bytes. However, you cannot generally assume that you have valid
+      // UTF-8 input, so we are going to go back from the end counting 4 leading bytes,
+      // to give us a good margin.
+      size_t leading_byte = 0;
+      size_t margin = size;
+      for(; margin > 0 && leading_byte < 4; margin--) {
+        leading_byte += (int8_t(in[margin-1]) > -65);
+      }
+      // If the input is long enough, then we have that margin-1 is the fourth last leading byte.
+      const size_t safety_margin = size - margin + 1; // to avoid overruns!
       while(pos + 64 + safety_margin <= size) {
         simd8x64<int8_t> input(reinterpret_cast<const int8_t *>(in + pos));
         if(input.is_ascii()) {
@@ -27661,7 +27844,7 @@ using namespace simd;
             utf8_end_of_code_point_mask >>= consumed;
           }
           // At this point there may remain between 0 and 12 bytes in the
-          // 64-byte block.These bytes will be processed again. So we have an
+          // 64-byte block. These bytes will be processed again. So we have an
           // 80% efficiency (in the worst case). In practice we expect an
           // 85% to 90% efficiency.
         }
@@ -27678,7 +27861,19 @@ using namespace simd;
     simdutf_really_inline result convert_with_errors(const char* in, size_t size, char32_t* utf32_output) {
       size_t pos = 0;
       char32_t* start{utf32_output};
-      const size_t safety_margin = 16; // to avoid overruns!
+      // In the worst case, we have the haswell kernel which can cause an overflow of
+      // 8 bytes when calling convert_masked_utf8_to_utf32. If you skip the last 16 bytes,
+      // and if the data is valid, then it is entirely safe because 16 UTF-8 bytes generate
+      // much more than 8 bytes. However, you cannot generally assume that you have valid
+      // UTF-8 input, so we are going to go back from the end counting 4 leading bytes,
+      // to give us a good margin.
+      size_t leading_byte = 0;
+      size_t margin = size;
+      for(; margin > 0 && leading_byte < 4; margin--) {
+        leading_byte += (int8_t(in[margin-1]) > -65);
+      }
+      // If the input is long enough, then we have that margin-1 is the fourth last leading byte.
+      const size_t safety_margin = size - margin + 1; // to avoid overruns!
       while(pos + 64 + safety_margin <= size) {
         simd8x64<int8_t> input(reinterpret_cast<const int8_t *>(in + pos));
         if(input.is_ascii()) {
@@ -27728,7 +27923,7 @@ using namespace simd;
             utf8_end_of_code_point_mask >>= consumed;
           }
           // At this point there may remain between 0 and 12 bytes in the
-          // 64-byte block.These bytes will be processed again. So we have an
+          // 64-byte block. These bytes will be processed again. So we have an
           // 80% efficiency (in the worst case). In practice we expect an
           // 85% to 90% efficiency.
         }
