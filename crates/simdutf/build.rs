@@ -6,6 +6,8 @@ fn cpp11(cc: &mut cc::Build) {
 }
 
 fn main() {
+    println!("cargo:rerun-if-changed=cpp/");
+
     let mut cc = cc::Build::new();
     cpp11(&mut cc);
     cc.file("cpp/simdutfrs.cpp").compile("simdutfrs");
