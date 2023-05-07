@@ -1,25 +1,24 @@
 mod common;
-mod gen;
 
 mod api;
 mod bindings;
 
-use self::gen::Codegen;
+use codegen_tools::Codegen;
 
 fn main() {
     {
         let path = "crates/simdutf/cpp/simdutfrs.cpp";
-        let mut gen = Codegen::create_file(path).unwrap();
-        bindings::codegen_cpp(&mut gen);
+        let gen = Codegen::create_file(path).unwrap();
+        codegen_tools::scoped(gen, bindings::codegen_cpp);
     }
     {
         let path = "crates/simdutf/src/bindings.rs";
-        let mut gen = Codegen::create_file(path).unwrap();
-        bindings::codegen_rust(&mut gen);
+        let gen = Codegen::create_file(path).unwrap();
+        codegen_tools::scoped(gen, bindings::codegen_rust);
     }
     {
         let path = "crates/simdutf/src/generated.rs";
-        let mut gen = Codegen::create_file(path).unwrap();
-        api::codegen(&mut gen);
+        let gen = Codegen::create_file(path).unwrap();
+        codegen_tools::scoped(gen, api::codegen);
     }
 }
