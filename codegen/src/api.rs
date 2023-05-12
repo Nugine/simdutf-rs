@@ -1,7 +1,7 @@
 use crate::common::*;
 
-use codegen_tools::g;
-use codegen_tools::glines;
+use codegen_writer::g;
+use codegen_writer::glines;
 
 pub fn codegen() {
     glines![
