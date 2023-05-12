@@ -16,4 +16,4 @@ rustdoc-args = ["--cfg", "docsrs"]
 cc = "1.0"
 
 [dependencies]
-bitflags = "2.0.2"
+bitflags = "2.2.1"
