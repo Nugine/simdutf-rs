@@ -1,4 +1,4 @@
-/* auto-generated on 2023-04-09 17:10:44 -0400. Do not edit! */
+/* auto-generated on 2023-05-12 15:22:16 -0400. Do not edit! */
 
 /* begin file src/simdutf.cpp */
 #include "simdutf.h"
@@ -1133,7 +1133,7 @@ simdutf_really_inline simd16<int16_t>::operator simd16<uint16_t>() const { retur
 #define SIMDUTF_IMPLEMENTATION_ICELAKE ((SIMDUTF_IS_X86_64) && (SIMDUTF_COMPILER_SUPPORTS_VBMI2))
 #endif
 
-// To see why  (__BMI__) && (__PCLMUL__) && (__LZCNT__) are not part of this next line, see
+// To see why  (__BMI__) && (__LZCNT__) are not part of this next line, see
 // https://github.com/simdutf/simdutf/issues/1247
 #define SIMDUTF_CAN_ALWAYS_RUN_ICELAKE ((SIMDUTF_IMPLEMENTATION_ICELAKE) && (SIMDUTF_IS_X86_64) && (__AVX2__) && (SIMDUTF_HAS_AVX512F && \
                                          SIMDUTF_HAS_AVX512DQ && \
@@ -1217,7 +1217,6 @@ SIMDUTF_POP_DISABLE_WARNINGS
 #include <tmmintrin.h>
 #include <avxintrin.h>
 #include <avx2intrin.h>
-#include <wmmintrin.h>   // for  _mm_clmulepi64_si128
 // Important: we need the AVX-512 headers:
 #include <avx512fintrin.h>
 #include <avx512dqintrin.h>
@@ -1286,7 +1285,7 @@ public:
   simdutf_really_inline implementation() : simdutf::implementation(
       "icelake",
       "Intel AVX512 (AVX-512BW, AVX-512CD, AVX-512VL, AVX-512VBMI2 extensions)",
-      internal::instruction_set::AVX2 | internal::instruction_set::PCLMULQDQ | internal::instruction_set::BMI1 | internal::instruction_set::BMI2 | internal::instruction_set::AVX512BW | internal::instruction_set::AVX512CD | internal::instruction_set::AVX512VL | internal::instruction_set::AVX512VBMI2 ) {}
+      internal::instruction_set::AVX2 | internal::instruction_set::BMI1 | internal::instruction_set::BMI2 | internal::instruction_set::AVX512BW | internal::instruction_set::AVX512CD | internal::instruction_set::AVX512VL | internal::instruction_set::AVX512VBMI2 ) {}
   simdutf_warn_unused int detect_encodings(const char * input, size_t length) const noexcept final;
   simdutf_warn_unused bool validate_utf8(const char *buf, size_t len) const noexcept final;
   simdutf_warn_unused result validate_utf8_with_errors(const char *buf, size_t len) const noexcept final;
@@ -1439,13 +1438,13 @@ SIMDUTF_POP_DISABLE_WARNINGS
 #endif
 
 #endif
-// To see why  (__BMI__) && (__PCLMUL__) && (__LZCNT__) are not part of this next line, see
+// To see why  (__BMI__) && (__LZCNT__) are not part of this next line, see
 // https://github.com/simdutf/simdutf/issues/1247
 #define SIMDUTF_CAN_ALWAYS_RUN_HASWELL ((SIMDUTF_IMPLEMENTATION_HASWELL) && (SIMDUTF_IS_X86_64) && (__AVX2__))
 
 #if SIMDUTF_IMPLEMENTATION_HASWELL
 
-#define SIMDUTF_TARGET_HASWELL SIMDUTF_TARGET_REGION("avx2,bmi,pclmul,lzcnt")
+#define SIMDUTF_TARGET_HASWELL SIMDUTF_TARGET_REGION("avx2,bmi,lzcnt")
 
 namespace simdutf {
 /**
@@ -1475,7 +1474,7 @@ public:
   simdutf_really_inline implementation() : simdutf::implementation(
       "haswell",
       "Intel/AMD AVX2",
-      internal::instruction_set::AVX2 | internal::instruction_set::PCLMULQDQ | internal::instruction_set::BMI1 | internal::instruction_set::BMI2
+      internal::instruction_set::AVX2 | internal::instruction_set::BMI1 | internal::instruction_set::BMI2
   ) {}
   simdutf_warn_unused int detect_encodings(const char * input, size_t length) const noexcept final;
   simdutf_warn_unused bool validate_utf8(const char *buf, size_t len) const noexcept final;
@@ -1592,7 +1591,6 @@ SIMDUTF_POP_DISABLE_WARNINGS
 #include <tmmintrin.h>
 #include <avxintrin.h>
 #include <avx2intrin.h>
-#include <wmmintrin.h>   // for  _mm_clmulepi64_si128
 // unfortunately, we may not get _blsr_u64, but, thankfully, clang
 // has it as a macro.
 #ifndef _blsr_u64
@@ -2366,11 +2364,11 @@ SIMDUTF_POP_DISABLE_WARNINGS
 
 #endif
 
-#define SIMDUTF_CAN_ALWAYS_RUN_WESTMERE (SIMDUTF_IMPLEMENTATION_WESTMERE && SIMDUTF_IS_X86_64 && __SSE4_2__ && __PCLMUL__)
+#define SIMDUTF_CAN_ALWAYS_RUN_WESTMERE (SIMDUTF_IMPLEMENTATION_WESTMERE && SIMDUTF_IS_X86_64 && __SSE4_2__)
 
 #if SIMDUTF_IMPLEMENTATION_WESTMERE
 
-#define SIMDUTF_TARGET_WESTMERE SIMDUTF_TARGET_REGION("sse4.2,pclmul")
+#define SIMDUTF_TARGET_WESTMERE SIMDUTF_TARGET_REGION("sse4.2")
 
 namespace simdutf {
 /**
@@ -2399,7 +2397,7 @@ using namespace simdutf;
 
 class implementation final : public simdutf::implementation {
 public:
-  simdutf_really_inline implementation() : simdutf::implementation("westmere", "Intel/AMD SSE4.2", internal::instruction_set::SSE42 | internal::instruction_set::PCLMULQDQ) {}
+  simdutf_really_inline implementation() : simdutf::implementation("westmere", "Intel/AMD SSE4.2", internal::instruction_set::SSE42) {}
   simdutf_warn_unused int detect_encodings(const char * input, size_t length) const noexcept final;
   simdutf_warn_unused bool validate_utf8(const char *buf, size_t len) const noexcept final;
   simdutf_warn_unused result validate_utf8_with_errors(const char *buf, size_t len) const noexcept final;
@@ -2499,7 +2497,6 @@ SIMDUTF_POP_DISABLE_WARNINGS
  * from macros:
  */
 #include <smmintrin.h>  // for _mm_alignr_epi8
-#include <wmmintrin.h>  // for  _mm_clmulepi64_si128
 #endif
 
 
