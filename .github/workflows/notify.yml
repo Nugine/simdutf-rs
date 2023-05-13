@@ -1,0 +1,14 @@
+on:
+  workflow_dispatch:
+  schedule: # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#onschedule
+    - cron: '0 0 * * 0' # at midnight of each sunday
+
+name: Notify
+
+jobs:
+  check-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: pip3 install requests
+      - run: ./scripts/check-release.py
