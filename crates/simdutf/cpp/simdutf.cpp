@@ -1,4 +1,4 @@
-/* auto-generated on 2023-05-12 15:22:16 -0400. Do not edit! */
+/* auto-generated on 2023-05-22 13:06:02 -0400. Do not edit! */
 
 /* begin file src/simdutf.cpp */
 #include "simdutf.h"
@@ -333,7 +333,7 @@ simdutf_really_inline int16x8_t make_int16x8_t(int16_t x1,  int16_t x2,  int16_t
     simdutf_really_inline simd8<T>& operator&=(const simd8<T> other) { auto this_cast = static_cast<simd8<T>*>(this); *this_cast = *this_cast & other; return *this_cast; }
     simdutf_really_inline simd8<T>& operator^=(const simd8<T> other) { auto this_cast = static_cast<simd8<T>*>(this); *this_cast = *this_cast ^ other; return *this_cast; }
 
-    simdutf_really_inline Mask operator==(const simd8<T> other) const { return vceqq_u8(*this, other); }
+    friend simdutf_really_inline Mask operator==(const simd8<T> lhs, const simd8<T> rhs) { return vceqq_u8(lhs, rhs); }
 
     template<int N=1>
     simdutf_really_inline simd8<T> prev(const simd8<T> prev_chunk) const {
@@ -1713,7 +1713,7 @@ namespace simd {
     simdutf_really_inline base8(const __m256i _value) : base<simd8<T>>(_value) {}
     simdutf_really_inline T first() const { return _mm256_extract_epi8(*this,0); }
     simdutf_really_inline T last() const { return _mm256_extract_epi8(*this,31); }
-    simdutf_really_inline Mask operator==(const simd8<T> other) const { return _mm256_cmpeq_epi8(*this, other); }
+    friend simdutf_really_inline Mask operator==(const simd8<T> lhs, const simd8<T> rhs) { return _mm256_cmpeq_epi8(lhs, rhs); }
 
     static const int SIZE = sizeof(base<T>::value);
 
@@ -2610,7 +2610,7 @@ namespace simd {
     simdutf_really_inline base8() : base<simd8<T>>() {}
     simdutf_really_inline base8(const __m128i _value) : base<simd8<T>>(_value) {}
 
-    simdutf_really_inline Mask operator==(const simd8<T> other) const { return _mm_cmpeq_epi8(*this, other); }
+    friend simdutf_really_inline Mask operator==(const simd8<T> lhs, const simd8<T> rhs) { return _mm_cmpeq_epi8(lhs, rhs); }
 
     static const int SIZE = sizeof(base<simd8<T>>::value);
 
@@ -3510,8 +3510,8 @@ struct base8 : base<simd8<T>> {
   simdutf_really_inline base8() : base<simd8<T>>() {}
   simdutf_really_inline base8(const __m128i _value) : base<simd8<T>>(_value) {}
 
-  simdutf_really_inline Mask operator==(const simd8<T> other) const {
-    return (__m128i)vec_cmpeq(this->value, (__m128i)other);
+  friend simdutf_really_inline Mask operator==(const simd8<T> lhs, const simd8<T> rhs) {
+    return (__m128i)vec_cmpeq(lhs.value, (__m128i)rhs);
   }
 
   static const int SIZE = sizeof(base<simd8<T>>::value);
@@ -11303,7 +11303,7 @@ inline result rewind_and_convert_with_errors(size_t prior_bytes, const char* buf
   bool found_leading_bytes{false};
   // important: it is i <= how_far_back and not 'i < how_far_back'.
   for(size_t i = 0; i <= how_far_back; i++) {
-    unsigned char byte = buf[-i];
+    unsigned char byte = buf[0-i];
     found_leading_bytes = ((byte & 0b11000000) != 0b10000000);
     if(found_leading_bytes) {
       buf -= i;
@@ -11322,7 +11322,7 @@ inline result rewind_and_convert_with_errors(size_t prior_bytes, const char* buf
     // If how_far_back == 3, we may have four consecutive continuation bytes!!!
     // [....] [continuation] [continuation] [continuation] | [buf is continuation]
     // Or we possibly have a stream that does not start with a leading byte.
-    return result(error_code::TOO_LONG, -how_far_back);
+    return result(error_code::TOO_LONG, 0-how_far_back);
   }
   result res = convert_with_errors<endian>(buf, len + extra_len, utf16_output);
   if (res.error) {
@@ -11581,7 +11581,7 @@ inline result rewind_and_convert_with_errors(size_t prior_bytes, const char* buf
   bool found_leading_bytes{false};
   // important: it is i <= how_far_back and not 'i < how_far_back'.
   for(size_t i = 0; i <= how_far_back; i++) {
-    unsigned char byte = buf[-i];
+    unsigned char byte = buf[0-i];
     found_leading_bytes = ((byte & 0b11000000) != 0b10000000);
     if(found_leading_bytes) {
       buf -= i;
@@ -11600,7 +11600,7 @@ inline result rewind_and_convert_with_errors(size_t prior_bytes, const char* buf
     // If how_far_back == 3, we may have four consecutive continuation bytes!!!
     // [....] [continuation] [continuation] [continuation] | [buf is continuation]
     // Or we possibly have a stream that does not start with a leading byte.
-    return result(error_code::TOO_LONG, -how_far_back);
+    return result(error_code::TOO_LONG, 0-how_far_back);
   }
 
   result res = convert_with_errors(buf, len + extra_len, utf32_output);
