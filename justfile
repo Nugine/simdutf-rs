@@ -17,7 +17,8 @@ test:
     RUSTFLAGS='-C target-cpu=native' CXXFLAGS='-march=native' cargo test -p simdutf --release
 
 sync-version:
-    cargo set-version -p simdutf    0.4.4
+    ./scripts/check-release.py
+    cargo set-version -p simdutf    0.4.5
 
 publish:
     cargo publish -p simdutf
