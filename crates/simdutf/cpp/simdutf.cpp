@@ -1,4 +1,4 @@
-/* auto-generated on 2023-05-22 15:11:34 -0400. Do not edit! */
+/* auto-generated on 2023-05-22 21:47:57 -0400. Do not edit! */
 
 /* begin file src/simdutf.cpp */
 #include "simdutf.h"
@@ -807,7 +807,7 @@ struct simd16;
     simdutf_really_inline simd16<T>& operator&=(const simd16<T> other) { auto this_cast = static_cast<simd16<T>*>(this); *this_cast = *this_cast & other; return *this_cast; }
     simdutf_really_inline simd16<T>& operator^=(const simd16<T> other) { auto this_cast = static_cast<simd16<T>*>(this); *this_cast = *this_cast ^ other; return *this_cast; }
 
-    simdutf_really_inline Mask operator==(const simd16<T> other) const { return vceqq_u16(*this, other); }
+    friend simdutf_really_inline Mask operator==(const simd16<T> lhs, const simd16<T> rhs) { return vceqq_u16(lhs, rhs); }
 
     template<int N=1>
     simdutf_really_inline simd16<T> prev(const simd16<T> prev_chunk) const {
@@ -824,8 +824,6 @@ struct base16: base_u16<T> {
   simdutf_really_inline base16(const uint16x8_t _value) : base_u16<T>(_value) {}
   template <typename Pointer>
   simdutf_really_inline base16(const Pointer* ptr) : base16(vld1q_u16(ptr)) {}
-
-  simdutf_really_inline Mask operator==(const simd16<T> other) const { return vceqq_u16(*this, other); }
 
   static const int SIZE = sizeof(base_u16<T>::value);
 
@@ -3004,7 +3002,7 @@ struct base16: base<simd16<T>> {
   template <typename Pointer>
   simdutf_really_inline base16(const Pointer* ptr) : base16(_mm_loadu_si128(reinterpret_cast<const __m128i*>(ptr))) {}
 
-  simdutf_really_inline Mask operator==(const simd16<T> other) const { return _mm_cmpeq_epi16(*this, other); }
+  friend simdutf_really_inline Mask operator==(const simd16<T> lhs, const simd16<T> rhs) { return _mm_cmpeq_epi16(lhs, rhs); }
 
   static const int SIZE = sizeof(base<simd16<T>>::value);
 
