@@ -22,3 +22,8 @@ sync-version:
 
 publish:
     cargo publish -p simdutf
+
+upgrade:
+    ./scripts/download.sh
+    ./scripts/vendor.sh
+    ./scripts/check-release.py
