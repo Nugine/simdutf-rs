@@ -1,4 +1,4 @@
-/* auto-generated on 2023-06-02 20:29:59 -0400. Do not edit! */
+/* auto-generated on 2023-06-05 09:07:13 -0400. Do not edit! */
 
 /* begin file src/simdutf.cpp */
 #include "simdutf.h"
@@ -1142,7 +1142,7 @@ simdutf_really_inline simd16<int16_t>::operator simd16<uint16_t>() const { retur
 #if SIMDUTF_CAN_ALWAYS_RUN_ICELAKE
 #define SIMDUTF_TARGET_ICELAKE
 #else
-#define SIMDUTF_TARGET_ICELAKE SIMDUTF_TARGET_REGION("avx512f,avx512dq,avx512cd,avx512bw,avx512vbmi,avx512vbmi2,avx512vl,avx2,bmi,bmi2,pclmul,lzcnt")
+#define SIMDUTF_TARGET_ICELAKE SIMDUTF_TARGET_REGION("avx512f,avx512dq,avx512cd,avx512bw,avx512vbmi,avx512vbmi2,avx512vl,avx2,bmi,bmi2,pclmul,lzcnt,popcnt")
 #endif
 
 namespace simdutf {
