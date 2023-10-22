@@ -1,4 +1,4 @@
-/* auto-generated on 2023-10-12 21:14:24 -0400. Do not edit! */
+/* auto-generated on 2023-10-21 19:22:13 -0400. Do not edit! */
 /* begin file include/simdutf.h */
 #ifndef SIMDUTF_H
 #define SIMDUTF_H
@@ -163,11 +163,8 @@
 
 #ifdef SIMDUTF_IS_32BITS
 #ifndef SIMDUTF_NO_PORTABILITY_WARNING
-#pragma message("The simdutf library is designed \
-for 64-bit processors and it seems that you are not \
-compiling for a known 64-bit platform. All fast kernels \
-will be disabled and performance may be poor. Please \
-use a 64-bit target such as x64, 64-bit ARM or 64-bit PPC.")
+// In the future, we may want to warn users of 32-bit systems that
+// the simdutf does not support accelerated kernels for such systems.
 #endif // SIMDUTF_NO_PORTABILITY_WARNING
 #endif // SIMDUTF_IS_32BITS
 
@@ -570,22 +567,22 @@ SIMDUTF_DISABLE_UNDESIRED_WARNINGS
 #define SIMDUTF_SIMDUTF_VERSION_H
 
 /** The version of simdutf being used (major.minor.revision) */
-#define SIMDUTF_VERSION "3.2.15"
+#define SIMDUTF_VERSION "4.0.0"
 
 namespace simdutf {
 enum {
   /**
    * The major version (MAJOR.minor.revision) of simdutf being used.
    */
-  SIMDUTF_VERSION_MAJOR = 3,
+  SIMDUTF_VERSION_MAJOR = 4,
   /**
    * The minor version (major.MINOR.revision) of simdutf being used.
    */
-  SIMDUTF_VERSION_MINOR = 2,
+  SIMDUTF_VERSION_MINOR = 0,
   /**
    * The revision (major.minor.REVISION) of simdutf being used.
    */
-  SIMDUTF_VERSION_REVISION = 15
+  SIMDUTF_VERSION_REVISION = 0
 };
 } // namespace simdutf
 
