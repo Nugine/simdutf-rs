@@ -1,4 +1,4 @@
-/* auto-generated on 2023-10-21 19:22:13 -0400. Do not edit! */
+/* auto-generated on 2023-10-26 15:38:00 -0400. Do not edit! */
 /* begin file src/simdutf.cpp */
 #include "simdutf.h"
 /* begin file src/implementation.cpp */
@@ -2078,9 +2078,7 @@ namespace simd {
 
       return  simd8x64<bool>(
         (this->chunks[0] <= mask_high) & (this->chunks[0] >= mask_low),
-        (this->chunks[1] <= mask_high) & (this->chunks[1] >= mask_low),
-        (this->chunks[2] <= mask_high) & (this->chunks[2] >= mask_low),
-        (this->chunks[3] <= mask_high) & (this->chunks[3] >= mask_low)
+        (this->chunks[1] <= mask_high) & (this->chunks[1] >= mask_low)
       ).to_bitmask();
     }
     simdutf_really_inline uint64_t not_in_range(const T low, const T high) const {
@@ -2368,9 +2366,7 @@ struct simd16<uint16_t>: base16_numeric<uint16_t>  {
 
       return  simd16x32<bool>(
         (this->chunks[0] <= mask_high) & (this->chunks[0] >= mask_low),
-        (this->chunks[1] <= mask_high) & (this->chunks[1] >= mask_low),
-        (this->chunks[2] <= mask_high) & (this->chunks[2] >= mask_low),
-        (this->chunks[3] <= mask_high) & (this->chunks[3] >= mask_low)
+        (this->chunks[1] <= mask_high) & (this->chunks[1] >= mask_low)
       ).to_bitmask();
     }
     simdutf_really_inline uint64_t not_in_range(const T low, const T high) const {
@@ -15048,7 +15044,7 @@ std::pair<const char32_t*, char16_t*> arm_convert_utf32_to_utf16(const char32_t*
       const uint16x4_t v_dfff = vmov_n_u16((uint16_t)0xdfff);
       forbidden_bytemask = vorr_u16(vand_u16(vcle_u16(utf16_packed, v_dfff), vcge_u16(utf16_packed, v_d800)), forbidden_bytemask);
 
-      if (!match_system(big_endian)) { utf16_packed = vrev16_u8(utf16_packed); }
+      if (!match_system(big_endian)) { utf16_packed = vreinterpret_u16_u8(vrev16_u8(vreinterpret_u8_u16(utf16_packed))); }
       vst1_u16(utf16_output, utf16_packed);
       utf16_output += 4;
       buf += 4;
@@ -15109,7 +15105,7 @@ std::pair<result, char16_t*> arm_convert_utf32_to_utf16_with_errors(const char32
         return std::make_pair(result(error_code::SURROGATE, buf - start), reinterpret_cast<char16_t*>(utf16_output));
       }
 
-      if (!match_system(big_endian)) { utf16_packed = vrev16_u8(utf16_packed); }
+      if (!match_system(big_endian)) { utf16_packed = vreinterpret_u16_u8(vrev16_u8(vreinterpret_u8_u16(utf16_packed))); }
       vst1_u16(utf16_output, utf16_packed);
       utf16_output += 4;
       buf += 4;
@@ -30229,7 +30225,7 @@ sse_convert_utf32_to_latin1(const char32_t *buf, size_t len,
   const size_t rounded_len = len & ~0xF; // Round down to nearest multiple of 16
 
   __m128i high_bytes_mask = _mm_set1_epi32(0xFFFFFF00);
-  __m128i shufmask_1 =
+  __m128i shufmask =
       _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 12, 8, 4, 0);
 
   for (size_t i = 0; i < rounded_len; i += 16) {
@@ -30245,18 +30241,10 @@ sse_convert_utf32_to_latin1(const char32_t *buf, size_t len,
     if (!_mm_testz_si128(check_combined, high_bytes_mask)) {
       return std::make_pair(nullptr, latin1_output);
     }
-
-    __m128i shuffled1 = _mm_shuffle_epi8(in1, shufmask_1);
-    _mm_storeu_si64(latin1_output, shuffled1);
-    __m128i shuffled2 = _mm_shuffle_epi8(in2, shufmask_1);
-    _mm_storeu_si64(latin1_output + 4, shuffled2);
-    __m128i shuffled3 = _mm_shuffle_epi8(in3, shufmask_1);
-    _mm_storeu_si64(latin1_output + 8, shuffled3);
-    __m128i shuffled4 = _mm_shuffle_epi8(in4, shufmask_1);
-
-    *reinterpret_cast<uint32_t *>(latin1_output + 12) =
-        _mm_cvtsi128_si32(shuffled4);
-
+    __m128i pack1 = _mm_unpacklo_epi32(_mm_shuffle_epi8(in1, shufmask), _mm_shuffle_epi8(in2, shufmask));
+    __m128i pack2 = _mm_unpacklo_epi32(_mm_shuffle_epi8(in3, shufmask), _mm_shuffle_epi8(in4, shufmask));
+    __m128i pack = _mm_unpacklo_epi64(pack1, pack2);
+    _mm_storeu_si128((__m128i *)latin1_output, pack);
     latin1_output += 16;
     buf += 16;
   }
@@ -30298,17 +30286,10 @@ sse_convert_utf32_to_latin1_with_errors(const char32_t *buf, size_t len,
       buf += 16;
       continue;
     }
-
-    __m128i shuffled1 = _mm_shuffle_epi8(in1, shufmask);
-    _mm_storeu_si64(latin1_output, shuffled1);
-    __m128i shuffled2 = _mm_shuffle_epi8(in2, shufmask);
-    _mm_storeu_si64(latin1_output + 4, shuffled2);
-    __m128i shuffled3 = _mm_shuffle_epi8(in3, shufmask);
-    _mm_storeu_si64(latin1_output + 8, shuffled3);
-    __m128i shuffled4 = _mm_shuffle_epi8(in4, shufmask);
-    *reinterpret_cast<uint32_t *>(latin1_output + 12) =
-        _mm_cvtsi128_si32(shuffled4);
-
+    __m128i pack1 = _mm_unpacklo_epi32(_mm_shuffle_epi8(in1, shufmask), _mm_shuffle_epi8(in2, shufmask));
+    __m128i pack2 = _mm_unpacklo_epi32(_mm_shuffle_epi8(in3, shufmask), _mm_shuffle_epi8(in4, shufmask));
+    __m128i pack = _mm_unpacklo_epi64(pack1, pack2);
+    _mm_storeu_si128((__m128i *)latin1_output, pack);
     latin1_output += 16;
     buf += 16;
   }
