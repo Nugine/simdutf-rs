@@ -1,4 +1,4 @@
-/* auto-generated on 2023-10-26 15:38:00 -0400. Do not edit! */
+/* auto-generated on 2023-11-16 14:46:59 -0500. Do not edit! */
 /* begin file include/simdutf.h */
 #ifndef SIMDUTF_H
 #define SIMDUTF_H
@@ -567,7 +567,7 @@ SIMDUTF_DISABLE_UNDESIRED_WARNINGS
 #define SIMDUTF_SIMDUTF_VERSION_H
 
 /** The version of simdutf being used (major.minor.revision) */
-#define SIMDUTF_VERSION "4.0.3"
+#define SIMDUTF_VERSION "4.0.4"
 
 namespace simdutf {
 enum {
@@ -582,7 +582,7 @@ enum {
   /**
    * The revision (major.minor.REVISION) of simdutf being used.
    */
-  SIMDUTF_VERSION_REVISION = 3
+  SIMDUTF_VERSION_REVISION = 4
 };
 } // namespace simdutf
 
@@ -1162,7 +1162,7 @@ simdutf_warn_unused size_t convert_utf8_to_utf16be(const char * input, size_t le
 
 
   /**
-   * Convert possibly broken UTF-8 string into latin1 string. with errors
+   * Convert possibly broken UTF-8 string into latin1 string with errors.
    *
    * During the conversion also validation of the input string is done.
    * This function is suitable to work with inputs from untrusted sources.
@@ -2161,6 +2161,68 @@ simdutf_warn_unused size_t count_utf16be(const char16_t * input, size_t length) 
 simdutf_warn_unused size_t count_utf8(const char * input, size_t length) noexcept;
 
 /**
+ * Given a valid UTF-8 string having a possibly truncated last character,
+ * this function checks the end of string. If the last character is truncated (or partial),
+ * then it returns a shorter length (shorter by 1 to 3 bytes) so that the short UTF-8
+ * strings only contain complete characters. If there is no truncated character,
+ * the original length is returned.
+ *
+ * This function assumes that the input string is valid UTF-8, but possibly truncated.
+ *
+ * @param input         the UTF-8 string to process
+ * @param length        the length of the string in bytes
+ * @return the length of the string in bytes, possibly shorter by 1 to 3 bytes
+ */
+simdutf_warn_unused size_t trim_partial_utf8(const char *input, size_t length);
+
+/**
+ * Given a valid UTF-16BE string having a possibly truncated last character,
+ * this function checks the end of string. If the last character is truncated (or partial),
+ * then it returns a shorter length (shorter by 1 unit) so that the short UTF-16BE
+ * strings only contain complete characters. If there is no truncated character,
+ * the original length is returned.
+ *
+ * This function assumes that the input string is valid UTF-16BE, but possibly truncated.
+ *
+ * @param input         the UTF-16BE string to process
+ * @param length        the length of the string in bytes
+ * @return the length of the string in bytes, possibly shorter by 1 unit
+ */
+simdutf_warn_unused size_t trim_partial_utf16be(const char16_t* input, size_t length);
+
+/**
+ * Given a valid UTF-16LE string having a possibly truncated last character,
+ * this function checks the end of string. If the last character is truncated (or partial),
+ * then it returns a shorter length (shorter by 1 unit) so that the short UTF-16LE
+ * strings only contain complete characters. If there is no truncated character,
+ * the original length is returned.
+ *
+ * This function assumes that the input string is valid UTF-16LE, but possibly truncated.
+ *
+ * @param input         the UTF-16LE string to process
+ * @param length        the length of the string in bytes
+ * @return the length of the string in unit, possibly shorter by 1 unit
+ */
+simdutf_warn_unused size_t trim_partial_utf16le(const char16_t* input, size_t length);
+
+
+/**
+ * Given a valid UTF-16 string having a possibly truncated last character,
+ * this function checks the end of string. If the last character is truncated (or partial),
+ * then it returns a shorter length (shorter by 1 unit) so that the short UTF-16
+ * strings only contain complete characters. If there is no truncated character,
+ * the original length is returned.
+ *
+ * This function assumes that the input string is valid UTF-16, but possibly truncated.
+ * We use the native endianness.
+ *
+ * @param input         the UTF-16 string to process
+ * @param length        the length of the string in bytes
+ * @return the length of the string in unit, possibly shorter by 1 unit
+ */
+simdutf_warn_unused size_t trim_partial_utf16(const char16_t* input, size_t length);
+
+/**
  * An implementation of simdutf for a particular CPU architecture.
  *
  * Also used to maintain the currently active implementation. The active implementation is
@@ -2416,7 +2478,7 @@ public:
   simdutf_warn_unused virtual size_t convert_utf8_to_latin1(const char * input, size_t length, char* latin1_output) const noexcept = 0;
 
   /**
-   * Convert possibly broken UTF-8 string into latin1 string. with errors
+   * Convert possibly broken UTF-8 string into latin1 string with errors
    *
    * During the conversion also validation of the input string is done.
    * This function is suitable to work with inputs from untrusted sources.

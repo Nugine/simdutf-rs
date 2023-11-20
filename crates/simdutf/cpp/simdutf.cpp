@@ -1,4 +1,4 @@
-/* auto-generated on 2023-10-26 15:38:00 -0400. Do not edit! */
+/* auto-generated on 2023-11-16 14:46:59 -0500. Do not edit! */
 /* begin file src/simdutf.cpp */
 #include "simdutf.h"
 /* begin file src/implementation.cpp */
@@ -999,7 +999,7 @@ struct simd16<uint16_t>: base16_numeric<uint16_t>  {
 
   // Change the endianness
   simdutf_really_inline simd16<uint16_t> swap_bytes() const {
-    return vreinterpretq_u16_u8(vrev16q_u8((*this)));
+    return vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(*this)));
   }
 };
 simdutf_really_inline simd16<int16_t>::operator simd16<uint16_t>() const { return this->value; }
@@ -4178,6 +4178,357 @@ namespace {
 #endif // SIMDUTF_FALLBACK_H
 /* end file src/simdutf/fallback.h */
 
+/* begin file src/scalar/utf8.h */
+#ifndef SIMDUTF_UTF8_H
+#define SIMDUTF_UTF8_H
+
+namespace simdutf {
+namespace scalar {
+namespace {
+namespace utf8 {
+#if SIMDUTF_IMPLEMENTATION_FALLBACK
+// only used by the fallback kernel.
+// credit: based on code from Google Fuchsia (Apache Licensed)
+inline simdutf_warn_unused bool validate(const char *buf, size_t len) noexcept {
+  const uint8_t *data = reinterpret_cast<const uint8_t *>(buf);
+  uint64_t pos = 0;
+  uint32_t code_point = 0;
+  while (pos < len) {
+    // check of the next 16 bytes are ascii.
+    uint64_t next_pos = pos + 16;
+    if (next_pos <= len) { // if it is safe to read 16 more bytes, check that they are ascii
+      uint64_t v1;
+      std::memcpy(&v1, data + pos, sizeof(uint64_t));
+      uint64_t v2;
+      std::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
+      uint64_t v{v1 | v2};
+      if ((v & 0x8080808080808080) == 0) {
+        pos = next_pos;
+        continue;
+      }
+    }
+    unsigned char byte = data[pos];
+
+    while (byte < 0b10000000) {
+      if (++pos == len) { return true; }
+      byte = data[pos];
+    }
+
+    if ((byte & 0b11100000) == 0b11000000) {
+      next_pos = pos + 2;
+      if (next_pos > len) { return false; }
+      if ((data[pos + 1] & 0b11000000) != 0b10000000) { return false; }
+      // range check
+      code_point = (byte & 0b00011111) << 6 | (data[pos + 1] & 0b00111111);
+      if ((code_point < 0x80) || (0x7ff < code_point)) { return false; }
+    } else if ((byte & 0b11110000) == 0b11100000) {
+      next_pos = pos + 3;
+      if (next_pos > len) { return false; }
+      if ((data[pos + 1] & 0b11000000) != 0b10000000) { return false; }
+      if ((data[pos + 2] & 0b11000000) != 0b10000000) { return false; }
+      // range check
+      code_point = (byte & 0b00001111) << 12 |
+                   (data[pos + 1] & 0b00111111) << 6 |
+                   (data[pos + 2] & 0b00111111);
+      if ((code_point < 0x800) || (0xffff < code_point) ||
+          (0xd7ff < code_point && code_point < 0xe000)) {
+        return false;
+      }
+    } else if ((byte & 0b11111000) == 0b11110000) { // 0b11110000
+      next_pos = pos + 4;
+      if (next_pos > len) { return false; }
+      if ((data[pos + 1] & 0b11000000) != 0b10000000) { return false; }
+      if ((data[pos + 2] & 0b11000000) != 0b10000000) { return false; }
+      if ((data[pos + 3] & 0b11000000) != 0b10000000) { return false; }
+      // range check
+      code_point =
+          (byte & 0b00000111) << 18 | (data[pos + 1] & 0b00111111) << 12 |
+          (data[pos + 2] & 0b00111111) << 6 | (data[pos + 3] & 0b00111111);
+      if (code_point <= 0xffff || 0x10ffff < code_point) { return false; }
+    } else {
+      // we may have a continuation
+      return false;
+    }
+    pos = next_pos;
+  }
+  return true;
+}
+#endif
+
+inline simdutf_warn_unused result validate_with_errors(const char *buf, size_t len) noexcept {
+  const uint8_t *data = reinterpret_cast<const uint8_t *>(buf);
+  size_t pos = 0;
+  uint32_t code_point = 0;
+  while (pos < len) {
+    // check of the next 16 bytes are ascii.
+    size_t next_pos = pos + 16;
+    if (next_pos <= len) { // if it is safe to read 16 more bytes, check that they are ascii
+      uint64_t v1;
+      std::memcpy(&v1, data + pos, sizeof(uint64_t));
+      uint64_t v2;
+      std::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
+      uint64_t v{v1 | v2};
+      if ((v & 0x8080808080808080) == 0) {
+        pos = next_pos;
+        continue;
+      }
+    }
+    unsigned char byte = data[pos];
+
+    while (byte < 0b10000000) {
+      if (++pos == len) { return result(error_code::SUCCESS, len); }
+      byte = data[pos];
+    }
+
+    if ((byte & 0b11100000) == 0b11000000) {
+      next_pos = pos + 2;
+      if (next_pos > len) { return result(error_code::TOO_SHORT, pos); }
+      if ((data[pos + 1] & 0b11000000) != 0b10000000) { return result(error_code::TOO_SHORT, pos); }
+      // range check
+      code_point = (byte & 0b00011111) << 6 | (data[pos + 1] & 0b00111111);
+      if ((code_point < 0x80) || (0x7ff < code_point)) { return result(error_code::OVERLONG, pos); }
+    } else if ((byte & 0b11110000) == 0b11100000) {
+      next_pos = pos + 3;
+      if (next_pos > len) { return result(error_code::TOO_SHORT, pos); }
+      if ((data[pos + 1] & 0b11000000) != 0b10000000) { return result(error_code::TOO_SHORT, pos); }
+      if ((data[pos + 2] & 0b11000000) != 0b10000000) { return result(error_code::TOO_SHORT, pos); }
+      // range check
+      code_point = (byte & 0b00001111) << 12 |
+                   (data[pos + 1] & 0b00111111) << 6 |
+                   (data[pos + 2] & 0b00111111);
+      if ((code_point < 0x800) || (0xffff < code_point)) { return result(error_code::OVERLONG, pos);}
+      if (0xd7ff < code_point && code_point < 0xe000) { return result(error_code::SURROGATE, pos); }
+    } else if ((byte & 0b11111000) == 0b11110000) { // 0b11110000
+      next_pos = pos + 4;
+      if (next_pos > len) { return result(error_code::TOO_SHORT, pos); }
+      if ((data[pos + 1] & 0b11000000) != 0b10000000) { return result(error_code::TOO_SHORT, pos); }
+      if ((data[pos + 2] & 0b11000000) != 0b10000000) { return result(error_code::TOO_SHORT, pos); }
+      if ((data[pos + 3] & 0b11000000) != 0b10000000) { return result(error_code::TOO_SHORT, pos); }
+      // range check
+      code_point =
+          (byte & 0b00000111) << 18 | (data[pos + 1] & 0b00111111) << 12 |
+          (data[pos + 2] & 0b00111111) << 6 | (data[pos + 3] & 0b00111111);
+      if (code_point <= 0xffff) { return result(error_code::OVERLONG, pos); }
+      if (0x10ffff < code_point) { return result(error_code::TOO_LARGE, pos); }
+    } else {
+      // we either have too many continuation bytes or an invalid leading byte
+      if ((byte & 0b11000000) == 0b10000000) { return result(error_code::TOO_LONG, pos); }
+      else { return result(error_code::HEADER_BITS, pos); }
+    }
+    pos = next_pos;
+  }
+  return result(error_code::SUCCESS, len);
+}
+
+// Finds the previous leading byte starting backward from buf and validates with errors from there
+// Used to pinpoint the location of an error when an invalid chunk is detected
+// We assume that the stream starts with a leading byte, and to check that it is the case, we
+// ask that you pass a pointer to the start of the stream (start).
+inline simdutf_warn_unused result rewind_and_validate_with_errors(const char *start, const char *buf, size_t len) noexcept {
+    // First check that we start with a leading byte
+  if ((*start & 0b11000000) == 0b10000000) {
+    return result(error_code::TOO_LONG, 0);
+  }
+  size_t extra_len{0};
+  // A leading byte cannot be further than 4 bytes away
+  for(int i = 0; i < 5; i++) {
+    unsigned char byte = *buf;
+    if ((byte & 0b11000000) != 0b10000000) {
+      break;
+    } else {
+      buf--;
+      extra_len++;
+    }
+  }
+
+  result res = validate_with_errors(buf, len + extra_len);
+  res.count -= extra_len;
+  return res;
+}
+
+inline size_t count_code_points(const char* buf, size_t len) {
+    const int8_t * p = reinterpret_cast<const int8_t *>(buf);
+    size_t counter{0};
+    for(size_t i = 0; i < len; i++) {
+        // -65 is 0b10111111, anything larger in two-complement's should start a new code point.
+        if(p[i] > -65) { counter++; }
+    }
+    return counter;
+}
+
+inline size_t utf16_length_from_utf8(const char* buf, size_t len) {
+    const int8_t * p = reinterpret_cast<const int8_t *>(buf);
+    size_t counter{0};
+    for(size_t i = 0; i < len; i++) {
+        if(p[i] > -65) { counter++; }
+        if(uint8_t(p[i]) >= 240) { counter++; }
+    }
+    return counter;
+}
+
+inline size_t latin1_length_from_utf8(const char *buf, size_t len) {
+  const uint8_t * c = reinterpret_cast<const uint8_t *>(buf);
+
+    size_t answer = len;
+    for(size_t i = 0; i < len; i++) {
+        if((c[i] & 0b11100000) == 0b11000000) { answer--; } // if we have a two-byte UTF8 character
+    }
+    return answer;
+}
+
+simdutf_warn_unused inline size_t trim_partial_utf8(const char *input, size_t length) {
+  if (length < 3) {
+    switch (length) {
+      case 2:
+        if (uint8_t(input[length-1]) >= 0xc0) { return length-1; } // 2-, 3- and 4-byte characters with only 1 byte left
+        if (uint8_t(input[length-2]) >= 0xe0) { return length-2; } // 3- and 4-byte characters with only 2 bytes left
+        return length;
+      case 1:
+        if (uint8_t(input[length-1]) >= 0xc0) { return length-1; } // 2-, 3- and 4-byte characters with only 1 byte left
+        return length;
+      case 0:
+        return length;
+    }
+  }
+  if (uint8_t(input[length-1]) >= 0xc0) { return length-1; } // 2-, 3- and 4-byte characters with only 1 byte left
+  if (uint8_t(input[length-2]) >= 0xe0) { return length-2; } // 3- and 4-byte characters with only 1 byte left
+  if (uint8_t(input[length-3]) >= 0xf0) { return length-3; } // 4-byte characters with only 3 bytes left
+  return length;
+}
+
+} // utf8 namespace
+} // unnamed namespace
+} // namespace scalar
+} // namespace simdutf
+
+#endif
+/* end file src/scalar/utf8.h */
+/* begin file src/scalar/utf16.h */
+#ifndef SIMDUTF_UTF16_H
+#define SIMDUTF_UTF16_H
+
+namespace simdutf {
+namespace scalar {
+namespace {
+namespace utf16 {
+
+inline simdutf_warn_unused uint16_t swap_bytes(const uint16_t word) {
+  return uint16_t((word >> 8) | (word << 8));
+}
+
+template <endianness big_endian>
+inline simdutf_warn_unused bool validate(const char16_t *buf, size_t len) noexcept {
+  const uint16_t *data = reinterpret_cast<const uint16_t *>(buf);
+  uint64_t pos = 0;
+  while (pos < len) {
+    uint16_t word = !match_system(big_endian) ? swap_bytes(data[pos]) : data[pos];
+    if((word &0xF800) == 0xD800) {
+        if(pos + 1 >= len) { return false; }
+        uint16_t diff = uint16_t(word - 0xD800);
+        if(diff > 0x3FF) { return false; }
+        uint16_t next_word = !match_system(big_endian) ? swap_bytes(data[pos + 1]) : data[pos + 1];
+        uint16_t diff2 = uint16_t(next_word - 0xDC00);
+        if(diff2 > 0x3FF) { return false; }
+        pos += 2;
+    } else {
+        pos++;
+    }
+  }
+  return true;
+}
+
+template <endianness big_endian>
+inline simdutf_warn_unused result validate_with_errors(const char16_t *buf, size_t len) noexcept {
+  const uint16_t *data = reinterpret_cast<const uint16_t *>(buf);
+  size_t pos = 0;
+  while (pos < len) {
+    uint16_t word = !match_system(big_endian) ? swap_bytes(data[pos]) : data[pos];
+    if((word & 0xF800) == 0xD800) {
+        if(pos + 1 >= len) { return result(error_code::SURROGATE, pos); }
+        uint16_t diff = uint16_t(word - 0xD800);
+        if(diff > 0x3FF) { return result(error_code::SURROGATE, pos); }
+        uint16_t next_word = !match_system(big_endian) ? swap_bytes(data[pos + 1]) : data[pos + 1];
+        uint16_t diff2 = uint16_t(next_word - 0xDC00);
+        if(diff2 > 0x3FF) { return result(error_code::SURROGATE, pos); }
+        pos += 2;
+    } else {
+        pos++;
+    }
+  }
+  return result(error_code::SUCCESS, pos);
+}
+
+template <endianness big_endian>
+inline size_t count_code_points(const char16_t* buf, size_t len) {
+  // We are not BOM aware.
+  const uint16_t * p = reinterpret_cast<const uint16_t *>(buf);
+  size_t counter{0};
+  for(size_t i = 0; i < len; i++) {
+    uint16_t word = !match_system(big_endian) ? swap_bytes(p[i]) : p[i];
+    counter += ((word & 0xFC00) != 0xDC00);
+  }
+  return counter;
+}
+
+template <endianness big_endian>
+inline size_t utf8_length_from_utf16(const char16_t* buf, size_t len) {
+  // We are not BOM aware.
+  const uint16_t * p = reinterpret_cast<const uint16_t *>(buf);
+  size_t counter{0};
+  for(size_t i = 0; i < len; i++) {
+    uint16_t word = !match_system(big_endian) ? swap_bytes(p[i]) : p[i];
+    counter++;                                      // ASCII
+    counter += static_cast<size_t>(word > 0x7F);    // non-ASCII is at least 2 bytes, surrogates are 2*2 == 4 bytes
+    counter += static_cast<size_t>((word > 0x7FF && word <= 0xD7FF) || (word >= 0xE000));   // three-byte
+  }
+  return counter;
+}
+
+template <endianness big_endian>
+inline size_t utf32_length_from_utf16(const char16_t* buf, size_t len) {
+  // We are not BOM aware.
+  const uint16_t * p = reinterpret_cast<const uint16_t *>(buf);
+  size_t counter{0};
+  for(size_t i = 0; i < len; i++) {
+    uint16_t word = !match_system(big_endian) ? swap_bytes(p[i]) : p[i];
+    counter += ((word & 0xFC00) != 0xDC00);
+  }
+  return counter;
+}
+
+
+inline size_t latin1_length_from_utf16(size_t len) {
+  return len;
+}
+
+simdutf_really_inline void change_endianness_utf16(const char16_t* in, size_t size, char16_t* out) {
+  const uint16_t * input = reinterpret_cast<const uint16_t *>(in);
+  uint16_t * output = reinterpret_cast<uint16_t *>(out);
+  for (size_t i = 0; i < size; i++) {
+    *output++ = uint16_t(input[i] >> 8 | input[i] << 8);
+  }
+}
+
+
+template <endianness big_endian>
+simdutf_warn_unused inline size_t trim_partial_utf16(const char16_t* input, size_t length) {
+  if (length <= 1) {
+    return length;
+  }
+  uint16_t last_word = uint16_t(input[length-1]);
+  last_word = !match_system(big_endian) ? swap_bytes(last_word) : last_word;
+  length -= ((last_word & 0xFC00) == 0xD800);
+  return length;
+}
+
+} // utf16 namespace
+} // unnamed namespace
+} // namespace scalar
+} // namespace simdutf
+
+#endif
+/* end file src/scalar/utf16.h */
+
 namespace simdutf {
 bool implementation::supported_by_runtime_system() const {
   uint32_t required_instruction_sets = this->required_instruction_sets();
@@ -5332,6 +5683,25 @@ const implementation * builtin_implementation() {
   return builtin_impl;
 }
 
+simdutf_warn_unused size_t trim_partial_utf8(const char *input, size_t length) {
+  return scalar::utf8::trim_partial_utf8(input, length);
+}
+
+simdutf_warn_unused size_t trim_partial_utf16be(const char16_t* input, size_t length) {
+  return scalar::utf16::trim_partial_utf16<BIG>(input, length);
+}
+
+simdutf_warn_unused size_t trim_partial_utf16le(const char16_t* input, size_t length) {
+  return scalar::utf16::trim_partial_utf16<LITTLE>(input, length);
+}
+
+simdutf_warn_unused size_t trim_partial_utf16(const char16_t* input, size_t length) {
+  #if SIMDUTF_IS_BIG_ENDIAN
+  return trim_partial_utf16be(input, length);
+  #else
+  return trim_partial_utf16le(input, length);
+  #endif
+}
 
 } // namespace simdutf
 
@@ -10346,324 +10716,6 @@ inline simdutf_warn_unused result validate_with_errors(const char *buf, size_t l
 
 #endif
 /* end file src/scalar/ascii.h */
-/* begin file src/scalar/utf8.h */
-#ifndef SIMDUTF_UTF8_H
-#define SIMDUTF_UTF8_H
-
-namespace simdutf {
-namespace scalar {
-namespace {
-namespace utf8 {
-#if SIMDUTF_IMPLEMENTATION_FALLBACK
-// only used by the fallback kernel.
-// credit: based on code from Google Fuchsia (Apache Licensed)
-inline simdutf_warn_unused bool validate(const char *buf, size_t len) noexcept {
-  const uint8_t *data = reinterpret_cast<const uint8_t *>(buf);
-  uint64_t pos = 0;
-  uint32_t code_point = 0;
-  while (pos < len) {
-    // check of the next 16 bytes are ascii.
-    uint64_t next_pos = pos + 16;
-    if (next_pos <= len) { // if it is safe to read 16 more bytes, check that they are ascii
-      uint64_t v1;
-      std::memcpy(&v1, data + pos, sizeof(uint64_t));
-      uint64_t v2;
-      std::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
-      uint64_t v{v1 | v2};
-      if ((v & 0x8080808080808080) == 0) {
-        pos = next_pos;
-        continue;
-      }
-    }
-    unsigned char byte = data[pos];
-
-    while (byte < 0b10000000) {
-      if (++pos == len) { return true; }
-      byte = data[pos];
-    }
-
-    if ((byte & 0b11100000) == 0b11000000) {
-      next_pos = pos + 2;
-      if (next_pos > len) { return false; }
-      if ((data[pos + 1] & 0b11000000) != 0b10000000) { return false; }
-      // range check
-      code_point = (byte & 0b00011111) << 6 | (data[pos + 1] & 0b00111111);
-      if ((code_point < 0x80) || (0x7ff < code_point)) { return false; }
-    } else if ((byte & 0b11110000) == 0b11100000) {
-      next_pos = pos + 3;
-      if (next_pos > len) { return false; }
-      if ((data[pos + 1] & 0b11000000) != 0b10000000) { return false; }
-      if ((data[pos + 2] & 0b11000000) != 0b10000000) { return false; }
-      // range check
-      code_point = (byte & 0b00001111) << 12 |
-                   (data[pos + 1] & 0b00111111) << 6 |
-                   (data[pos + 2] & 0b00111111);
-      if ((code_point < 0x800) || (0xffff < code_point) ||
-          (0xd7ff < code_point && code_point < 0xe000)) {
-        return false;
-      }
-    } else if ((byte & 0b11111000) == 0b11110000) { // 0b11110000
-      next_pos = pos + 4;
-      if (next_pos > len) { return false; }
-      if ((data[pos + 1] & 0b11000000) != 0b10000000) { return false; }
-      if ((data[pos + 2] & 0b11000000) != 0b10000000) { return false; }
-      if ((data[pos + 3] & 0b11000000) != 0b10000000) { return false; }
-      // range check
-      code_point =
-          (byte & 0b00000111) << 18 | (data[pos + 1] & 0b00111111) << 12 |
-          (data[pos + 2] & 0b00111111) << 6 | (data[pos + 3] & 0b00111111);
-      if (code_point <= 0xffff || 0x10ffff < code_point) { return false; }
-    } else {
-      // we may have a continuation
-      return false;
-    }
-    pos = next_pos;
-  }
-  return true;
-}
-#endif
-
-inline simdutf_warn_unused result validate_with_errors(const char *buf, size_t len) noexcept {
-  const uint8_t *data = reinterpret_cast<const uint8_t *>(buf);
-  size_t pos = 0;
-  uint32_t code_point = 0;
-  while (pos < len) {
-    // check of the next 16 bytes are ascii.
-    size_t next_pos = pos + 16;
-    if (next_pos <= len) { // if it is safe to read 16 more bytes, check that they are ascii
-      uint64_t v1;
-      std::memcpy(&v1, data + pos, sizeof(uint64_t));
-      uint64_t v2;
-      std::memcpy(&v2, data + pos + sizeof(uint64_t), sizeof(uint64_t));
-      uint64_t v{v1 | v2};
-      if ((v & 0x8080808080808080) == 0) {
-        pos = next_pos;
-        continue;
-      }
-    }
-    unsigned char byte = data[pos];
-
-    while (byte < 0b10000000) {
-      if (++pos == len) { return result(error_code::SUCCESS, len); }
-      byte = data[pos];
-    }
-
-    if ((byte & 0b11100000) == 0b11000000) {
-      next_pos = pos + 2;
-      if (next_pos > len) { return result(error_code::TOO_SHORT, pos); }
-      if ((data[pos + 1] & 0b11000000) != 0b10000000) { return result(error_code::TOO_SHORT, pos); }
-      // range check
-      code_point = (byte & 0b00011111) << 6 | (data[pos + 1] & 0b00111111);
-      if ((code_point < 0x80) || (0x7ff < code_point)) { return result(error_code::OVERLONG, pos); }
-    } else if ((byte & 0b11110000) == 0b11100000) {
-      next_pos = pos + 3;
-      if (next_pos > len) { return result(error_code::TOO_SHORT, pos); }
-      if ((data[pos + 1] & 0b11000000) != 0b10000000) { return result(error_code::TOO_SHORT, pos); }
-      if ((data[pos + 2] & 0b11000000) != 0b10000000) { return result(error_code::TOO_SHORT, pos); }
-      // range check
-      code_point = (byte & 0b00001111) << 12 |
-                   (data[pos + 1] & 0b00111111) << 6 |
-                   (data[pos + 2] & 0b00111111);
-      if ((code_point < 0x800) || (0xffff < code_point)) { return result(error_code::OVERLONG, pos);}
-      if (0xd7ff < code_point && code_point < 0xe000) { return result(error_code::SURROGATE, pos); }
-    } else if ((byte & 0b11111000) == 0b11110000) { // 0b11110000
-      next_pos = pos + 4;
-      if (next_pos > len) { return result(error_code::TOO_SHORT, pos); }
-      if ((data[pos + 1] & 0b11000000) != 0b10000000) { return result(error_code::TOO_SHORT, pos); }
-      if ((data[pos + 2] & 0b11000000) != 0b10000000) { return result(error_code::TOO_SHORT, pos); }
-      if ((data[pos + 3] & 0b11000000) != 0b10000000) { return result(error_code::TOO_SHORT, pos); }
-      // range check
-      code_point =
-          (byte & 0b00000111) << 18 | (data[pos + 1] & 0b00111111) << 12 |
-          (data[pos + 2] & 0b00111111) << 6 | (data[pos + 3] & 0b00111111);
-      if (code_point <= 0xffff) { return result(error_code::OVERLONG, pos); }
-      if (0x10ffff < code_point) { return result(error_code::TOO_LARGE, pos); }
-    } else {
-      // we either have too many continuation bytes or an invalid leading byte
-      if ((byte & 0b11000000) == 0b10000000) { return result(error_code::TOO_LONG, pos); }
-      else { return result(error_code::HEADER_BITS, pos); }
-    }
-    pos = next_pos;
-  }
-  return result(error_code::SUCCESS, len);
-}
-
-// Finds the previous leading byte starting backward from buf and validates with errors from there
-// Used to pinpoint the location of an error when an invalid chunk is detected
-// We assume that the stream starts with a leading byte, and to check that it is the case, we
-// ask that you pass a pointer to the start of the stream (start).
-inline simdutf_warn_unused result rewind_and_validate_with_errors(const char *start, const char *buf, size_t len) noexcept {
-    // First check that we start with a leading byte
-  if ((*start & 0b11000000) == 0b10000000) {
-    return result(error_code::TOO_LONG, 0);
-  }
-  size_t extra_len{0};
-  // A leading byte cannot be further than 4 bytes away
-  for(int i = 0; i < 5; i++) {
-    unsigned char byte = *buf;
-    if ((byte & 0b11000000) != 0b10000000) {
-      break;
-    } else {
-      buf--;
-      extra_len++;
-    }
-  }
-
-  result res = validate_with_errors(buf, len + extra_len);
-  res.count -= extra_len;
-  return res;
-}
-
-inline size_t count_code_points(const char* buf, size_t len) {
-    const int8_t * p = reinterpret_cast<const int8_t *>(buf);
-    size_t counter{0};
-    for(size_t i = 0; i < len; i++) {
-        // -65 is 0b10111111, anything larger in two-complement's should start a new code point.
-        if(p[i] > -65) { counter++; }
-    }
-    return counter;
-}
-
-inline size_t utf16_length_from_utf8(const char* buf, size_t len) {
-    const int8_t * p = reinterpret_cast<const int8_t *>(buf);
-    size_t counter{0};
-    for(size_t i = 0; i < len; i++) {
-        if(p[i] > -65) { counter++; }
-        if(uint8_t(p[i]) >= 240) { counter++; }
-    }
-    return counter;
-}
-
-inline size_t latin1_length_from_utf8(const char *buf, size_t len) {
-  const uint8_t * c = reinterpret_cast<const uint8_t *>(buf);
-
-    size_t answer = len;
-    for(size_t i = 0; i < len; i++) {
-        if((c[i] & 0b11100000) == 0b11000000) { answer--; } // if we have a two-byte UTF8 character
-    }
-    return answer;
-}
-
-} // utf8 namespace
-} // unnamed namespace
-} // namespace scalar
-} // namespace simdutf
-
-#endif
-/* end file src/scalar/utf8.h */
-/* begin file src/scalar/utf16.h */
-#ifndef SIMDUTF_UTF16_H
-#define SIMDUTF_UTF16_H
-
-namespace simdutf {
-namespace scalar {
-namespace {
-namespace utf16 {
-
-inline simdutf_warn_unused uint16_t swap_bytes(const uint16_t word) {
-  return uint16_t((word >> 8) | (word << 8));
-}
-
-template <endianness big_endian>
-inline simdutf_warn_unused bool validate(const char16_t *buf, size_t len) noexcept {
-  const uint16_t *data = reinterpret_cast<const uint16_t *>(buf);
-  uint64_t pos = 0;
-  while (pos < len) {
-    uint16_t word = !match_system(big_endian) ? swap_bytes(data[pos]) : data[pos];
-    if((word &0xF800) == 0xD800) {
-        if(pos + 1 >= len) { return false; }
-        uint16_t diff = uint16_t(word - 0xD800);
-        if(diff > 0x3FF) { return false; }
-        uint16_t next_word = !match_system(big_endian) ? swap_bytes(data[pos + 1]) : data[pos + 1];
-        uint16_t diff2 = uint16_t(next_word - 0xDC00);
-        if(diff2 > 0x3FF) { return false; }
-        pos += 2;
-    } else {
-        pos++;
-    }
-  }
-  return true;
-}
-
-template <endianness big_endian>
-inline simdutf_warn_unused result validate_with_errors(const char16_t *buf, size_t len) noexcept {
-  const uint16_t *data = reinterpret_cast<const uint16_t *>(buf);
-  size_t pos = 0;
-  while (pos < len) {
-    uint16_t word = !match_system(big_endian) ? swap_bytes(data[pos]) : data[pos];
-    if((word & 0xF800) == 0xD800) {
-        if(pos + 1 >= len) { return result(error_code::SURROGATE, pos); }
-        uint16_t diff = uint16_t(word - 0xD800);
-        if(diff > 0x3FF) { return result(error_code::SURROGATE, pos); }
-        uint16_t next_word = !match_system(big_endian) ? swap_bytes(data[pos + 1]) : data[pos + 1];
-        uint16_t diff2 = uint16_t(next_word - 0xDC00);
-        if(diff2 > 0x3FF) { return result(error_code::SURROGATE, pos); }
-        pos += 2;
-    } else {
-        pos++;
-    }
-  }
-  return result(error_code::SUCCESS, pos);
-}
-
-template <endianness big_endian>
-inline size_t count_code_points(const char16_t* buf, size_t len) {
-  // We are not BOM aware.
-  const uint16_t * p = reinterpret_cast<const uint16_t *>(buf);
-  size_t counter{0};
-  for(size_t i = 0; i < len; i++) {
-    uint16_t word = !match_system(big_endian) ? swap_bytes(p[i]) : p[i];
-    counter += ((word & 0xFC00) != 0xDC00);
-  }
-  return counter;
-}
-
-template <endianness big_endian>
-inline size_t utf8_length_from_utf16(const char16_t* buf, size_t len) {
-  // We are not BOM aware.
-  const uint16_t * p = reinterpret_cast<const uint16_t *>(buf);
-  size_t counter{0};
-  for(size_t i = 0; i < len; i++) {
-    uint16_t word = !match_system(big_endian) ? swap_bytes(p[i]) : p[i];
-    counter++;                                      // ASCII
-    counter += static_cast<size_t>(word > 0x7F);    // non-ASCII is at least 2 bytes, surrogates are 2*2 == 4 bytes
-    counter += static_cast<size_t>((word > 0x7FF && word <= 0xD7FF) || (word >= 0xE000));   // three-byte
-  }
-  return counter;
-}
-
-template <endianness big_endian>
-inline size_t utf32_length_from_utf16(const char16_t* buf, size_t len) {
-  // We are not BOM aware.
-  const uint16_t * p = reinterpret_cast<const uint16_t *>(buf);
-  size_t counter{0};
-  for(size_t i = 0; i < len; i++) {
-    uint16_t word = !match_system(big_endian) ? swap_bytes(p[i]) : p[i];
-    counter += ((word & 0xFC00) != 0xDC00);
-  }
-  return counter;
-}
-
-
-inline size_t latin1_length_from_utf16(size_t len) {
-  return len;
-}
-
-simdutf_really_inline void change_endianness_utf16(const char16_t* in, size_t size, char16_t* out) {
-  const uint16_t * input = reinterpret_cast<const uint16_t *>(in);
-  uint16_t * output = reinterpret_cast<uint16_t *>(out);
-  for (size_t i = 0; i < size; i++) {
-    *output++ = uint16_t(input[i] >> 8 | input[i] << 8);
-  }
-}
-
-} // utf16 namespace
-} // unnamed namespace
-} // namespace scalar
-} // namespace simdutf
-
-#endif
-/* end file src/scalar/utf16.h */
 /* begin file src/scalar/utf32.h */
 #ifndef SIMDUTF_UTF32_H
 #define SIMDUTF_UTF32_H
@@ -12924,8 +12976,8 @@ const char16_t* arm_validate_utf16(const char16_t* input, size_t size) {
         auto in0 = simd16<uint16_t>(input);
         auto in1 = simd16<uint16_t>(input + simd16<uint16_t>::SIZE / sizeof(char16_t));
         if (!match_system(big_endian)) {
-            in0 = vrev16q_u8(in0);
-            in1 = vrev16q_u8(in1);
+            in0 = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in0)));
+            in1 = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in1)));
         }
         const auto t0 = in0.shr<8>();
         const auto t1 = in1.shr<8>();
@@ -12995,8 +13047,8 @@ const result arm_validate_utf16_with_errors(const char16_t* input, size_t size) 
         auto in1 = simd16<uint16_t>(input + simd16<uint16_t>::SIZE / sizeof(char16_t));
 
         if (!match_system(big_endian)) {
-            in0 = vrev16q_u8(in0);
-            in1 = vrev16q_u8(in1);
+            in0 = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in0)));
+            in1 = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in1)));
         }
         const auto t0 = in0.shr<8>();
         const auto t1 = in1.shr<8>();
@@ -13190,10 +13242,10 @@ std::pair<const char*, char16_t*> arm_convert_latin1_to_utf16(const char* buf, s
     while (buf + 16 <= end) {
         uint8x16_t in8 = vld1q_u8(reinterpret_cast<const uint8_t *>(buf));
         uint16x8_t inlow = vmovl_u8(vget_low_u8(in8));
-        if (!match_system(big_endian)) { inlow = vrev16q_u8(inlow); }
+        if (!match_system(big_endian)) { inlow = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(inlow))); }
         vst1q_u16(reinterpret_cast<uint16_t *>(utf16_output), inlow);
         uint16x8_t inhigh = vmovl_u8(vget_high_u8(in8));
-        if (!match_system(big_endian)) { inhigh = vrev16q_u8(inhigh); }
+        if (!match_system(big_endian)) { inhigh = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(inhigh))); }
         vst1q_u16(reinterpret_cast<uint16_t *>(utf16_output+8), inhigh);
         utf16_output += 16;
         buf += 16;
@@ -13740,7 +13792,7 @@ std::pair<const char16_t*, char*> arm_convert_utf16_to_latin1(const char16_t* bu
   const char16_t* end = buf + len;
   while (buf + 8 <= end) {
     uint16x8_t in = vld1q_u16(reinterpret_cast<const uint16_t *>(buf));
-    if (!match_system(big_endian)) { in = vrev16q_u8(in); }
+    if (!match_system(big_endian)) { in = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in))); }
     if (vmaxvq_u16(in) <= 0xff) {
         // 1. pack the bytes
         uint8x8_t latin1_packed = vmovn_u16(in);
@@ -13762,7 +13814,7 @@ std::pair<result, char*> arm_convert_utf16_to_latin1_with_errors(const char16_t*
   const char16_t* end = buf + len;
   while (buf + 8 <= end) {
     uint16x8_t in = vld1q_u16(reinterpret_cast<const uint16_t *>(buf));
-    if (!match_system(big_endian)) { in = vrev16q_u8(in); }
+    if (!match_system(big_endian)) { in = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in))); }
     if (vmaxvq_u16(in) <= 0xff) {
         // 1. pack the bytes
         uint8x8_t latin1_packed = vmovn_u16(in);
@@ -13850,11 +13902,11 @@ std::pair<const char16_t*, char*> arm_convert_utf16_to_utf8(const char16_t* buf,
 
   while (buf + 16 <= end) {
     uint16x8_t in = vld1q_u16(reinterpret_cast<const uint16_t *>(buf));
-    if (!match_system(big_endian)) { in = vrev16q_u8(in); }
+    if (!match_system(big_endian)) { in = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in))); }
     if(vmaxvq_u16(in) <= 0x7F) { // ASCII fast path!!!!
         // It is common enough that we have sequences of 16 consecutive ASCII characters.
         uint16x8_t nextin = vld1q_u16(reinterpret_cast<const uint16_t *>(buf) + 8);
-        if (!match_system(big_endian)) { nextin = vrev16q_u8(nextin); }
+        if (!match_system(big_endian)) { nextin = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(nextin))); }
         if(vmaxvq_u16(nextin) > 0x7F) {
           // 1. pack the bytes
           // obviously suboptimal.
@@ -14103,11 +14155,11 @@ std::pair<result, char*> arm_convert_utf16_to_utf8_with_errors(const char16_t* b
 
   while (buf + 16 <= end) {
     uint16x8_t in = vld1q_u16(reinterpret_cast<const uint16_t *>(buf));
-    if (!match_system(big_endian)) { in = vrev16q_u8(in); }
+    if (!match_system(big_endian)) { in = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in))); }
     if(vmaxvq_u16(in) <= 0x7F) { // ASCII fast path!!!!
         // It is common enough that we have sequences of 16 consecutive ASCII characters.
         uint16x8_t nextin = vld1q_u16(reinterpret_cast<const uint16_t *>(buf) + 8);
-        if (!match_system(big_endian)) { nextin = vrev16q_u8(nextin); }
+        if (!match_system(big_endian)) { nextin = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(nextin))); }
         if(vmaxvq_u16(nextin) > 0x7F) {
           // 1. pack the bytes
           // obviously suboptimal.
@@ -14400,7 +14452,7 @@ std::pair<const char16_t*, char32_t*> arm_convert_utf16_to_utf32(const char16_t*
 
   while (buf + 8 <= end) {
     uint16x8_t in = vld1q_u16(reinterpret_cast<const uint16_t *>(buf));
-    if (!match_system(big_endian)) { in = vrev16q_u8(in); }
+    if (!match_system(big_endian)) { in = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in))); }
 
     const uint16x8_t surrogates_bytemask = vceqq_u16(vandq_u16(in, v_f800), v_d800);
     // It might seem like checking for surrogates_bitmask == 0xc000 could help. However,
@@ -14458,7 +14510,7 @@ std::pair<result, char32_t*> arm_convert_utf16_to_utf32_with_errors(const char16
 
   while (buf + 8 <= end) {
     uint16x8_t in = vld1q_u16(reinterpret_cast<const uint16_t *>(buf));
-    if (!match_system(big_endian)) { in = vrev16q_u8(in); }
+    if (!match_system(big_endian)) { in = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in))); }
 
     const uint16x8_t surrogates_bytemask = vceqq_u16(vandq_u16(in, v_f800), v_d800);
     // It might seem like checking for surrogates_bitmask == 0xc000 could help. However,
@@ -20588,12 +20640,12 @@ We adjust for the bytes that have their two most significant bits. This takes ca
  
 static inline size_t latin1_to_utf8_avx512_branch(__m512i input, char *utf8_output) {
   __mmask64 nonascii = _mm512_movepi8_mask(input);
-  size_t nonascii_count = (size_t)count_ones(nonascii);
-  if(nonascii_count > 0){
+  if(nonascii) {
     return latin1_to_utf8_avx512_vec(input, 64, utf8_output, 0);
   } else {
     _mm512_storeu_si512(utf8_output, input);
-    return 64 + nonascii_count;}
+    return 64;
+  }
 }
  
 size_t latin1_to_utf8_avx512_start(const char *buf, size_t len, char *utf8_output) {
