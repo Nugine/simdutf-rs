@@ -9,7 +9,7 @@ r = requests.get(url)
 version = r.url.split("/")[-1]
 
 current = version
-last = "v4.0.4"
+last = "v4.0.5"
 print(f"current: {current}")
 print(f"last:    {last}")
 assert current == last
