@@ -1,4 +1,4 @@
-/* auto-generated on 2023-11-22 11:07:54 -0500. Do not edit! */
+/* auto-generated on 2023-12-20 11:04:05 -0500. Do not edit! */
 /* begin file include/simdutf.h */
 #ifndef SIMDUTF_H
 #define SIMDUTF_H
@@ -567,7 +567,7 @@ SIMDUTF_DISABLE_UNDESIRED_WARNINGS
 #define SIMDUTF_SIMDUTF_VERSION_H
 
 /** The version of simdutf being used (major.minor.revision) */
-#define SIMDUTF_VERSION "4.0.5"
+#define SIMDUTF_VERSION "4.0.8"
 
 namespace simdutf {
 enum {
@@ -582,7 +582,7 @@ enum {
   /**
    * The revision (major.minor.REVISION) of simdutf being used.
    */
-  SIMDUTF_VERSION_REVISION = 5
+  SIMDUTF_VERSION_REVISION = 8
 };
 } // namespace simdutf
 

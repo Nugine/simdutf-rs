@@ -1,4 +1,4 @@
-/* auto-generated on 2023-11-22 11:07:54 -0500. Do not edit! */
+/* auto-generated on 2023-12-20 11:04:05 -0500. Do not edit! */
 /* begin file src/simdutf.cpp */
 #include "simdutf.h"
 /* begin file src/implementation.cpp */
@@ -205,7 +205,7 @@ namespace {
 #define simdutf_make_uint8x16_t(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, \
                              x13, x14, x15, x16)                                   \
    ([=]() {                                                                        \
-     static uint8_t array[16] = {x1, x2,  x3,  x4,  x5,  x6,  x7,  x8,             \
+     uint8_t array[16] = {x1, x2,  x3,  x4,  x5,  x6,  x7,  x8,                    \
                                  x9, x10, x11, x12, x13, x14, x15, x16};           \
      return vld1q_u8(array);                                                       \
    }())
@@ -214,7 +214,7 @@ namespace {
 #define simdutf_make_int8x16_t(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, \
                              x13, x14, x15, x16)                                  \
    ([=]() {                                                                       \
-     static int8_t array[16] = {x1, x2,  x3,  x4,  x5,  x6,  x7,  x8,             \
+     int8_t array[16] = {x1, x2,  x3,  x4,  x5,  x6,  x7,  x8,                    \
                                  x9, x10, x11, x12, x13, x14, x15, x16};          \
      return vld1q_s8(array);                                                      \
    }())
@@ -223,28 +223,28 @@ namespace {
 #ifndef simdutf_make_uint8x8_t
 #define simdutf_make_uint8x8_t(x1, x2, x3, x4, x5, x6, x7, x8)                \
    ([=]() {                                                                   \
-     static uint8_t array[8] = {x1, x2,  x3,  x4,  x5,  x6,  x7,  x8};        \
+     uint8_t array[8] = {x1, x2,  x3,  x4,  x5,  x6,  x7,  x8};               \
      return vld1_u8(array);                                                   \
    }())
 #endif
 #ifndef simdutf_make_int8x8_t
 #define simdutf_make_int8x8_t(x1, x2, x3, x4, x5, x6, x7, x8)                 \
    ([=]() {                                                                   \
-     static int8_t array[8] = {x1, x2,  x3,  x4,  x5,  x6,  x7,  x8};         \
+     int8_t array[8] = {x1, x2,  x3,  x4,  x5,  x6,  x7,  x8};                \
      return vld1_s8(array);                                                   \
    }())
 #endif
 #ifndef simdutf_make_uint16x8_t
 #define simdutf_make_uint16x8_t(x1, x2, x3, x4, x5, x6, x7, x8)                \
    ([=]() {                                                                    \
-     static uint16_t array[8] = {x1, x2,  x3,  x4,  x5,  x6,  x7,  x8};        \
+     uint16_t array[8] = {x1, x2,  x3,  x4,  x5,  x6,  x7,  x8};               \
      return vld1q_u16(array);                                                  \
    }())
 #endif
 #ifndef simdutf_make_int16x8_t
 #define simdutf_make_int16x8_t(x1, x2, x3, x4, x5, x6, x7, x8)                 \
    ([=]() {                                                                    \
-     static int16_t array[8] = {x1, x2,  x3,  x4,  x5,  x6,  x7,  x8};         \
+     int16_t array[8] = {x1, x2,  x3,  x4,  x5,  x6,  x7,  x8};                \
      return vld1q_s16(array);                                                  \
    }())
 #endif
@@ -1151,7 +1151,7 @@ namespace icelake {
 // We should not get warnings while including <x86intrin.h> yet we do
 // under some versions of GCC.
 // If the x86intrin.h header has uninitialized values that are problematic,
-// it is a GCC issue, we want to ignore these warnigns.
+// it is a GCC issue, we want to ignore these warnings.
 SIMDUTF_DISABLE_GCC_WARNING(-Wuninitialized)
 #endif
 
@@ -1568,7 +1568,7 @@ public:
 // We should not get warnings while including <x86intrin.h> yet we do
 // under some versions of GCC.
 // If the x86intrin.h header has uninitialized values that are problematic,
-// it is a GCC issue, we want to ignore these warnigns.
+// it is a GCC issue, we want to ignore these warnings.
 SIMDUTF_DISABLE_GCC_WARNING(-Wuninitialized)
 #endif
 
@@ -2498,7 +2498,7 @@ public:
 // We should not get warnings while including <x86intrin.h> yet we do
 // under some versions of GCC.
 // If the x86intrin.h header has uninitialized values that are problematic,
-// it is a GCC issue, we want to ignore these warnigns.
+// it is a GCC issue, we want to ignore these warnings.
 SIMDUTF_DISABLE_GCC_WARNING(-Wuninitialized)
 #endif
 
@@ -5695,9 +5695,9 @@ encoding_type check_bom(const char* byte, size_t length) {
 /* begin file src/error.cpp */
 namespace simdutf {
 
-  simdutf_really_inline result::result() : error{error_code::SUCCESS}, count{0} {};
+  simdutf_really_inline result::result() : error{error_code::SUCCESS}, count{0} {}
 
-  simdutf_really_inline result::result(error_code _err, size_t _pos) : error{_err}, count{_pos} {};
+  simdutf_really_inline result::result(error_code _err, size_t _pos) : error{_err}, count{_pos} {}
 
 }
 /* end file src/error.cpp */
@@ -11655,7 +11655,7 @@ inline result convert_with_errors(const char* buf, size_t len, char16_t* utf16_o
  *
  * The caller is responsible to ensure that len > 0.
  *
- * If the error is believed to have occured prior to 'buf', the count value contain in the result
+ * If the error is believed to have occurred prior to 'buf', the count value contain in the result
  * will be SIZE_T - 1, SIZE_T - 2, or SIZE_T - 3.
  */
 template <endianness endian>
@@ -11934,7 +11934,7 @@ inline result convert_with_errors(const char* buf, size_t len, char32_t* utf32_o
  *
  * The caller is responsible to ensure that len > 0.
  *
- * If the error is believed to have occured prior to 'buf', the count value contain in the result
+ * If the error is believed to have occurred prior to 'buf', the count value contain in the result
  * will be SIZE_T - 1, SIZE_T - 2, or SIZE_T - 3.
  */
 inline result rewind_and_convert_with_errors(size_t prior_bytes, const char* buf, size_t len, char32_t* utf32_output) {
@@ -13091,7 +13091,9 @@ arm_convert_latin1_to_utf8(const char *latin1_input, size_t len,
   uint8_t *utf8_output = reinterpret_cast<uint8_t *>(utf8_out);
   const char *end = latin1_input + len;
   const uint16x8_t v_c080 = vmovq_n_u16((uint16_t)0xc080);
-  while (latin1_input + 16 <= end) {
+  // We always write 16 bytes, of which more than the first 8 bytes
+  // are valid. A safety margin of 8 is more than sufficient.
+  while (latin1_input + 16 + 8 <= end) {
     uint8x16_t in8 = vld1q_u8(reinterpret_cast<const uint8_t *>(latin1_input));
     if (vmaxvq_u8(in8) <= 0x7F) { // ASCII fast path!!!!
       vst1q_u8(utf8_output, in8);
@@ -13815,8 +13817,8 @@ std::pair<const char16_t*, char*> arm_convert_utf16_to_utf8(const char16_t* buf,
   const uint16x8_t v_f800 = vmovq_n_u16((uint16_t)0xf800);
   const uint16x8_t v_d800 = vmovq_n_u16((uint16_t)0xd800);
   const uint16x8_t v_c080 = vmovq_n_u16((uint16_t)0xc080);
-
-  while (buf + 16 <= end) {
+  const size_t safety_margin = 12; // to avoid overruns, see issue https://github.com/simdutf/simdutf/issues/92
+  while (buf + 16 + safety_margin <= end) {
     uint16x8_t in = vld1q_u16(reinterpret_cast<const uint16_t *>(buf));
     if (!match_system(big_endian)) { in = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in))); }
     if(vmaxvq_u16(in) <= 0x7F) { // ASCII fast path!!!!
@@ -14068,8 +14070,9 @@ std::pair<result, char*> arm_convert_utf16_to_utf8_with_errors(const char16_t* b
   const uint16x8_t v_f800 = vmovq_n_u16((uint16_t)0xf800);
   const uint16x8_t v_d800 = vmovq_n_u16((uint16_t)0xd800);
   const uint16x8_t v_c080 = vmovq_n_u16((uint16_t)0xc080);
+  const size_t safety_margin = 12; // to avoid overruns, see issue https://github.com/simdutf/simdutf/issues/92
 
-  while (buf + 16 <= end) {
+  while (buf + 16 + safety_margin <= end) {
     uint16x8_t in = vld1q_u16(reinterpret_cast<const uint16_t *>(buf));
     if (!match_system(big_endian)) { in = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in))); }
     if(vmaxvq_u16(in) <= 0x7F) { // ASCII fast path!!!!
@@ -16281,11 +16284,6 @@ simdutf_really_inline size_t utf16_length_from_utf8(const char* in, size_t size)
     }
     return count + scalar::utf8::utf16_length_from_utf8(in + pos, size - pos);
 }
-
-
-simdutf_really_inline size_t utf32_length_from_utf8(const char* in, size_t size) {
-    return count_code_points(in, size);
-}
 } // utf8 namespace
 } // unnamed namespace
 } // namespace arm64
@@ -16724,7 +16722,7 @@ using namespace simd;
       return latin1_output - start;
     }
 
-  }; 
+  }
 }   // utf8_to_latin1 namespace
 }   // unnamed namespace
 }   // namespace arm64
@@ -17417,7 +17415,7 @@ simdutf_warn_unused size_t implementation::utf16_length_from_utf32(const char32_
 }
 
 simdutf_warn_unused size_t implementation::utf32_length_from_utf8(const char * input, size_t length) const noexcept {
-  return utf8::utf32_length_from_utf8(input, length);
+  return utf8::count_code_points(input, length);
 }
 
 } // namespace arm64
@@ -17932,7 +17930,7 @@ simdutf_really_inline bool process_block_utf8_to_utf16(const char *&in, char16_t
       __m512i indexofthirdlastbytes = _mm512_add_epi16(mask_ffffffff,
                                                        indexofsecondlastbytes); // indices of the second last bytes
       __m512i thirdlastbyte = _mm512_maskz_mov_epi8(m34,
-                                                    clearedbytes); // only those that are the third last byte of a sequece
+                                                    clearedbytes); // only those that are the third last byte of a sequence
       __m512i thirdlastbytes = _mm512_maskz_permutexvar_epi8(0x5555555555555555, indexofthirdlastbytes,
                                                              thirdlastbyte); // the third last bytes (of three byte sequences, hi
                                                                              // surrogate)
@@ -17994,7 +17992,7 @@ simdutf_really_inline bool process_block_utf8_to_utf16(const char *&in, char16_t
     __m512i indexofthirdlastbytes = _mm512_add_epi16(mask_ffffffff,
                                                      indexofsecondlastbytes); // indices of the second last bytes
     __m512i thirdlastbyte = _mm512_maskz_mov_epi8(m34,
-                                                  clearedbytes); // only those that are the third last byte of a sequece
+                                                  clearedbytes); // only those that are the third last byte of a sequence
     __m512i thirdlastbytes = _mm512_maskz_permutexvar_epi8(0x5555555555555555, indexofthirdlastbytes,
                                                            thirdlastbyte); // the third last bytes (of three byte sequences, hi
                                                                            // surrogate)
@@ -18050,7 +18048,7 @@ simdutf_really_inline bool process_block_utf8_to_utf16(const char *&in, char16_t
   }
   // Fast path 2: all ASCII or 2 byte
   __mmask64 continuation_or_ascii = (tail == SIMDUTF_FULL) ? _knot_mask64(m234) : _kand_mask64(_knot_mask64(m234), b);
-  // on top of -0xc0 we substract -2 which we get back later of the
+  // on top of -0xc0 we subtract -2 which we get back later of the
   // continuation byte tags
   __m512i leading2byte = _mm512_maskz_sub_epi8(m234, input, mask_c2c2c2c2);
   __mmask64 leading = tail == (tail == SIMDUTF_FULL) ? _kor_mask64(m1, m234) : _kand_mask64(_kor_mask64(m1, m234), b); // first bytes of each sequence
@@ -18298,7 +18296,7 @@ __m512i rotate_by_N_epi8(const __m512i input) {
     stored at separate 32-bit lanes.
 
     For each lane we have also a character class (`char_class), given in form
-    0x8080800N, where N is 4 higest bits from the leading byte; 0x80 resets
+    0x8080800N, where N is 4 highest bits from the leading byte; 0x80 resets
     corresponding bytes during pshufb.
 */
 simdutf_really_inline __m512i expanded_utf8_to_utf32(__m512i char_class, __m512i utf8) {
@@ -19216,7 +19214,7 @@ simdutf_really_inline size_t process_block_from_utf8_to_latin1(const char *buf, 
   //  _mm512_storeu_si512((__m512i *)latin_output, output); I tried using
   //  _mm512_storeu_si512 and have the next process_block start from the
   //  "written_out" point but the compiler shuffles memory in such a way that it
-  //  is signifcantly slower...
+  //  is significantly slower...
   // ****************************
   _mm512_mask_storeu_epi8((__m512i *)latin_output, store_mask, output);
 
@@ -20734,7 +20732,6 @@ implementation::detect_encodings(const char *input,
           }
           return simdutf::encoding_type::unspecified;
         }
-        break;
       }
       // If no surrogate, validate under other encodings as well
 
@@ -25698,11 +25695,6 @@ simdutf_really_inline size_t utf16_length_from_utf8(const char* in, size_t size)
     }
     return count + scalar::utf8::utf16_length_from_utf8(in + pos, size - pos);
 }
-
-
-simdutf_really_inline size_t utf32_length_from_utf8(const char* in, size_t size) {
-    return count_code_points(in, size);
-}
 } // utf8 namespace
 } // unnamed namespace
 } // namespace haswell
@@ -26143,7 +26135,7 @@ using namespace simd;
       return latin1_output - start;
     }
 
-  }; 
+  }
 }   // utf8_to_latin1 namespace
 }   // unnamed namespace
 }   // namespace haswell
@@ -26521,7 +26513,6 @@ simdutf_warn_unused size_t implementation::convert_utf32_to_latin1(const char32_
 }
 
 simdutf_warn_unused result implementation::convert_utf32_to_latin1_with_errors(const char32_t* buf, size_t len, char* latin1_output) const noexcept {
-  return scalar::utf32_to_latin1::convert_with_errors(buf,len,latin1_output);
   // ret.first.count is always the position in the buffer, not the number of code units written even if finished
   std::pair<result, char*> ret = avx2_convert_utf32_to_latin1_with_errors(buf, len, latin1_output);
   if (ret.first.count != len) {
@@ -28076,11 +28067,6 @@ simdutf_really_inline size_t utf16_length_from_utf8(const char* in, size_t size)
     }
     return count + scalar::utf8::utf16_length_from_utf8(in + pos, size - pos);
 }
-
-
-simdutf_really_inline size_t utf32_length_from_utf8(const char* in, size_t size) {
-    return count_code_points(in, size);
-}
 } // utf8 namespace
 } // unnamed namespace
 } // namespace ppc64
@@ -28485,7 +28471,7 @@ inline void write_v_u16_11bits_to_utf8(
 
   // 6. adjust pointers
   utf8_output += row[0];
-};
+}
 
 inline void write_v_u16_11bits_to_utf8(
   const __m128i v_u16,
@@ -28499,7 +28485,7 @@ inline void write_v_u16_11bits_to_utf8(
 
   write_v_u16_11bits_to_utf8(
     v_u16, utf8_output, one_byte_bytemask, one_byte_bitmask);
-};
+}
 /* end file src/westmere/internal/write_v_u16_11bits_to_utf8.cpp */
 
 } // namespace westmere
@@ -29060,7 +29046,7 @@ std::pair<const char* const, char* const> sse_convert_latin1_to_utf8(
   }
 
   return std::make_pair(latin_input, utf8_output);
-};
+}
 /* end file src/westmere/sse_convert_latin1_to_utf8.cpp */
 /* begin file src/westmere/sse_convert_latin1_to_utf16.cpp */
 template <endianness big_endian>
@@ -32088,11 +32074,6 @@ simdutf_really_inline size_t utf16_length_from_utf8(const char* in, size_t size)
     }
     return count + scalar::utf8::utf16_length_from_utf8(in + pos, size - pos);
 }
-
-
-simdutf_really_inline size_t utf32_length_from_utf8(const char* in, size_t size) {
-    return count_code_points(in, size);
-}
 } // utf8 namespace
 } // unnamed namespace
 } // namespace westmere
@@ -32531,7 +32512,7 @@ using namespace simd;
       return latin1_output - start;
     }
 
-  }; 
+  }
 }   // utf8_to_latin1 namespace
 }   // unnamed namespace
 }   // namespace westmere
