@@ -119,8 +119,8 @@ pub enum ErrorCode {
 #[repr(u64)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum Base64Options {
-    /// Normal base64 encoding.
-    Normal = 0,
+    /// Default base64 encoding.
+    Default = 0,
     /// base64url encoding.
     Url = 1,
 }
