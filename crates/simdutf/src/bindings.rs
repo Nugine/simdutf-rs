@@ -27,12 +27,14 @@ extern "C" {
     pub fn simdutf_utf8_length_from_utf16be(buf: *const u16, len: usize) -> usize;
     pub fn simdutf_utf8_length_from_utf16le(buf: *const u16, len: usize) -> usize;
     pub fn simdutf_utf8_length_from_utf32(buf: *const u32, len: usize) -> usize;
+    pub fn simdutf_utf8_length_from_latin1(buf: *const u8, len: usize) -> usize;
     pub fn simdutf_utf16_length_from_utf8(buf: *const u8, len: usize) -> usize;
     pub fn simdutf_utf16_length_from_utf32(buf: *const u32, len: usize) -> usize;
     pub fn simdutf_utf32_length_from_utf8(buf: *const u8, len: usize) -> usize;
     pub fn simdutf_utf32_length_from_utf16(buf: *const u16, len: usize) -> usize;
     pub fn simdutf_utf32_length_from_utf16be(buf: *const u16, len: usize) -> usize;
     pub fn simdutf_utf32_length_from_utf16le(buf: *const u16, len: usize) -> usize;
+    pub fn simdutf_latin1_length_from_utf8(buf: *const u8, len: usize) -> usize;
 
     pub fn simdutf_convert_utf8_to_utf16(src: *const u8, len: usize, dst: *mut u16) -> usize;
     pub fn simdutf_convert_utf8_to_utf16be(src: *const u8, len: usize, dst: *mut u16) -> usize;

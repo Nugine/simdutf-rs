@@ -63,7 +63,10 @@ pub fn for_each_transcoding_length(mut f: impl FnMut(&str, &str)) {
             if from == "ascii" || to == "ascii" {
                 continue;
             }
-            if from == "latin1" || to == "latin1" {
+            if from == "latin1" && matches!(to, "utf16" | "utf32") {
+                continue;
+            }
+            if to == "latin1" && matches!(from, "utf16le" | "utf16be" | "utf16" | "utf32") {
                 continue;
             }
             if from == to {

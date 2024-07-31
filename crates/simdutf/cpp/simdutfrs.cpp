@@ -96,6 +96,10 @@ size_t simdutf_utf8_length_from_utf32(const char32_t *buf, size_t len) {
     return simdutf::utf8_length_from_utf32(buf, len);
 }
 
+size_t simdutf_utf8_length_from_latin1(const char *buf, size_t len) {
+    return simdutf::utf8_length_from_latin1(buf, len);
+}
+
 size_t simdutf_utf16_length_from_utf8(const char *buf, size_t len) {
     return simdutf::utf16_length_from_utf8(buf, len);
 }

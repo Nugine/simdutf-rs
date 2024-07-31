@@ -262,6 +262,18 @@ pub unsafe fn utf8_length_from_utf32(src: &[u32]) -> usize {
     crate::bindings::simdutf_utf8_length_from_utf32(buf, len)
 }
 
+/// Count the number of code units that the Latin1 string would require in UTF-8 format.
+///
+/// # Safety
+/// + The input string must be valid Latin1.
+#[inline]
+#[must_use]
+pub unsafe fn utf8_length_from_latin1(src: &[u8]) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    crate::bindings::simdutf_utf8_length_from_latin1(buf, len)
+}
+
 /// Count the number of code units that the UTF-8 string would require in UTF-16 format.
 ///
 /// # Safety
@@ -350,6 +362,18 @@ pub unsafe fn utf32_length_from_utf16le(src: &[u16]) -> usize {
     let len = src.len();
     let buf = src.as_ptr();
     crate::bindings::simdutf_utf32_length_from_utf16le(buf, len)
+}
+
+/// Count the number of code units that the UTF-8 string would require in Latin1 format.
+///
+/// # Safety
+/// + The input string must be valid UTF-8.
+#[inline]
+#[must_use]
+pub unsafe fn latin1_length_from_utf8(src: &[u8]) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    crate::bindings::simdutf_latin1_length_from_utf8(buf, len)
 }
 
 /// Convert possibly broken UTF-8 string into UTF-16 string.

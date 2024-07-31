@@ -128,9 +128,6 @@ fn codegen_count() {
 
 fn codegen_transcoding_length() {
     for_each_transcoding_length(|from, to| {
-        if from == "latin1" {
-            return;
-        }
         let from_ch = map_rs_char_type(from);
         let from_doc_name = map_doc_name(from);
         let to_doc_name = map_doc_name(to);
