@@ -39,6 +39,10 @@ pub fn codegen_cpp() {
     });
 
     for_each_transcoding_length(|from, to| {
+        if to == "latin1" {
+            return;
+        }
+
         let from_ch = map_cpp_char_type(from);
         g!("size_t simdutf_{to}_length_from_{from}(const {from_ch}* buf, size_t len) {{");
         g!("    return simdutf::{to}_length_from_{from}(buf, len);");
@@ -56,6 +60,9 @@ pub fn codegen_cpp() {
     });
 
     for_each_transcoding_convert(|from, to| {
+        if from == "latin1" {
+            return;
+        }
         let from_ch = map_cpp_char_type(from);
         let to_ch = map_cpp_char_type(to);
         g!("simdutfrs_result_t \
@@ -68,6 +75,9 @@ pub fn codegen_cpp() {
     });
 
     for_each_transcoding_convert(|from, to| {
+        if from == "latin1" {
+            return;
+        }
         let from_ch = map_cpp_char_type(from);
         let to_ch = map_cpp_char_type(to);
         g!("size_t simdutf_convert_valid_{from}_to_{to}(const {from_ch}* src, size_t len, {to_ch}* dst) {{");
@@ -76,7 +86,7 @@ pub fn codegen_cpp() {
         g!();
     });
 
-    g!("simdutf_result_t simdutf_base64_to_binary_safe(const char *input,");
+    g!("simdutfrs_result_t simdutf_base64_to_binary_safe(const char *input,");
     g!("                                               size_t length, char *output,");
     g!("                                               size_t *outlen,");
     g!("                                               uint64_t options) {{");
@@ -140,6 +150,9 @@ pub fn codegen_rust() {
     g!();
 
     for_each_transcoding_convert(|from, to| {
+        if from == "latin1" {
+            return;
+        }
         let from_ch = map_rs_char_type(from);
         let to_ch = map_rs_char_type(to);
         g!("pub fn simdutf_convert_valid_{from}_to_{to}\
