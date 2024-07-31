@@ -78,6 +78,7 @@ extern "C" {
     pub fn simdutf_convert_valid_utf32_to_utf16(src: *const u32, len: usize, dst: *mut u16) -> usize;
     pub fn simdutf_convert_valid_utf32_to_utf16be(src: *const u32, len: usize, dst: *mut u16) -> usize;
     pub fn simdutf_convert_valid_utf32_to_utf16le(src: *const u32, len: usize, dst: *mut u16) -> usize;
+
     pub fn simdutf_base64_to_binary_safe(
         input: *const u8,
         len: usize,
