@@ -1137,3 +1137,10 @@ pub unsafe fn base64_to_binary_safe(
 ) -> Result {
     crate::bindings::simdutf_base64_to_binary_safe(input, len, output, out_len, options as u64)
 }
+/// Convert binary data into base64.
+///
+#[inline]
+#[must_use]
+pub unsafe fn binary_to_base64(input: *const u8, len: usize, output: *mut u8, options: Base64Options) -> usize {
+    crate::bindings::simdutf_binary_to_base64(input, len, output, options as u64)
+}

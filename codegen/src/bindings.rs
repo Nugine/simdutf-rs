@@ -84,6 +84,13 @@ pub fn codegen_cpp() {
     g!("        simdutf::base64_to_binary_safe(input, length, output, *outlen, options);");
     g!("    return {{static_cast<uint32_t>(res.error), res.count}};");
     g!("}}");
+    g!();
+
+    g!("size_t simdutf_binary_to_base64(const char *input,");
+    g!("                        size_t length, char *output,");
+    g!("                        uint64_t options) {{");
+    g!("    return simdutf::binary_to_base64(input, length, output, options);");
+    g!("}}");
 
     g!("}}");
 }
@@ -153,7 +160,15 @@ pub fn codegen_rust() {
         output: *mut u8,
         out_len: *mut usize,
         options: u64,
-    ) -> Result;");
+        ) -> Result;");
+    g!();
+
+    g!("pub fn simdutf_binary_to_base64(
+        input: *const u8,
+        len: usize,
+        output: *mut u8,
+        options: u64,
+    ) -> usize;");
 
     g!("}}");
 }

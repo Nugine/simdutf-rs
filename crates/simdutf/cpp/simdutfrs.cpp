@@ -380,4 +380,9 @@ simdutfrs_result_t simdutf_base64_to_binary_safe(const char *input,
         simdutf::base64_to_binary_safe(input, length, output, *outlen, options);
     return {static_cast<uint32_t>(res.error), res.count};
 }
+
+size_t simdutf_binary_to_base64(const char *input, size_t length, char *output,
+                                uint64_t options) {
+    return simdutf::binary_to_base64(input, length, output, options);
+}
 }
