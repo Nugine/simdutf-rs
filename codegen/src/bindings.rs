@@ -76,7 +76,7 @@ pub fn codegen_cpp() {
         g!();
     });
 
-    g!("simdutf_result_t simdutf_base64_to_binary_safe(const char *input,");
+    g!("simdutfrs_result_t simdutf_base64_to_binary_safe(const char *input,");
     g!("                                               size_t length, char *output,");
     g!("                                               size_t *outlen,");
     g!("                                               uint64_t options) {{");

@@ -372,9 +372,10 @@ size_t simdutf_convert_valid_utf32_to_utf16le(const char32_t *src, size_t len,
     return simdutf::convert_valid_utf32_to_utf16le(src, len, dst);
 }
 
-simdutf_result_t simdutf_base64_to_binary_safe(const char *input, size_t length,
-                                               char *output, size_t *outlen,
-                                               uint64_t options) {
+simdutfrs_result_t simdutf_base64_to_binary_safe(const char *input,
+                                                 size_t length, char *output,
+                                                 size_t *outlen,
+                                                 uint64_t options) {
     const simdutf::result res =
         simdutf::base64_to_binary_safe(input, length, output, *outlen, options);
     return {static_cast<uint32_t>(res.error), res.count};

@@ -11,7 +11,7 @@ fn base64_decoding() {
             len,
             out_buf.as_mut_ptr(),
             &mut out_len,
-            simdutf::Base64Options::Normal,
+            simdutf::Base64Options::Default,
         )
     };
     assert_eq!(result.error, simdutf::ErrorCode::Success);
