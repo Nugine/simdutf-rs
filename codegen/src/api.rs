@@ -16,36 +16,37 @@ pub fn codegen() {
     codegen_transcoding_length();
     codegen_transcoding_convert();
 
-    glines![
-        "/// Convert base64 string into binary data."
-        "///"
-        "#[inline]"
-        "#[must_use]"
-        "pub unsafe fn base64_to_binary_safe("
-        "    input: *const u8,"
-        "    len: usize,"
-        "    output: *mut u8,"
-        "    out_len: *mut usize,"
-        "    options: Base64Options,"
-        ") -> Result {"
-        "    crate::bindings::simdutf_base64_to_binary_safe(input, len, output, out_len, options as u64)"
-        "}"
-    ];
+    g!("/// Convert base64 string into binary data.");
+    g!("///");
+    g!("/// # Safety");
+    decl_src_dst_tys("u8", "u8`");
+    g!("#[inline]");
+    g!("#[must_use]");
+    g!("pub unsafe fn base64_to_binary_safe(");
+    g!("    input: *const u8,");
+    g!("    len: usize,");
+    g!("    output: *mut u8,");
+    g!("    out_len: *mut usize,");
+    g!("    options: Base64Options,");
+    g!(") -> Result {{");
+    g!("    crate::bindings::simdutf_base64_to_binary_safe(input, len, output, out_len, options as u64)");
+    g!("}}");
+    g!();
 
-    glines![
-        "/// Convert binary data into base64."
-        "///"
-        "#[inline]"
-        "#[must_use]"
-        "pub unsafe fn binary_to_base64("
-        "    input: *const u8,"
-        "    len: usize,"
-        "    output: *mut u8,"
-        "    options: Base64Options,"
-        ") -> usize {"
-        "    crate::bindings::simdutf_binary_to_base64(input, len, output, options as u64)"
-        "}"
-    ];
+    g!("/// Convert binary data into base64.");
+    g!("///");
+    g!("/// # Safety");
+    decl_src_dst_tys("u8", "u8`");
+    g!("#[inline]");
+    g!("#[must_use]");
+    g!("pub unsafe fn binary_to_base64(");
+    g!("    input: *const u8,");
+    g!("    len: usize,");
+    g!("    output: *mut u8,");
+    g!("    options: Base64Options,");
+    g!(") -> usize {{");
+    g!("    crate::bindings::simdutf_binary_to_base64(input, len, output, options as u64)");
+    g!("}}");
 }
 
 fn decl_ne_and_bom(encoding: &str) {
@@ -68,6 +69,10 @@ fn decl_assume(encoding: &str) {
 fn decl_src_dst(from: &str, to: &str) {
     let from_ch = map_rs_char_type(from);
     let to_ch = map_rs_char_type(to);
+    decl_src_dst_tys(from_ch, to_ch);
+}
+
+fn decl_src_dst_tys(from_ch: &str, to_ch: &str) {
     g!("/// + `src` and `dst` must be non-null and properly aligned.");
     g!("/// + `src` must be valid for reads of `len * size_of::<{from_ch}>()` bytes");
     g!("/// + `dst` must be valid for writes of `count * size_of::<{to_ch}>()` bytes, \
