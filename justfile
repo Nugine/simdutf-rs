@@ -18,7 +18,7 @@ test:
 
 sync-version:
     ./scripts/check-release.py
-    cargo set-version -p simdutf    0.4.17
+    cargo set-version -p simdutf    0.4.18
 
 publish:
     cargo publish -p simdutf
