@@ -1,4 +1,4 @@
-/* auto-generated on 2024-08-05 08:44:21 -0400. Do not edit! */
+/* auto-generated on 2024-08-10 18:57:09 -0400. Do not edit! */
 /* begin file include/simdutf.h */
 #ifndef SIMDUTF_H
 #define SIMDUTF_H
@@ -597,7 +597,7 @@ SIMDUTF_DISABLE_UNDESIRED_WARNINGS
 #define SIMDUTF_SIMDUTF_VERSION_H
 
 /** The version of simdutf being used (major.minor.revision) */
-#define SIMDUTF_VERSION "5.3.1"
+#define SIMDUTF_VERSION "5.3.4"
 
 namespace simdutf {
 enum {
@@ -612,7 +612,7 @@ enum {
   /**
    * The revision (major.minor.REVISION) of simdutf being used.
    */
-  SIMDUTF_VERSION_REVISION = 1
+  SIMDUTF_VERSION_REVISION = 4
 };
 } // namespace simdutf
 
@@ -2322,7 +2322,6 @@ simdutf_warn_unused size_t trim_partial_utf16le(const char16_t* input, size_t le
 simdutf_warn_unused size_t trim_partial_utf16(const char16_t* input, size_t length);
 
 // base64_options are used to specify the base64 encoding options.
-using base64_options = uint64_t;
 using base64_options = uint64_t;
 enum : base64_options {
   base64_default = 0, /* standard base64 format (with padding) */
