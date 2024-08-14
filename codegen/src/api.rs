@@ -209,7 +209,7 @@ fn codegen_transcoding_convert() {
     });
 
     for_each_transcoding_convert(|from, to| {
-        if from == "latin1" {
+        if from == "latin1" || (from == "utf32" && to == "latin1") {
             return;
         }
         let from_ch = map_rs_char_type(from);

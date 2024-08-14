@@ -1538,21 +1538,3 @@ pub unsafe fn convert_valid_utf32_to_utf16be(src: *const u32, len: usize, dst: *
 pub unsafe fn convert_valid_utf32_to_utf16le(src: *const u32, len: usize, dst: *mut u16) -> usize {
     crate::bindings::simdutf_convert_valid_utf32_to_utf16le(src, len, dst)
 }
-
-/// Convert valid UTF-32 string into Latin1 string.
-///
-/// Returns the number of written code units.
-///
-/// This function uses native endianness.
-///
-/// # Safety
-/// + The input string must be valid UTF-32.
-/// + `src` and `dst` must be non-null and properly aligned.
-/// + `src` must be valid for reads of `len * size_of::<u32>()` bytes
-/// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
-/// + The memory regions of `src` and `dst` must not overlap.
-#[inline]
-#[must_use]
-pub unsafe fn convert_valid_utf32_to_latin1(src: *const u32, len: usize, dst: *mut u8) -> usize {
-    crate::bindings::simdutf_convert_valid_utf32_to_latin1(src, len, dst)
-}

@@ -499,9 +499,4 @@ size_t simdutf_convert_valid_utf32_to_utf16le(const char32_t *src, size_t len,
                                               char16_t *dst) {
     return simdutf::convert_valid_utf32_to_utf16le(src, len, dst);
 }
-
-size_t simdutf_convert_valid_utf32_to_latin1(const char32_t *src, size_t len,
-                                             char *dst) {
-    return simdutf::convert_valid_utf32_to_latin1(src, len, dst);
-}
 }
