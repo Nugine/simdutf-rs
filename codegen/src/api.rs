@@ -112,6 +112,9 @@ fn codegen_count() {
 
 fn codegen_transcoding_length() {
     for_each_transcoding_length(|from, to| {
+        if from == "latin1" && to == "utf32" {
+            return;
+        }
         let from_ch = map_rs_char_type(from);
         let from_doc_name = map_doc_name(from);
         let to_doc_name = map_doc_name(to);
@@ -133,9 +136,14 @@ fn codegen_transcoding_length() {
         g!("#[inline]");
         g!("#[must_use]");
         g!("pub unsafe fn {to}_length_from_{from}(src: &[{from_ch}]) -> usize {{");
-        g!("let len = src.len();");
-        g!("let buf = src.as_ptr();");
-        g!("crate::bindings::simdutf_{to}_length_from_{from}(buf, len)");
+        if from == "latin1" && is_fixed_length(to) || is_fixed_length(from) && to == "latin1" {
+            g!("let len = src.len();");
+            g!("crate::bindings::simdutf_{to}_length_from_{from}(len)");
+        } else {
+            g!("let len = src.len();");
+            g!("let buf = src.as_ptr();");
+            g!("crate::bindings::simdutf_{to}_length_from_{from}(buf, len)");
+        }
         g!("}}");
         g!();
     })
@@ -172,6 +180,9 @@ fn codegen_transcoding_convert() {
     });
 
     for_each_transcoding_convert(|from, to| {
+        if from == "latin1" {
+            return;
+        }
         let from_ch = map_rs_char_type(from);
         let to_ch = map_rs_char_type(to);
         let from_doc_name = map_doc_name(from);
@@ -198,6 +209,9 @@ fn codegen_transcoding_convert() {
     });
 
     for_each_transcoding_convert(|from, to| {
+        if from == "latin1" {
+            return;
+        }
         let from_ch = map_rs_char_type(from);
         let to_ch = map_rs_char_type(to);
         let from_doc_name = map_doc_name(from);
