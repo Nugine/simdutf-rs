@@ -58,3 +58,39 @@ fn utf16_to_utf8() {
     assert_eq!(written, expected.len());
     assert_eq!(&buf[..written], expected.as_bytes());
 }
+
+#[test]
+fn latin1_to_utf8() {
+    let expected = "hello¢";
+    let mut input: Vec<u8> = "hello".as_bytes().to_vec();
+    input.push(0xA2);
+
+    let mut buf = vec![0; expected.len()];
+    let written = unsafe {
+        let len = input.len();
+        let src = input.as_ptr();
+        let dst = buf.as_mut_ptr();
+        simdutf::convert_latin1_to_utf8(src, len, dst)
+    };
+
+    assert_eq!(written, expected.len());
+    assert_eq!(&buf[..written], expected.as_bytes());
+}
+
+#[test]
+fn utf8_to_latin1() {
+    let mut expected = "hello".as_bytes().to_vec();
+    expected.push(0xA2);
+    let input = "hello¢";
+
+    let mut buf = vec![0; input.len()];
+    let written = unsafe {
+        let len = input.len();
+        let src = input.as_ptr();
+        let dst = buf.as_mut_ptr();
+        simdutf::convert_utf8_to_latin1(src, len, dst)
+    };
+
+    assert_eq!(written, expected.len());
+    assert_eq!(&buf[..written], expected);
+}
