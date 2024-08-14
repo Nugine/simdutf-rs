@@ -66,7 +66,7 @@ pub fn codegen_cpp() {
     });
 
     for_each_transcoding_convert(|from, to| {
-        if from == "latin1" {
+        if from == "latin1" || (from == "utf32" && to == "latin1") {
             return;
         }
         let from_ch = map_cpp_char_type(from);
@@ -146,7 +146,7 @@ pub fn codegen_rust() {
     g!();
 
     for_each_transcoding_convert(|from, to| {
-        if from == "latin1" {
+        if from == "latin1" || (from == "utf32" && to == "latin1") {
             return;
         }
         let from_ch = map_rs_char_type(from);

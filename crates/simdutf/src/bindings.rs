@@ -82,7 +82,6 @@ extern "C" {
     pub fn simdutf_convert_utf32_to_utf16_with_errors(src: *const u32, len: usize, dst: *mut u16) -> Result;
     pub fn simdutf_convert_utf32_to_utf16be_with_errors(src: *const u32, len: usize, dst: *mut u16) -> Result;
     pub fn simdutf_convert_utf32_to_utf16le_with_errors(src: *const u32, len: usize, dst: *mut u16) -> Result;
-    pub fn simdutf_convert_utf32_to_latin1_with_errors(src: *const u32, len: usize, dst: *mut u8) -> Result;
 
     pub fn simdutf_convert_valid_utf8_to_utf16(src: *const u8, len: usize, dst: *mut u16) -> usize;
     pub fn simdutf_convert_valid_utf8_to_utf16be(src: *const u8, len: usize, dst: *mut u16) -> usize;

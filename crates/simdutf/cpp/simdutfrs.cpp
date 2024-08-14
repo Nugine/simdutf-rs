@@ -402,14 +402,6 @@ simdutf_convert_utf32_to_utf16le_with_errors(const char32_t *src, size_t len,
     return {static_cast<uint32_t>(ans.error), ans.count};
 }
 
-simdutfrs_result_t
-simdutf_convert_utf32_to_latin1_with_errors(const char32_t *src, size_t len,
-                                            char *dst) {
-    const simdutf::result ans =
-        simdutf::convert_utf32_to_latin1_with_errors(src, len, dst);
-    return {static_cast<uint32_t>(ans.error), ans.count};
-}
-
 size_t simdutf_convert_valid_utf8_to_utf16(const char *src, size_t len,
                                            char16_t *dst) {
     return simdutf::convert_valid_utf8_to_utf16(src, len, dst);

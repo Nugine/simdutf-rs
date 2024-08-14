@@ -1201,24 +1201,6 @@ pub unsafe fn convert_utf32_to_utf16le_with_errors(src: *const u32, len: usize, 
     crate::bindings::simdutf_convert_utf32_to_utf16le_with_errors(src, len, dst)
 }
 
-/// Convert possibly broken UTF-32 string into Latin1 string.
-///
-/// During the conversion also validation of the input string is done.
-/// This function is suitable to work with inputs from untrusted sources.
-///
-/// This function uses native endianness.
-///
-/// # Safety
-/// + `src` and `dst` must be non-null and properly aligned.
-/// + `src` must be valid for reads of `len * size_of::<u32>()` bytes
-/// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
-/// + The memory regions of `src` and `dst` must not overlap.
-#[inline]
-#[must_use]
-pub unsafe fn convert_utf32_to_latin1_with_errors(src: *const u32, len: usize, dst: *mut u8) -> Result {
-    crate::bindings::simdutf_convert_utf32_to_latin1_with_errors(src, len, dst)
-}
-
 /// Convert valid UTF-8 string into UTF-16 string.
 ///
 /// Returns the number of written code units.
