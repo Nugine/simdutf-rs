@@ -1127,10 +1127,10 @@ pub unsafe fn convert_valid_utf32_to_utf16le(src: *const u32, len: usize, dst: *
 /// Convert base64 string into binary data.
 ///
 /// # Safety
-/// + `src` and `dst` must be non-null and properly aligned.
-/// + `src` must be valid for reads of `len * size_of::<u8>()` bytes
-/// + `dst` must be valid for writes of `count * size_of::<u8`>()` bytes, where the `count` is the number of code units ([`u8``]) after successful conversion.
-/// + The memory regions of `src` and `dst` must not overlap.
+/// + `input` and `output` must be non-null and properly aligned.
+/// + `input` must be valid for reads of `len * size_of::<u8>()` bytes
+/// + `output` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `input` and `output` must not overlap.
 #[inline]
 #[must_use]
 pub unsafe fn base64_to_binary_safe(
@@ -1146,10 +1146,10 @@ pub unsafe fn base64_to_binary_safe(
 /// Convert binary data into base64.
 ///
 /// # Safety
-/// + `src` and `dst` must be non-null and properly aligned.
-/// + `src` must be valid for reads of `len * size_of::<u8>()` bytes
-/// + `dst` must be valid for writes of `count * size_of::<u8`>()` bytes, where the `count` is the number of code units ([`u8``]) after successful conversion.
-/// + The memory regions of `src` and `dst` must not overlap.
+/// + `input` and `output` must be non-null and properly aligned.
+/// + `input` must be valid for reads of `len * size_of::<u8>()` bytes
+/// + `output` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `input` and `output` must not overlap.
 #[inline]
 #[must_use]
 pub unsafe fn binary_to_base64(input: *const u8, len: usize, output: *mut u8, options: Base64Options) -> usize {

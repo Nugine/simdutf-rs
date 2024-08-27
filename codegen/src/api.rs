@@ -19,7 +19,7 @@ pub fn codegen() {
     g!("/// Convert base64 string into binary data.");
     g!("///");
     g!("/// # Safety");
-    decl_src_dst_tys("u8", "u8`");
+    decl_src_dst_tys_named("u8", "u8", "input", "output");
     g!("#[inline]");
     g!("#[must_use]");
     g!("pub unsafe fn base64_to_binary_safe(");
@@ -36,7 +36,7 @@ pub fn codegen() {
     g!("/// Convert binary data into base64.");
     g!("///");
     g!("/// # Safety");
-    decl_src_dst_tys("u8", "u8`");
+    decl_src_dst_tys_named("u8", "u8", "input", "output");
     g!("#[inline]");
     g!("#[must_use]");
     g!("pub unsafe fn binary_to_base64(");
@@ -73,11 +73,16 @@ fn decl_src_dst(from: &str, to: &str) {
 }
 
 fn decl_src_dst_tys(from_ch: &str, to_ch: &str) {
-    g!("/// + `src` and `dst` must be non-null and properly aligned.");
-    g!("/// + `src` must be valid for reads of `len * size_of::<{from_ch}>()` bytes");
-    g!("/// + `dst` must be valid for writes of `count * size_of::<{to_ch}>()` bytes, \
+    decl_src_dst_tys_named(from_ch, to_ch, "src", "dst");
+}
+
+fn decl_src_dst_tys_named(from_ch: &str, to_ch: &str, from_name: &str, to_name: &str) {
+    g!("/// + `{from_name}` and `{to_name}` must be non-null and properly aligned.");
+    g!("/// + `{from_name}` must be valid for reads of `len * size_of::<{from_ch}>()` bytes");
+    g!("/// + `{to_name}` must be valid for writes of `count * size_of::<{to_ch}>()` bytes, \
         where the `count` is the number of code units ([`{to_ch}`]) after successful conversion.");
-    g!("/// + The memory regions of `src` and `dst` must not overlap."); // TODO: inplace mode?
+    g!("/// + The memory regions of `{from_name}` and `{to_name}` must not overlap.");
+    // TODO: inplace mode?
 }
 
 fn codegen_validate() {
