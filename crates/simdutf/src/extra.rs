@@ -114,3 +114,17 @@ pub enum ErrorCode {
     /// Not related to validation/transcoding.
     Other = 7,
 }
+
+/// The error code type of validation and transcoding.
+#[repr(u64)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum Base64Options {
+    /// Standard base64 format (with padding).
+    Default = 0,
+    /// Base64url format (no padding).
+    Url = 1,
+    /// Standard base64 format (no padding).
+    DefaultNoPadding = 2,
+    /// Base64url format (with padding).
+    UrlWithPadding = 3,
+}
