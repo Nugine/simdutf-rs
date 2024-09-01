@@ -102,15 +102,16 @@ fn codegen_count() {
 
         decl_ne_and_bom(encoding);
 
-        g!("/// # Safety");
-        decl_assume(encoding);
+        g!("/// This function does not validate the input.");
+        g!("/// It is acceptable to pass invalid {doc_name} strings but in such cases the result is implementation defined.");
+        g!("///");
 
         g!("#[inline]");
         g!("#[must_use]");
-        g!("pub unsafe fn count_{encoding}(src: &[{ch}]) -> usize {{");
+        g!("pub fn count_{encoding}(src: &[{ch}]) -> usize {{");
         g!("let len = src.len();");
         g!("let buf = src.as_ptr();");
-        g!("crate::bindings::simdutf_count_{encoding}(buf, len)");
+        g!("unsafe{{ crate::bindings::simdutf_count_{encoding}(buf, len) }}");
         g!("}}");
         g!();
     });

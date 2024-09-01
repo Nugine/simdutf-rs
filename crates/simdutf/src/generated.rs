@@ -150,14 +150,15 @@ pub fn validate_utf32_with_errors(src: &[u32]) -> Result {
 
 /// Count the number of code points in the UTF-8 string.
 ///
-/// # Safety
-/// + The input string must be valid UTF-8.
+/// This function does not validate the input.
+/// It is acceptable to pass invalid UTF-8 strings but in such cases the result is implementation defined.
+///
 #[inline]
 #[must_use]
-pub unsafe fn count_utf8(src: &[u8]) -> usize {
+pub fn count_utf8(src: &[u8]) -> usize {
     let len = src.len();
     let buf = src.as_ptr();
-    crate::bindings::simdutf_count_utf8(buf, len)
+    unsafe { crate::bindings::simdutf_count_utf8(buf, len) }
 }
 
 /// Count the number of code points in the UTF-16 string.
@@ -166,42 +167,45 @@ pub unsafe fn count_utf8(src: &[u8]) -> usize {
 ///
 /// This function is not BOM-aware.
 ///
-/// # Safety
-/// + The input string must be valid UTF-16.
+/// This function does not validate the input.
+/// It is acceptable to pass invalid UTF-16 strings but in such cases the result is implementation defined.
+///
 #[inline]
 #[must_use]
-pub unsafe fn count_utf16(src: &[u16]) -> usize {
+pub fn count_utf16(src: &[u16]) -> usize {
     let len = src.len();
     let buf = src.as_ptr();
-    crate::bindings::simdutf_count_utf16(buf, len)
+    unsafe { crate::bindings::simdutf_count_utf16(buf, len) }
 }
 
 /// Count the number of code points in the UTF-16BE string.
 ///
 /// This function is not BOM-aware.
 ///
-/// # Safety
-/// + The input string must be valid UTF-16BE.
+/// This function does not validate the input.
+/// It is acceptable to pass invalid UTF-16BE strings but in such cases the result is implementation defined.
+///
 #[inline]
 #[must_use]
-pub unsafe fn count_utf16be(src: &[u16]) -> usize {
+pub fn count_utf16be(src: &[u16]) -> usize {
     let len = src.len();
     let buf = src.as_ptr();
-    crate::bindings::simdutf_count_utf16be(buf, len)
+    unsafe { crate::bindings::simdutf_count_utf16be(buf, len) }
 }
 
 /// Count the number of code points in the UTF-16LE string.
 ///
 /// This function is not BOM-aware.
 ///
-/// # Safety
-/// + The input string must be valid UTF-16LE.
+/// This function does not validate the input.
+/// It is acceptable to pass invalid UTF-16LE strings but in such cases the result is implementation defined.
+///
 #[inline]
 #[must_use]
-pub unsafe fn count_utf16le(src: &[u16]) -> usize {
+pub fn count_utf16le(src: &[u16]) -> usize {
     let len = src.len();
     let buf = src.as_ptr();
-    crate::bindings::simdutf_count_utf16le(buf, len)
+    unsafe { crate::bindings::simdutf_count_utf16le(buf, len) }
 }
 
 /// Count the number of code units that the UTF-16 string would require in UTF-8 format.
