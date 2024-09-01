@@ -136,7 +136,7 @@ fn codegen_transcoding_length() {
         g!("#[inline]");
         g!("#[must_use]");
         g!("pub unsafe fn {to}_length_from_{from}(src: &[{from_ch}]) -> usize {{");
-        if from == "latin1" && is_fixed_length(to) || is_fixed_length(from) && to == "latin1" {
+        if is_fixed_length_for_latin1(from, to) {
             g!("let len = src.len();");
             g!("crate::bindings::simdutf_{to}_length_from_{from}(len)");
         } else {

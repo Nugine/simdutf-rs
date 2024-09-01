@@ -42,7 +42,7 @@ pub fn codegen_cpp() {
         if from == "latin1" && to == "utf32" {
             return;
         }
-        if from == "latin1" && is_fixed_length(to) || is_fixed_length(from) && to == "latin1" {
+        if is_fixed_length_for_latin1(from, to) {
             g!("size_t simdutf_{to}_length_from_{from}(size_t len) {{");
             g!("    return simdutf::{to}_length_from_{from}(len);");
             g!("}}");
@@ -128,7 +128,7 @@ pub fn codegen_rust() {
         if from == "latin1" && to == "utf32" {
             return;
         }
-        if from == "latin1" && is_fixed_length(to) || is_fixed_length(from) && to == "latin1" {
+        if is_fixed_length_for_latin1(from, to) {
             g!("pub fn simdutf_{to}_length_from_{from}(len: usize) -> usize;");
             return;
         }

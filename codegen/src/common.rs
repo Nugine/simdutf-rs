@@ -100,6 +100,12 @@ pub fn for_each_transcoding_convert(mut f: impl FnMut(&str, &str)) {
     }
 }
 
-pub fn is_fixed_length(encoding: &str) -> bool {
-    matches!(encoding, "ascii" | "utf16" | "utf16le" | "utf16be" | "utf32" | "latin1")
+pub fn is_fixed_length_for_latin1(from: &str, to: &str) -> bool {
+    if from == "latin1" && to != "utf8" {
+        return true;
+    }
+    if from != "utf8" && to == "latin1" {
+        return true;
+    }
+    false
 }
