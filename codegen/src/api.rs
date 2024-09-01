@@ -15,38 +15,7 @@ pub fn codegen() {
     codegen_count();
     codegen_transcoding_length();
     codegen_transcoding_convert();
-
-    g!("/// Convert base64 string into binary data.");
-    g!("///");
-    g!("/// # Safety");
-    decl_src_dst_tys_named("u8", "u8", "input", "output");
-    g!("#[inline]");
-    g!("#[must_use]");
-    g!("pub unsafe fn base64_to_binary_safe(");
-    g!("    input: *const u8,");
-    g!("    len: usize,");
-    g!("    output: *mut u8,");
-    g!("    out_len: *mut usize,");
-    g!("    options: Base64Options,");
-    g!(") -> Result {{");
-    g!("    crate::bindings::simdutf_base64_to_binary_safe(input, len, output, out_len, options as u64)");
-    g!("}}");
-    g!();
-
-    g!("/// Convert binary data into base64.");
-    g!("///");
-    g!("/// # Safety");
-    decl_src_dst_tys_named("u8", "u8", "input", "output");
-    g!("#[inline]");
-    g!("#[must_use]");
-    g!("pub unsafe fn binary_to_base64(");
-    g!("    input: *const u8,");
-    g!("    len: usize,");
-    g!("    output: *mut u8,");
-    g!("    options: Base64Options,");
-    g!(") -> usize {{");
-    g!("    crate::bindings::simdutf_binary_to_base64(input, len, output, options as u64)");
-    g!("}}");
+    codegen_base64();
 }
 
 fn decl_ne_and_bom(encoding: &str) {
@@ -66,21 +35,17 @@ fn decl_assume(encoding: &str) {
     g!("/// + The input string must be valid {doc_name}.");
 }
 
-fn decl_src_dst(from: &str, to: &str) {
-    let from_ch = map_rs_char_type(from);
-    let to_ch = map_rs_char_type(to);
-    decl_src_dst_tys(from_ch, to_ch);
+fn decl_src_dst(from_encoding: &str, to_encoding: &str) {
+    let from_ch_ty = map_rs_char_type(from_encoding);
+    let to_ch_ty = map_rs_char_type(to_encoding);
+    decl_src_dst_tys(from_ch_ty, to_ch_ty, "src", "dst");
 }
 
-fn decl_src_dst_tys(from_ch: &str, to_ch: &str) {
-    decl_src_dst_tys_named(from_ch, to_ch, "src", "dst");
-}
-
-fn decl_src_dst_tys_named(from_ch: &str, to_ch: &str, from_name: &str, to_name: &str) {
+fn decl_src_dst_tys(from_ch_ty: &str, to_ch_ty: &str, from_name: &str, to_name: &str) {
     g!("/// + `{from_name}` and `{to_name}` must be non-null and properly aligned.");
-    g!("/// + `{from_name}` must be valid for reads of `len * size_of::<{from_ch}>()` bytes");
-    g!("/// + `{to_name}` must be valid for writes of `count * size_of::<{to_ch}>()` bytes, \
-        where the `count` is the number of code units ([`{to_ch}`]) after successful conversion.");
+    g!("/// + `{from_name}` must be valid for reads of `len * size_of::<{from_ch_ty}>()` bytes");
+    g!("/// + `{to_name}` must be valid for writes of `count * size_of::<{to_ch_ty}>()` bytes, \
+        where the `count` is the number of code units ([`{to_ch_ty}`]) after successful conversion.");
     g!("/// + The memory regions of `{from_name}` and `{to_name}` must not overlap.");
     // TODO: inplace mode?
 }
@@ -277,4 +242,38 @@ fn codegen_transcoding_convert() {
         g!("}}");
         g!();
     })
+}
+
+fn codegen_base64() {
+    g!("/// Convert base64 string into binary data.");
+    g!("///");
+    g!("/// # Safety");
+    decl_src_dst_tys("u8", "u8", "input", "output");
+    g!("#[inline]");
+    g!("#[must_use]");
+    g!("pub unsafe fn base64_to_binary_safe(");
+    g!("    input: *const u8,");
+    g!("    len: usize,");
+    g!("    output: *mut u8,");
+    g!("    out_len: *mut usize,");
+    g!("    options: Base64Options,");
+    g!(") -> Result {{");
+    g!("    crate::bindings::simdutf_base64_to_binary_safe(input, len, output, out_len, options as u64)");
+    g!("}}");
+    g!();
+
+    g!("/// Convert binary data into base64.");
+    g!("///");
+    g!("/// # Safety");
+    decl_src_dst_tys("u8", "u8", "input", "output");
+    g!("#[inline]");
+    g!("#[must_use]");
+    g!("pub unsafe fn binary_to_base64(");
+    g!("    input: *const u8,");
+    g!("    len: usize,");
+    g!("    output: *mut u8,");
+    g!("    options: Base64Options,");
+    g!(") -> usize {{");
+    g!("    crate::bindings::simdutf_binary_to_base64(input, len, output, options as u64)");
+    g!("}}");
 }
