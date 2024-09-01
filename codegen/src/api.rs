@@ -136,21 +136,23 @@ fn codegen_transcoding_length() {
 
         decl_ne_and_bom(from);
 
-        g!("/// # Safety");
-        decl_assume(from);
+        g!("/// This function does not validate the input.");
+        g!("/// It is acceptable to pass invalid {from_doc_name} strings but in such cases the result is implementation defined.");
+        g!("///");
 
         g!("#[inline]");
         g!("#[must_use]");
-        g!("pub unsafe fn {to}_length_from_{from}(src: &[{from_ch}]) -> usize {{");
         if is_fixed_length_for_latin1(from, to) {
-            g!("let len = src.len();");
-            g!("crate::bindings::simdutf_{to}_length_from_{from}(len)");
+            g!("pub fn {to}_length_from_{from}(src_len: usize) -> usize {{");
+            g!("    unsafe{{ crate::bindings::simdutf_{to}_length_from_{from}(src_len) }}");
+            g!("}}");
         } else {
-            g!("let len = src.len();");
-            g!("let buf = src.as_ptr();");
-            g!("crate::bindings::simdutf_{to}_length_from_{from}(buf, len)");
+            g!("pub fn {to}_length_from_{from}(src: &[{from_ch}]) -> usize {{");
+            g!("    let len = src.len();");
+            g!("    let buf = src.as_ptr();");
+            g!("    unsafe{{ crate::bindings::simdutf_{to}_length_from_{from}(buf, len) }}");
+            g!("}}");
         }
-        g!("}}");
         g!();
     })
 }

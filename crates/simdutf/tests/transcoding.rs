@@ -13,7 +13,7 @@ fn utf8_to_utf16() {
 
         let utf16: Vec<u16> = s.encode_utf16().collect();
 
-        assert_eq!(unsafe { simdutf::utf16_length_from_utf8(s.as_bytes()) }, utf16.len());
+        assert_eq!(simdutf::utf16_length_from_utf8(s.as_bytes()), utf16.len());
 
         let mut buf: Vec<u16> = Vec::with_capacity(utf16.len());
 
