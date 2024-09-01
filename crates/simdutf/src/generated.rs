@@ -262,6 +262,18 @@ pub unsafe fn utf8_length_from_utf32(src: &[u32]) -> usize {
     crate::bindings::simdutf_utf8_length_from_utf32(buf, len)
 }
 
+/// Count the number of code units that the Latin1 string would require in UTF-8 format.
+///
+/// # Safety
+/// + The input string must be valid Latin1.
+#[inline]
+#[must_use]
+pub unsafe fn utf8_length_from_latin1(src: &[u8]) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    crate::bindings::simdutf_utf8_length_from_latin1(buf, len)
+}
+
 /// Count the number of code units that the UTF-8 string would require in UTF-16 format.
 ///
 /// # Safety
@@ -286,6 +298,17 @@ pub unsafe fn utf16_length_from_utf32(src: &[u32]) -> usize {
     let len = src.len();
     let buf = src.as_ptr();
     crate::bindings::simdutf_utf16_length_from_utf32(buf, len)
+}
+
+/// Count the number of code units that the Latin1 string would require in UTF-16 format.
+///
+/// # Safety
+/// + The input string must be valid Latin1.
+#[inline]
+#[must_use]
+pub unsafe fn utf16_length_from_latin1(src: &[u8]) -> usize {
+    let len = src.len();
+    crate::bindings::simdutf_utf16_length_from_latin1(len)
 }
 
 /// Count the number of code units that the UTF-8 string would require in UTF-32 format.
@@ -350,6 +373,46 @@ pub unsafe fn utf32_length_from_utf16le(src: &[u16]) -> usize {
     let len = src.len();
     let buf = src.as_ptr();
     crate::bindings::simdutf_utf32_length_from_utf16le(buf, len)
+}
+
+/// Count the number of code units that the UTF-8 string would require in Latin1 format.
+///
+/// # Safety
+/// + The input string must be valid UTF-8.
+#[inline]
+#[must_use]
+pub unsafe fn latin1_length_from_utf8(src: &[u8]) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    crate::bindings::simdutf_latin1_length_from_utf8(buf, len)
+}
+
+/// Count the number of code units that the UTF-16 string would require in Latin1 format.
+///
+/// This function uses native endianness.
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// + The input string must be valid UTF-16.
+#[inline]
+#[must_use]
+pub unsafe fn latin1_length_from_utf16(src: &[u16]) -> usize {
+    let len = src.len();
+    crate::bindings::simdutf_latin1_length_from_utf16(len)
+}
+
+/// Count the number of code units that the UTF-32 string would require in Latin1 format.
+///
+/// This function uses native endianness.
+///
+/// # Safety
+/// + The input string must be valid UTF-32.
+#[inline]
+#[must_use]
+pub unsafe fn latin1_length_from_utf32(src: &[u32]) -> usize {
+    let len = src.len();
+    crate::bindings::simdutf_latin1_length_from_utf32(len)
 }
 
 /// Convert possibly broken UTF-8 string into UTF-16 string.
@@ -424,6 +487,24 @@ pub unsafe fn convert_utf8_to_utf32(src: *const u8, len: usize, dst: *mut u32) -
     crate::bindings::simdutf_convert_utf8_to_utf32(src, len, dst)
 }
 
+/// Convert possibly broken UTF-8 string into Latin1 string.
+///
+/// During the conversion also validation of the input string is done.
+/// This function is suitable to work with inputs from untrusted sources.
+///
+/// Returns the number of written code units; 0 if the input is not a valid UTF-8 string
+///
+/// # Safety
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u8>()` bytes
+/// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
+#[inline]
+#[must_use]
+pub unsafe fn convert_utf8_to_latin1(src: *const u8, len: usize, dst: *mut u8) -> usize {
+    crate::bindings::simdutf_convert_utf8_to_latin1(src, len, dst)
+}
+
 /// Convert possibly broken UTF-16 string into UTF-8 string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -468,6 +549,28 @@ pub unsafe fn convert_utf16_to_utf32(src: *const u16, len: usize, dst: *mut u32)
     crate::bindings::simdutf_convert_utf16_to_utf32(src, len, dst)
 }
 
+/// Convert possibly broken UTF-16 string into Latin1 string.
+///
+/// During the conversion also validation of the input string is done.
+/// This function is suitable to work with inputs from untrusted sources.
+///
+/// Returns the number of written code units; 0 if the input is not a valid UTF-16 string
+///
+/// This function uses native endianness.
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes
+/// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
+#[inline]
+#[must_use]
+pub unsafe fn convert_utf16_to_latin1(src: *const u16, len: usize, dst: *mut u8) -> usize {
+    crate::bindings::simdutf_convert_utf16_to_latin1(src, len, dst)
+}
+
 /// Convert possibly broken UTF-16BE string into UTF-8 string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -508,6 +611,26 @@ pub unsafe fn convert_utf16be_to_utf32(src: *const u16, len: usize, dst: *mut u3
     crate::bindings::simdutf_convert_utf16be_to_utf32(src, len, dst)
 }
 
+/// Convert possibly broken UTF-16BE string into Latin1 string.
+///
+/// During the conversion also validation of the input string is done.
+/// This function is suitable to work with inputs from untrusted sources.
+///
+/// Returns the number of written code units; 0 if the input is not a valid UTF-16BE string
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes
+/// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
+#[inline]
+#[must_use]
+pub unsafe fn convert_utf16be_to_latin1(src: *const u16, len: usize, dst: *mut u8) -> usize {
+    crate::bindings::simdutf_convert_utf16be_to_latin1(src, len, dst)
+}
+
 /// Convert possibly broken UTF-16LE string into UTF-8 string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -546,6 +669,26 @@ pub unsafe fn convert_utf16le_to_utf8(src: *const u16, len: usize, dst: *mut u8)
 #[must_use]
 pub unsafe fn convert_utf16le_to_utf32(src: *const u16, len: usize, dst: *mut u32) -> usize {
     crate::bindings::simdutf_convert_utf16le_to_utf32(src, len, dst)
+}
+
+/// Convert possibly broken UTF-16LE string into Latin1 string.
+///
+/// During the conversion also validation of the input string is done.
+/// This function is suitable to work with inputs from untrusted sources.
+///
+/// Returns the number of written code units; 0 if the input is not a valid UTF-16LE string
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes
+/// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
+#[inline]
+#[must_use]
+pub unsafe fn convert_utf16le_to_latin1(src: *const u16, len: usize, dst: *mut u8) -> usize {
+    crate::bindings::simdutf_convert_utf16le_to_latin1(src, len, dst)
 }
 
 /// Convert possibly broken UTF-32 string into UTF-8 string.
@@ -628,6 +771,116 @@ pub unsafe fn convert_utf32_to_utf16le(src: *const u32, len: usize, dst: *mut u1
     crate::bindings::simdutf_convert_utf32_to_utf16le(src, len, dst)
 }
 
+/// Convert possibly broken UTF-32 string into Latin1 string.
+///
+/// During the conversion also validation of the input string is done.
+/// This function is suitable to work with inputs from untrusted sources.
+///
+/// Returns the number of written code units; 0 if the input is not a valid UTF-32 string
+///
+/// This function uses native endianness.
+///
+/// # Safety
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u32>()` bytes
+/// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
+#[inline]
+#[must_use]
+pub unsafe fn convert_utf32_to_latin1(src: *const u32, len: usize, dst: *mut u8) -> usize {
+    crate::bindings::simdutf_convert_utf32_to_latin1(src, len, dst)
+}
+
+/// Convert possibly broken Latin1 string into UTF-8 string.
+///
+/// During the conversion also validation of the input string is done.
+/// This function is suitable to work with inputs from untrusted sources.
+///
+/// Returns the number of written code units; 0 if the input is not a valid Latin1 string
+///
+/// # Safety
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u8>()` bytes
+/// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
+#[inline]
+#[must_use]
+pub unsafe fn convert_latin1_to_utf8(src: *const u8, len: usize, dst: *mut u8) -> usize {
+    crate::bindings::simdutf_convert_latin1_to_utf8(src, len, dst)
+}
+
+/// Convert possibly broken Latin1 string into UTF-16 string.
+///
+/// During the conversion also validation of the input string is done.
+/// This function is suitable to work with inputs from untrusted sources.
+///
+/// Returns the number of written code units; 0 if the input is not a valid Latin1 string
+///
+/// # Safety
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u8>()` bytes
+/// + `dst` must be valid for writes of `count * size_of::<u16>()` bytes, where the `count` is the number of code units ([`u16`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
+#[inline]
+#[must_use]
+pub unsafe fn convert_latin1_to_utf16(src: *const u8, len: usize, dst: *mut u16) -> usize {
+    crate::bindings::simdutf_convert_latin1_to_utf16(src, len, dst)
+}
+
+/// Convert possibly broken Latin1 string into UTF-16BE string.
+///
+/// During the conversion also validation of the input string is done.
+/// This function is suitable to work with inputs from untrusted sources.
+///
+/// Returns the number of written code units; 0 if the input is not a valid Latin1 string
+///
+/// # Safety
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u8>()` bytes
+/// + `dst` must be valid for writes of `count * size_of::<u16>()` bytes, where the `count` is the number of code units ([`u16`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
+#[inline]
+#[must_use]
+pub unsafe fn convert_latin1_to_utf16be(src: *const u8, len: usize, dst: *mut u16) -> usize {
+    crate::bindings::simdutf_convert_latin1_to_utf16be(src, len, dst)
+}
+
+/// Convert possibly broken Latin1 string into UTF-16LE string.
+///
+/// During the conversion also validation of the input string is done.
+/// This function is suitable to work with inputs from untrusted sources.
+///
+/// Returns the number of written code units; 0 if the input is not a valid Latin1 string
+///
+/// # Safety
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u8>()` bytes
+/// + `dst` must be valid for writes of `count * size_of::<u16>()` bytes, where the `count` is the number of code units ([`u16`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
+#[inline]
+#[must_use]
+pub unsafe fn convert_latin1_to_utf16le(src: *const u8, len: usize, dst: *mut u16) -> usize {
+    crate::bindings::simdutf_convert_latin1_to_utf16le(src, len, dst)
+}
+
+/// Convert possibly broken Latin1 string into UTF-32 string.
+///
+/// During the conversion also validation of the input string is done.
+/// This function is suitable to work with inputs from untrusted sources.
+///
+/// Returns the number of written code units; 0 if the input is not a valid Latin1 string
+///
+/// # Safety
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u8>()` bytes
+/// + `dst` must be valid for writes of `count * size_of::<u32>()` bytes, where the `count` is the number of code units ([`u32`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
+#[inline]
+#[must_use]
+pub unsafe fn convert_latin1_to_utf32(src: *const u8, len: usize, dst: *mut u32) -> usize {
+    crate::bindings::simdutf_convert_latin1_to_utf32(src, len, dst)
+}
+
 /// Convert possibly broken UTF-8 string into UTF-16 string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -692,6 +945,22 @@ pub unsafe fn convert_utf8_to_utf32_with_errors(src: *const u8, len: usize, dst:
     crate::bindings::simdutf_convert_utf8_to_utf32_with_errors(src, len, dst)
 }
 
+/// Convert possibly broken UTF-8 string into Latin1 string.
+///
+/// During the conversion also validation of the input string is done.
+/// This function is suitable to work with inputs from untrusted sources.
+///
+/// # Safety
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u8>()` bytes
+/// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
+#[inline]
+#[must_use]
+pub unsafe fn convert_utf8_to_latin1_with_errors(src: *const u8, len: usize, dst: *mut u8) -> Result {
+    crate::bindings::simdutf_convert_utf8_to_latin1_with_errors(src, len, dst)
+}
+
 /// Convert possibly broken UTF-16 string into UTF-8 string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -732,6 +1001,26 @@ pub unsafe fn convert_utf16_to_utf32_with_errors(src: *const u16, len: usize, ds
     crate::bindings::simdutf_convert_utf16_to_utf32_with_errors(src, len, dst)
 }
 
+/// Convert possibly broken UTF-16 string into Latin1 string.
+///
+/// During the conversion also validation of the input string is done.
+/// This function is suitable to work with inputs from untrusted sources.
+///
+/// This function uses native endianness.
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes
+/// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
+#[inline]
+#[must_use]
+pub unsafe fn convert_utf16_to_latin1_with_errors(src: *const u16, len: usize, dst: *mut u8) -> Result {
+    crate::bindings::simdutf_convert_utf16_to_latin1_with_errors(src, len, dst)
+}
+
 /// Convert possibly broken UTF-16BE string into UTF-8 string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -768,6 +1057,24 @@ pub unsafe fn convert_utf16be_to_utf32_with_errors(src: *const u16, len: usize, 
     crate::bindings::simdutf_convert_utf16be_to_utf32_with_errors(src, len, dst)
 }
 
+/// Convert possibly broken UTF-16BE string into Latin1 string.
+///
+/// During the conversion also validation of the input string is done.
+/// This function is suitable to work with inputs from untrusted sources.
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes
+/// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
+#[inline]
+#[must_use]
+pub unsafe fn convert_utf16be_to_latin1_with_errors(src: *const u16, len: usize, dst: *mut u8) -> Result {
+    crate::bindings::simdutf_convert_utf16be_to_latin1_with_errors(src, len, dst)
+}
+
 /// Convert possibly broken UTF-16LE string into UTF-8 string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -802,6 +1109,24 @@ pub unsafe fn convert_utf16le_to_utf8_with_errors(src: *const u16, len: usize, d
 #[must_use]
 pub unsafe fn convert_utf16le_to_utf32_with_errors(src: *const u16, len: usize, dst: *mut u32) -> Result {
     crate::bindings::simdutf_convert_utf16le_to_utf32_with_errors(src, len, dst)
+}
+
+/// Convert possibly broken UTF-16LE string into Latin1 string.
+///
+/// During the conversion also validation of the input string is done.
+/// This function is suitable to work with inputs from untrusted sources.
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes
+/// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
+#[inline]
+#[must_use]
+pub unsafe fn convert_utf16le_to_latin1_with_errors(src: *const u16, len: usize, dst: *mut u8) -> Result {
+    crate::bindings::simdutf_convert_utf16le_to_latin1_with_errors(src, len, dst)
 }
 
 /// Convert possibly broken UTF-32 string into UTF-8 string.
@@ -940,6 +1265,22 @@ pub unsafe fn convert_valid_utf8_to_utf32(src: *const u8, len: usize, dst: *mut 
     crate::bindings::simdutf_convert_valid_utf8_to_utf32(src, len, dst)
 }
 
+/// Convert valid UTF-8 string into Latin1 string.
+///
+/// Returns the number of written code units.
+///
+/// # Safety
+/// + The input string must be valid UTF-8.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u8>()` bytes
+/// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
+#[inline]
+#[must_use]
+pub unsafe fn convert_valid_utf8_to_latin1(src: *const u8, len: usize, dst: *mut u8) -> usize {
+    crate::bindings::simdutf_convert_valid_utf8_to_latin1(src, len, dst)
+}
+
 /// Convert valid UTF-16 string into UTF-8 string.
 ///
 /// Returns the number of written code units.
@@ -980,6 +1321,26 @@ pub unsafe fn convert_valid_utf16_to_utf32(src: *const u16, len: usize, dst: *mu
     crate::bindings::simdutf_convert_valid_utf16_to_utf32(src, len, dst)
 }
 
+/// Convert valid UTF-16 string into Latin1 string.
+///
+/// Returns the number of written code units.
+///
+/// This function uses native endianness.
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// + The input string must be valid UTF-16.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes
+/// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
+#[inline]
+#[must_use]
+pub unsafe fn convert_valid_utf16_to_latin1(src: *const u16, len: usize, dst: *mut u8) -> usize {
+    crate::bindings::simdutf_convert_valid_utf16_to_latin1(src, len, dst)
+}
+
 /// Convert valid UTF-16BE string into UTF-8 string.
 ///
 /// Returns the number of written code units.
@@ -1016,6 +1377,24 @@ pub unsafe fn convert_valid_utf16be_to_utf32(src: *const u16, len: usize, dst: *
     crate::bindings::simdutf_convert_valid_utf16be_to_utf32(src, len, dst)
 }
 
+/// Convert valid UTF-16BE string into Latin1 string.
+///
+/// Returns the number of written code units.
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// + The input string must be valid UTF-16BE.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes
+/// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
+#[inline]
+#[must_use]
+pub unsafe fn convert_valid_utf16be_to_latin1(src: *const u16, len: usize, dst: *mut u8) -> usize {
+    crate::bindings::simdutf_convert_valid_utf16be_to_latin1(src, len, dst)
+}
+
 /// Convert valid UTF-16LE string into UTF-8 string.
 ///
 /// Returns the number of written code units.
@@ -1050,6 +1429,24 @@ pub unsafe fn convert_valid_utf16le_to_utf8(src: *const u16, len: usize, dst: *m
 #[must_use]
 pub unsafe fn convert_valid_utf16le_to_utf32(src: *const u16, len: usize, dst: *mut u32) -> usize {
     crate::bindings::simdutf_convert_valid_utf16le_to_utf32(src, len, dst)
+}
+
+/// Convert valid UTF-16LE string into Latin1 string.
+///
+/// Returns the number of written code units.
+///
+/// This function is not BOM-aware.
+///
+/// # Safety
+/// + The input string must be valid UTF-16LE.
+/// + `src` and `dst` must be non-null and properly aligned.
+/// + `src` must be valid for reads of `len * size_of::<u16>()` bytes
+/// + `dst` must be valid for writes of `count * size_of::<u8>()` bytes, where the `count` is the number of code units ([`u8`]) after successful conversion.
+/// + The memory regions of `src` and `dst` must not overlap.
+#[inline]
+#[must_use]
+pub unsafe fn convert_valid_utf16le_to_latin1(src: *const u16, len: usize, dst: *mut u8) -> usize {
+    crate::bindings::simdutf_convert_valid_utf16le_to_latin1(src, len, dst)
 }
 
 /// Convert valid UTF-32 string into UTF-8 string.
