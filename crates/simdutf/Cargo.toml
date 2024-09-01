@@ -1,6 +1,6 @@
 [package]
 name = "simdutf"
-version = "0.5.0"
+version = "0.5.1-dev"
 edition = "2021"
 license = "MIT"
 description = "Unicode validation and transcoding at billions of characters per second"
