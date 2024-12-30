@@ -127,4 +127,8 @@ pub enum Base64Options {
     DefaultNoPadding = 2,
     /// Base64url format (with padding).
     UrlWithPadding = 3,
+    /// Standard base64 format accepting garbage characters
+    DefaultAcceptGarbage = 4,
+    /// Standard base64 format accepting garbage characters
+    UrlAcceptGarbage = 5,
 }
