@@ -129,6 +129,6 @@ pub enum Base64Options {
     UrlWithPadding = 3,
     /// Standard base64 format accepting garbage characters
     DefaultAcceptGarbage = 4,
-    /// Standard base64 format accepting garbage characters
+    /// Base64url format accepting garbage characters
     UrlAcceptGarbage = 5,
 }
