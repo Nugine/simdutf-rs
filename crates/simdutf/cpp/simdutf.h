@@ -1,4 +1,4 @@
-/* auto-generated on 2024-12-30 15:15:01 -0500. Do not edit! */
+/* auto-generated on 2024-12-30 20:13:49 -0500. Do not edit! */
 /* begin file include/simdutf.h */
 #ifndef SIMDUTF_H
 #define SIMDUTF_H
