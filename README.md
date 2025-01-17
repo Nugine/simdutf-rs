@@ -15,3 +15,8 @@ This crate is the Rust binding of [simdutf](https://github.com/simdutf/simdutf).
 [License]: https://img.shields.io/crates/l/simdutf.svg
 
 Documentation: <https://docs.rs/simdutf>
+
+## Contributing
+
++ [Development Guide](./CONTRIBUTING.md)
++ [Code of Conduct](./CODE_OF_CONDUCT.md)
