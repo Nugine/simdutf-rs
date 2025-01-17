@@ -25,7 +25,7 @@ ci:
 codegen:
     cargo run -p simdutf-codegen
     cargo fmt
-    clang-format -i crates/simdutf/cpp/simdutfrs.cpp
+    clang-format -i cpp/simdutfrs.cpp
 
 sync-version:
     ./scripts/check-release.py

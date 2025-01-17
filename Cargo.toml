@@ -1,5 +1,25 @@
+[package]
+name = "simdutf"
+version = "0.5.72"
+edition = "2021"
+license = "MIT"
+description = "Unicode validation and transcoding at billions of characters per second"
+repository = "https://github.com/Nugine/simdutf-rs"
+keywords = ["utf8", "unicode", "string", "validation", "simd"]
+categories = ["encoding", "algorithms", "no-std", "text-processing"]
+readme = "../../README.md"
+
+[package.metadata.docs.rs]
+rustdoc-args = ["--cfg", "docsrs"]
+
+[build-dependencies]
+cc = "1.0"
+
+[dependencies]
+bitflags = "2.2.1"
+
 [workspace]
-members = ["crates/*", "codegen"]
+members = ["codegen"]
 resolver = "2"
 
 [profile.release]

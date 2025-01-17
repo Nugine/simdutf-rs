@@ -11,7 +11,7 @@ version = r.url.split("/")[-1]
 current = version
 
 last = None
-with open("crates/simdutf/cpp/simdutf.h", "r") as f:
+with open("cpp/simdutf.h", "r") as f:
     for line in f.readlines():
         line = line.strip()
         if line.startswith("#define SIMDUTF_VERSION"):
