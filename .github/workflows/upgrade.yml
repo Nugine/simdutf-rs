@@ -1,0 +1,14 @@
+on:
+  schedule:
+    - cron: '0 0 * * 0' # at midnight of each sunday
+  workflow_dispatch:
+
+name: Upgrade
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: pip3 install requests typer
+      - run: ./scripts/upgrade.py upgrade --pr

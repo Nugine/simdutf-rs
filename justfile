@@ -22,16 +22,14 @@ ci:
     just lint -- -D warnings
     just test
 
+assert_unchanged:
+    #!/bin/bash -ex
+    [[ -z "$(git status -s)" ]] # https://stackoverflow.com/a/9393642
+
+upgrade:
+    ./scripts/upgrade.py upgrade
+
 codegen:
     cargo run -p simdutf-codegen
     cargo fmt
     clang-format -i cpp/simdutfrs.cpp
-
-sync-version:
-    ./scripts/check-release.py
-    cargo set-version -p simdutf    0.5.72
-
-upgrade:
-    ./scripts/download.sh
-    ./scripts/vendor.sh
-    ./scripts/check-release.py
