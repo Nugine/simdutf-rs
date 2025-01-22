@@ -10,7 +10,7 @@ cli = typer.Typer()
 
 
 def shell(cmd, cwd=None):
-    print(cmd)
+    print(cmd, flush=True)
     subprocess.run(cmd, check=True, shell=True, cwd=cwd)
 
 
@@ -34,8 +34,8 @@ def check():
     assert vendor_version is not None
 
     latest_version = get_latest_version()
-    print(f"vendor version: {vendor_version}")
-    print(f"latest version: {latest_version}")
+    print(f"vendor version: {vendor_version}", flush=True)
+    print(f"latest version: {latest_version}", flush=True)
 
     return vendor_version, latest_version
 
@@ -56,11 +56,11 @@ def download():
 
 
 @cli.command()
-def upgrade(pr=False):
+def upgrade(pr: bool = False):
     vendor_version, latest_version = check()
 
     if vendor_version == latest_version:
-        print("already up to date")
+        print("already up to date", flush=True)
         return
 
     simdutf_dir = download()
@@ -75,13 +75,14 @@ def upgrade(pr=False):
         shell(f"git checkout -b {branch}")
         shell("git add -A")
         shell(f"git commit -m 'upstream {latest_version}'")
-        shell(f"git push origin --set-upstream {branch}")
+        shell(f"git push origin -f --set-upstream {branch}")
         shell(
-            f"gh pr create -B main -H {branch} "
-            f"--title 'Upgrade simdutf to {latest_version}'"
+            f"gh pr create -B main -H {branch}"
+            f" --title 'Upgrade simdutf to {latest_version}'"
+            f" --body 'https://github.com/simdutf/simdutf/releases/tag/{latest_version}'"
         )
 
-    print("Done")
+    print("Done", flush=True)
 
 
 if __name__ == "__main__":

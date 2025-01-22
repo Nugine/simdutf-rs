@@ -10,5 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - run: git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      - run: git config --global user.name  "github-actions[bot]"
       - run: pip3 install requests typer
       - run: ./scripts/upgrade.py upgrade --pr
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
