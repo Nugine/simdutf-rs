@@ -5,8 +5,12 @@ import shutil
 
 import requests
 import typer
+import re
 
 cli = typer.Typer()
+
+TEMP_DIR = Path("temp")
+SIMDUTF_DIR = TEMP_DIR / "simdutf"
 
 
 def shell(cmd, cwd=None):
@@ -42,33 +46,49 @@ def check():
 
 @cli.command()
 def download():
-    temp_dir = Path("temp")
-    temp_dir.mkdir(exist_ok=True)
-
-    simdutf_dir = temp_dir / "simdutf"
-    shutil.rmtree(simdutf_dir, ignore_errors=True)
+    TEMP_DIR.mkdir(exist_ok=True)
+    shutil.rmtree(SIMDUTF_DIR, ignore_errors=True)
 
     git_url = "https://github.com/simdutf/simdutf.git"
     depth = 50
-    shell(f"git clone {git_url} -b master --depth={depth}", cwd=temp_dir)
+    shell(f"git clone {git_url} -b master --depth={depth}", cwd=TEMP_DIR)
 
-    return simdutf_dir
+
+def postprocess(src: Path, dst: Path):
+    with open(dst, "w") as dst_file:
+        with open(src, "r") as src_file:
+            for line in src_file.read().splitlines():
+                if re.match(r"^/\* auto-generated on.+$", line):
+                    continue
+
+                if re.match(r"^// /.+simdutf-rs.+simdutf/include.+\.h:.+$", line):
+                    continue
+
+                if re.match(r"^// /.+simdutf-rs.+simdutf/src.+\.cpp:.+$", line):
+                    continue
+
+                dst_file.write(line + "\n")
 
 
 @cli.command()
-def upgrade(pr: bool = False):
+def vendor():
+    shell("python3 ./singleheader/amalgamate.py", cwd=SIMDUTF_DIR)
+    postprocess(SIMDUTF_DIR / "singleheader/simdutf.h", Path("cpp/simdutf.h"))
+    postprocess(SIMDUTF_DIR / "singleheader/simdutf.cpp", Path("cpp/simdutf.cpp"))
+
+
+@cli.command()
+def upgrade(force: bool = False, pr: bool = False):
     vendor_version, latest_version = check()
 
-    if vendor_version == latest_version:
+    if vendor_version == latest_version and not force:
         print("already up to date", flush=True)
         return
 
-    simdutf_dir = download()
-    shell(f"git checkout {latest_version}", cwd=simdutf_dir)
+    download()
+    shell(f"git checkout {latest_version}", cwd=SIMDUTF_DIR)
 
-    shell("python3 ./singleheader/amalgamate.py", cwd=simdutf_dir)
-    shutil.copy(simdutf_dir / "singleheader/simdutf.h", "cpp/simdutf.h")
-    shutil.copy(simdutf_dir / "singleheader/simdutf.cpp", "cpp/simdutf.cpp")
+    vendor()
 
     if pr:
         branch = f"auto/upgrade/{latest_version}"

@@ -27,7 +27,7 @@ assert_unchanged:
     [[ -z "$(git status -s)" ]] # https://stackoverflow.com/a/9393642
 
 upgrade:
-    ./scripts/upgrade.py upgrade
+    ./scripts/upgrade.py upgrade --force
 
 codegen:
     cargo run -p simdutf-codegen
