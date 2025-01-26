@@ -15,4 +15,4 @@ jobs:
       - run: pip3 install requests typer
       - run: ./scripts/upgrade.py upgrade --pr
         env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.GH_ACTION_PAT }}
