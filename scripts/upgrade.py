@@ -13,9 +13,9 @@ TEMP_DIR = Path("temp")
 SIMDUTF_DIR = TEMP_DIR / "simdutf"
 
 
-def shell(cmd, cwd=None):
+def shell(cmd: str, cwd: Path | None = None, check: bool = True):
     print(cmd, flush=True)
-    subprocess.run(cmd, check=True, shell=True, cwd=cwd)
+    subprocess.run(cmd, check=check, shell=True, cwd=cwd)
 
 
 # https://github.com/simdutf/simdutf/releases
@@ -88,19 +88,35 @@ def upgrade(force: bool = False, pr: bool = False):
     download()
     shell(f"git checkout {latest_version}", cwd=SIMDUTF_DIR)
 
-    vendor()
-
     if pr:
         branch = f"auto/upgrade/{latest_version}"
-        shell(f"git checkout -b {branch}")
+
+        try:
+            shell(f"git fetch origin {branch}")
+            has_remote = True
+        except Exception:
+            has_remote = False
+
+        if has_remote:
+            shell(f"git checkout {branch}")
+            shell("git reset --hard origin/main")
+        else:
+            shell(f"git checkout -b {branch}")
+
+        vendor()
+
         shell("git add -A")
         shell(f"git commit -m 'upstream {latest_version}'")
         shell(f"git push origin -f --set-upstream {branch}")
+
         shell(
             f"gh pr create -B main -H {branch}"
             f" --title 'Upgrade simdutf to {latest_version}'"
-            f" --body 'https://github.com/simdutf/simdutf/releases/tag/{latest_version}'"
+            f" --body 'https://github.com/simdutf/simdutf/releases/tag/{latest_version}'",
+            check=False,
         )
+    else:
+        vendor()
 
     print("Done", flush=True)
 
