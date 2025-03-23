@@ -162,9 +162,9 @@
 #elif defined(__aarch64__) || defined(_M_ARM64) || defined(_M_ARM64EC)
   #define SIMDUTF_IS_ARM64 1
 #elif defined(__PPC64__) || defined(_M_PPC64)
-// #define SIMDUTF_IS_PPC64 1
-//  The simdutf library does yet support SIMD acceleration under
-//  POWER processors. Please see https://github.com/lemire/simdutf/issues/51
+  #if defined(__VEC__) && defined(__ALTIVEC__)
+    #define SIMDUTF_IS_PPC64 1
+  #endif
 #elif defined(__s390__)
 // s390 IBM system. Big endian.
 #elif (defined(__riscv) || defined(__riscv__)) && __riscv_xlen == 64
@@ -651,7 +651,7 @@ SIMDUTF_DISABLE_UNDESIRED_WARNINGS
 #define SIMDUTF_SIMDUTF_VERSION_H
 
 /** The version of simdutf being used (major.minor.revision) */
-#define SIMDUTF_VERSION "6.3.1"
+#define SIMDUTF_VERSION "6.4.0"
 
 namespace simdutf {
 enum {
@@ -662,11 +662,11 @@ enum {
   /**
    * The minor version (major.MINOR.revision) of simdutf being used.
    */
-  SIMDUTF_VERSION_MINOR = 3,
+  SIMDUTF_VERSION_MINOR = 4,
   /**
    * The revision (major.minor.REVISION) of simdutf being used.
    */
-  SIMDUTF_VERSION_REVISION = 1
+  SIMDUTF_VERSION_REVISION = 0
 };
 } // namespace simdutf
 
@@ -3698,6 +3698,9 @@ trim_partial_utf16(std::span<const char16_t> valid_utf16_input) noexcept {
 #endif   // SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_BASE64
+  #ifndef SIMDUTF_NEED_TRAILING_ZEROES
+    #define SIMDUTF_NEED_TRAILING_ZEROES 1
+  #endif
 // base64_options are used to specify the base64 encoding options.
 // ASCII spaces are ' ', '\t', '\n', '\r', '\f'
 // garbage characters are characters that are not part of the base64 alphabet
@@ -5805,6 +5808,26 @@ public:
   binary_to_base64(const char *input, size_t length, char *output,
                    base64_options options = base64_default) const noexcept = 0;
 #endif // SIMDUTF_FEATURE_BASE64
+
+#ifdef SIMDUTF_INTERNAL_TESTS
+  // This method is exported only in developer mode, its purpose
+  // is to expose some internal test procedures from the given
+  // implementation and then use them through our standard test
+  // framework.
+  //
+  // Regular users should not use it, the tests of the public
+  // API are enough.
+
+  struct TestProcedure {
+    // display name
+    std::string name;
+
+    // procedure should return whether given test pass or not
+    void (*procedure)(const implementation &);
+  };
+
+  virtual std::vector<TestProcedure> internal_tests() const;
+#endif
 
 protected:
   /** @private Construct an implementation with the given name and description.
