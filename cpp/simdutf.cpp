@@ -10156,9 +10156,9 @@ simdutf_really_inline int count_ones(uint64_t input_num) {
 }
 
 #if SIMDUTF_NEED_TRAILING_ZEROES
-// simdutf_really_inline int trailing_zeroes(uint64_t input_num) {
-//   return __builtin_ctzll(input_num);
-// }
+simdutf_really_inline int trailing_zeroes(uint64_t input_num) {
+  return __builtin_ctzll(input_num);
+}
 #endif
 
 } // unnamed namespace
@@ -11524,9 +11524,9 @@ simdutf_really_inline int count_ones(uint64_t input_num) {
 }
 
 #if SIMDUTF_NEED_TRAILING_ZEROES
-// simdutf_really_inline int trailing_zeroes(uint64_t input_num) {
-//   return __builtin_ctzll(input_num);
-// }
+simdutf_really_inline int trailing_zeroes(uint64_t input_num) {
+  return __builtin_ctzll(input_num);
+}
 #endif
 
 } // unnamed namespace
@@ -47305,6 +47305,39 @@ simdutf_warn_unused size_t implementation::convert_valid_utf8_to_utf32(
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
 /* end file src/rvv/rvv_utf8_to.inl.cpp */
 
+#if SIMDUTF_FEATURE_BASE64
+/* begin file src/rvv/rvv_find.cpp */
+simdutf_really_inline const char *util_find(const char *start, const char *end,
+                                            char character) noexcept {
+  const char *src = start;
+  for (size_t len = end - start, vl; len > 0; len -= vl, src += vl) {
+    vl = __riscv_vsetvl_e8m8(len);
+    vuint8m8_t v = __riscv_vle8_v_u8m8((uint8_t *)src, vl);
+    long idx =
+        __riscv_vfirst_m_b1(__riscv_vmseq_vx_u8m8_b1(v, character, vl), vl);
+    if (idx >= 0)
+      return src + idx;
+  }
+  return end;
+}
+
+simdutf_really_inline const char16_t *util_find(const char16_t *start,
+                                                const char16_t *end,
+                                                char16_t character) noexcept {
+  const char16_t *src = start;
+  for (size_t len = end - start, vl; len > 0; len -= vl, src += vl) {
+    vl = __riscv_vsetvl_e16m8(len);
+    vuint16m8_t v = __riscv_vle16_v_u16m8((uint16_t *)src, vl);
+    long idx =
+        __riscv_vfirst_m_b2(__riscv_vmseq_vx_u16m8_b2(v, character, vl), vl);
+    if (idx >= 0)
+      return src + idx;
+  }
+  return end;
+}
+/* end file src/rvv/rvv_find.cpp */
+#endif
+
 #if SIMDUTF_FEATURE_DETECT_ENCODING
 simdutf_warn_unused int
 implementation::detect_encodings(const char *input,
@@ -47400,12 +47433,12 @@ size_t implementation::binary_to_base64(const char *input, size_t length,
 
 const char *implementation::find(const char *start, const char *end,
                                  char character) const noexcept {
-  return std::find(start, end, character);
+  return util_find(start, end, character);
 }
 
 const char16_t *implementation::find(const char16_t *start, const char16_t *end,
                                      char16_t character) const noexcept {
-  return std::find(start, end, character);
+  return util_find(start, end, character);
 }
 #endif // SIMDUTF_FEATURE_BASE64
 
@@ -57236,6 +57269,68 @@ compress_decode_base64(char *dst, const char_type *src, size_t srclen,
   return {SUCCESS, srclen, size_t(dst - dstinit)};
 }
 /* end file src/lsx/lsx_base64.cpp */
+/* begin file src/lsx/lsx_find.cpp */
+simdutf_really_inline const char *util_find(const char *start, const char *end,
+                                            char character) noexcept {
+  if (start >= end)
+    return end;
+
+  const int step = 16;
+  __m128i char_vec = __lsx_vreplgr2vr_b(static_cast<uint8_t>(character));
+
+  while (end - start >= step) {
+    __m128i data = __lsx_vld(reinterpret_cast<const __m128i *>(start), 0);
+    __m128i cmp = __lsx_vseq_b(data, char_vec);
+    if (__lsx_bnz_v(cmp)) {
+      uint16_t mask =
+          static_cast<uint16_t>(__lsx_vpickve2gr_hu(__lsx_vmsknz_b(cmp), 0));
+      return start + trailing_zeroes(mask);
+    }
+
+    start += step;
+  }
+
+  // Handle remaining bytes with scalar loop
+  for (; start < end; ++start) {
+    if (*start == character) {
+      return start;
+    }
+  }
+
+  return end;
+}
+
+simdutf_really_inline const char16_t *util_find(const char16_t *start,
+                                                const char16_t *end,
+                                                char16_t character) noexcept {
+  if (start >= end)
+    return end;
+
+  const int step = 8;
+  __m128i char_vec = __lsx_vreplgr2vr_h(static_cast<uint16_t>(character));
+
+  while (end - start >= step) {
+    __m128i data = __lsx_vld(reinterpret_cast<const __m128i *>(start), 0);
+    __m128i cmp = __lsx_vseq_h(data, char_vec);
+    if (__lsx_bnz_v(cmp)) {
+      uint16_t mask =
+          static_cast<uint16_t>(__lsx_vpickve2gr_hu(__lsx_vmsknz_b(cmp), 0));
+      return start + trailing_zeroes(mask) / 2;
+    }
+
+    start += step;
+  }
+
+  // Handle remaining elements with scalar loop
+  for (; start < end; ++start) {
+    if (*start == character) {
+      return start;
+    }
+  }
+
+  return end;
+}
+/* end file src/lsx/lsx_find.cpp */
 #endif // SIMDUTF_FEATURE_BASE64
 
 } // namespace
@@ -60747,12 +60842,12 @@ size_t implementation::binary_to_base64(const char *input, size_t length,
 }
 const char *implementation::find(const char *start, const char *end,
                                  char character) const noexcept {
-  return std::find(start, end, character);
+  return util_find(start, end, character);
 }
 
 const char16_t *implementation::find(const char16_t *start, const char16_t *end,
                                      char16_t character) const noexcept {
-  return std::find(start, end, character);
+  return util_find(start, end, character);
 }
 #endif // SIMDUTF_FEATURE_BASE64
 
@@ -64098,6 +64193,72 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
   return {SUCCESS, srclen, size_t(dst - dstinit)};
 }
 /* end file src/lasx/lasx_base64.cpp */
+/* begin file src/lasx/lasx_find.cpp */
+simdutf_really_inline const char *util_find(const char *start, const char *end,
+                                            char character) noexcept {
+  if (start >= end)
+    return end;
+
+  const int step = 32;
+  __m256i char_vec = __lasx_xvreplgr2vr_b(static_cast<uint16_t>(character));
+
+  while (end - start >= step) {
+    __m256i data = __lasx_xvld(reinterpret_cast<const __m256i *>(start), 0);
+    __m256i cmp = __lasx_xvseq_b(data, char_vec);
+    if (__lasx_xbnz_v(cmp)) {
+      __m256i res = __lasx_xvmsknz_b(cmp);
+      uint32_t mask0 = __lasx_xvpickve2gr_wu(res, 0);
+      uint32_t mask1 = __lasx_xvpickve2gr_wu(res, 4);
+      uint32_t mask = (mask0 | (mask1 << 16));
+      return start + trailing_zeroes(mask);
+    }
+
+    start += step;
+  }
+
+  // Handle remaining bytes with scalar loop
+  for (; start < end; ++start) {
+    if (*start == character) {
+      return start;
+    }
+  }
+
+  return end;
+}
+
+simdutf_really_inline const char16_t *util_find(const char16_t *start,
+                                                const char16_t *end,
+                                                char16_t character) noexcept {
+  if (start >= end)
+    return end;
+
+  const int step = 16;
+  __m256i char_vec = __lasx_xvreplgr2vr_h(static_cast<uint16_t>(character));
+
+  while (end - start >= step) {
+    __m256i data = __lasx_xvld(reinterpret_cast<const __m256i *>(start), 0);
+    __m256i cmp = __lasx_xvseq_h(data, char_vec);
+    if (__lasx_xbnz_v(cmp)) {
+      __m256i res = __lasx_xvmsknz_b(cmp);
+      uint32_t mask0 = __lasx_xvpickve2gr_wu(res, 0);
+      uint32_t mask1 = __lasx_xvpickve2gr_wu(res, 4);
+      uint32_t mask = (mask0 | (mask1 << 16));
+      return start + trailing_zeroes(mask) / 2;
+    }
+
+    start += step;
+  }
+
+  // Handle remaining elements with scalar loop
+  for (; start < end; ++start) {
+    if (*start == character) {
+      return start;
+    }
+  }
+
+  return end;
+}
+/* end file src/lasx/lasx_find.cpp */
 #endif // SIMDUTF_FEATURE_BASE64
 
 } // namespace
@@ -67721,12 +67882,12 @@ size_t implementation::binary_to_base64(const char *input, size_t length,
 
 const char *implementation::find(const char *start, const char *end,
                                  char character) const noexcept {
-  return std::find(start, end, character);
+  return util_find(start, end, character);
 }
 
 const char16_t *implementation::find(const char16_t *start, const char16_t *end,
                                      char16_t character) const noexcept {
-  return std::find(start, end, character);
+  return util_find(start, end, character);
 }
 #endif // SIMDUTF_FEATURE_BASE64
 
