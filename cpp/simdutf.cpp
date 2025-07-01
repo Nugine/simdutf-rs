@@ -7713,7 +7713,7 @@ public:
                               char16_t *output) const noexcept final;
   void to_well_formed_utf16le(const char16_t *input, size_t len,
                               char16_t *output) const noexcept final;
-#endif
+#endif // SIMDUTF_FEATURE_UTF16
 };
 
 } // namespace ppc64
@@ -47336,7 +47336,7 @@ simdutf_really_inline const char16_t *util_find(const char16_t *start,
   return end;
 }
 /* end file src/rvv/rvv_find.cpp */
-#endif
+#endif // SIMDUTF_FEATURE_BASE64
 
 #if SIMDUTF_FEATURE_DETECT_ENCODING
 simdutf_warn_unused int
