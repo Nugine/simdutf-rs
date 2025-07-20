@@ -939,7 +939,7 @@ encoding_type check_bom(const uint8_t *byte, size_t length) {
   } else if (length >= 4 && byte[0] == 0x00 and byte[1] == 0x00 and
              byte[2] == 0xfe and byte[3] == 0xff) {
     return encoding_type::UTF32_BE;
-  } else if (length >= 4 && byte[0] == 0xef and byte[1] == 0xbb and
+  } else if (length >= 3 && byte[0] == 0xef and byte[1] == 0xbb and
              byte[2] == 0xbf) {
     return encoding_type::UTF8;
   }
@@ -13730,6 +13730,13 @@ full_result base64_tail_decode_impl(
     }
     if (idx != 4) {
       simdutf_log_assert(idx < 4, "idx should be less than 4");
+      // We never should have that the number of base64 characters + the
+      // number of padding characters is more than 4.
+      if (!ignore_garbage && (idx + padding_characters > 4)) {
+        return {INVALID_BASE64_CHARACTER, size_t(src - srcinit),
+                size_t(dst - dstinit), true};
+      }
+
       // The idea here is that in loose mode,
       // if there is padding at all, it must be used
       // to form 4-wise chunk. However, in loose mode,
@@ -30179,6 +30186,9 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
   }
 
   if ((bufferptr - buffer_start) != 0) {
+    // For efficiency reasons, we end up reproducing much of the code
+    // in base64_tail_decode_impl. Better engineering would be to
+    // refactor the code so that we can call it without a performance hit.
     size_t rem = (bufferptr - buffer_start);
     int idx = rem % 4;
     __mmask64 mask = ((__mmask64)1 << rem) - 1;
@@ -30195,7 +30205,12 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
         28, 29, 30, 24, 25, 26, 20, 21, 22, 16, 17, 18, 12, 13, 14, 8, 9, 10, 4,
         5, 6, 0, 1, 2);
     const __m512i shuffled = _mm512_permutexvar_epi8(pack, merged);
-
+    // We never should have that the number of base64 characters + the
+    // number of padding characters is more than 4.
+    if (!ignore_garbage && (idx + padding_characters > 4)) {
+      return {INVALID_BASE64_CHARACTER, size_t(src - srcinit),
+              size_t(dst - dstinit), true};
+    }
     // The idea here is that in loose mode,
     // if there is padding at all, it must be used
     // to form 4-wise chunk. However, in loose mode,
