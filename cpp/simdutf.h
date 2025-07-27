@@ -720,7 +720,7 @@ SIMDUTF_DISABLE_UNDESIRED_WARNINGS
 #define SIMDUTF_SIMDUTF_VERSION_H
 
 /** The version of simdutf being used (major.minor.revision) */
-#define SIMDUTF_VERSION "7.3.2"
+#define SIMDUTF_VERSION "7.3.3"
 
 namespace simdutf {
 enum {
@@ -735,7 +735,7 @@ enum {
   /**
    * The revision (major.minor.REVISION) of simdutf being used.
    */
-  SIMDUTF_VERSION_REVISION = 2
+  SIMDUTF_VERSION_REVISION = 3
 };
 } // namespace simdutf
 
@@ -1577,7 +1577,7 @@ validate_utf32_with_errors(std::span<const char32_t> input) noexcept {
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
 /**
- * Convert Latin1 string into UTF8 string.
+ * Convert Latin1 string into UTF-8 string.
  *
  * This function is suitable to work with inputs from untrusted sources.
  *
@@ -1600,7 +1600,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_latin1_to_utf8(
   #endif // SIMDUTF_SPAN
 
 /**
- * Convert Latin1 string into UTF8 string with output limit.
+ * Convert Latin1 string into UTF-8 string with output limit.
  *
  * This function is suitable to work with inputs from untrusted sources.
  *
@@ -1638,7 +1638,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_latin1_to_utf8_safe(
  *
  * This function is suitable to work with inputs from untrusted sources.
  *
- * @param input         the Latin1  string to convert
+ * @param input         the Latin1 string to convert
  * @param length        the length of the string in bytes
  * @param utf16_buffer  the pointer to buffer that can hold conversion result
  * @return the number of written char16_t; 0 if conversion is not possible
@@ -1777,7 +1777,7 @@ convert_utf8_to_utf16(const detail::input_span_of_byte_like auto &input,
 /**
  * Using native endianness, convert a Latin1 string into a UTF-16 string.
  *
- * @param input         the UTF-8 string to convert
+ * @param input         the Latin1 string to convert
  * @param length        the length of the string in bytes
  * @param utf16_buffer  the pointer to buffer that can hold conversion result
  * @return the number of written char16_t.
@@ -4039,7 +4039,7 @@ maximal_binary_length_from_base64(std::span<const char16_t> input) noexcept {
  * maximal_binary_length_from_base64(input, length) bytes long. If you fail to
  * provide that much space, the function may cause a buffer overflow.
  *
- * Advanced users may want to taylor how the last chunk is handled. By default,
+ * Advanced users may want to tailor how the last chunk is handled. By default,
  * we use a loose (forgiving) approach but we also support a strict approach
  * as well as a stop_before_partial approach, as per the following proposal:
  *
@@ -4210,7 +4210,7 @@ atomic_binary_to_base64(const detail::input_span_of_byte_like auto &input,
  * maximal_binary_length_from_base64(input, length) bytes long. If you fail
  * to provide that much space, the function may cause a buffer overflow.
  *
- * Advanced users may want to taylor how the last chunk is handled. By default,
+ * Advanced users may want to tailor how the last chunk is handled. By default,
  * we use a loose (forgiving) approach but we also support a strict approach
  * as well as a stop_before_partial approach, as per the following proposal:
  *
@@ -4337,7 +4337,7 @@ base64_valid_or_padding(char16_t input,
  * true. In that case, the function will decode up to the first invalid
  * character. Extra padding characters ('=') are considered invalid characters.
  *
- * Advanced users may want to taylor how the last chunk is handled. By default,
+ * Advanced users may want to tailor how the last chunk is handled. By default,
  * we use a loose (forgiving) approach but we also support a strict approach
  * as well as a stop_before_partial approach, as per the following proposal:
  *
@@ -4804,7 +4804,7 @@ public:
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
   /**
-   * Convert Latin1 string into UTF8 string.
+   * Convert Latin1 string into UTF-8 string.
    *
    * This function is suitable to work with inputs from untrusted sources.
    *
