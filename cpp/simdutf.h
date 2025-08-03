@@ -520,20 +520,42 @@
 #endif // MSC_VER
 
 #ifndef SIMDUTF_DLLIMPORTEXPORT
-  #if defined(SIMDUTF_VISUAL_STUDIO)
-    /**
-     * It does not matter here whether you are using
-     * the regular visual studio or clang under visual
-     * studio.
-     */
-    #if SIMDUTF_USING_LIBRARY
+  #if defined(SIMDUTF_VISUAL_STUDIO) // Visual Studio
+                                     /**
+                                      * Windows users need to do some extra work when building
+                                      * or using a dynamic library (DLL). When building, we need
+                                      * to set SIMDUTF_DLLIMPORTEXPORT to __declspec(dllexport).
+                                      * When *using* the DLL, the user needs to set
+                                      * SIMDUTF_DLLIMPORTEXPORT __declspec(dllimport).
+                                      *
+                                      * Static libraries not need require such work.
+                                      *
+                                      * It does not matter here whether you are using
+                                      * the regular visual studio or clang under visual
+                                      * studio, you still need to handle these issues.
+                                      *
+                                      * Non-Windows systems do not have this complexity.
+                                      */
+    #if SIMDUTF_BUILDING_WINDOWS_DYNAMIC_LIBRARY
+
+      // We set SIMDUTF_BUILDING_WINDOWS_DYNAMIC_LIBRARY when we build a DLL
+      // under Windows. It should never happen that both
+      // SIMDUTF_BUILDING_WINDOWS_DYNAMIC_LIBRARY and
+      // SIMDUTF_USING_WINDOWS_DYNAMIC_LIBRARY are set.
+      #define SIMDUTF_DLLIMPORTEXPORT __declspec(dllexport)
+    #elif SIMDUTF_USING_WINDOWS_DYNAMIC_LIBRARY
+      // Windows user who call a dynamic library should set
+      // SIMDUTF_USING_WINDOWS_DYNAMIC_LIBRARY to 1.
+
       #define SIMDUTF_DLLIMPORTEXPORT __declspec(dllimport)
     #else
-      #define SIMDUTF_DLLIMPORTEXPORT __declspec(dllexport)
+      // We assume by default static linkage
+      #define SIMDUTF_DLLIMPORTEXPORT
     #endif
-  #else
+  #else // defined(SIMDUTF_VISUAL_STUDIO)
+    // Non-Windows systems do not have this complexity.
     #define SIMDUTF_DLLIMPORTEXPORT
-  #endif
+  #endif // defined(SIMDUTF_VISUAL_STUDIO)
 #endif
 
 #if SIMDUTF_MAYBE_UNUSED_AVAILABLE
@@ -720,7 +742,7 @@ SIMDUTF_DISABLE_UNDESIRED_WARNINGS
 #define SIMDUTF_SIMDUTF_VERSION_H
 
 /** The version of simdutf being used (major.minor.revision) */
-#define SIMDUTF_VERSION "7.3.2"
+#define SIMDUTF_VERSION "7.3.4"
 
 namespace simdutf {
 enum {
@@ -735,7 +757,7 @@ enum {
   /**
    * The revision (major.minor.REVISION) of simdutf being used.
    */
-  SIMDUTF_VERSION_REVISION = 2
+  SIMDUTF_VERSION_REVISION = 4
 };
 } // namespace simdutf
 
@@ -1577,7 +1599,7 @@ validate_utf32_with_errors(std::span<const char32_t> input) noexcept {
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
 /**
- * Convert Latin1 string into UTF8 string.
+ * Convert Latin1 string into UTF-8 string.
  *
  * This function is suitable to work with inputs from untrusted sources.
  *
@@ -1600,7 +1622,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_latin1_to_utf8(
   #endif // SIMDUTF_SPAN
 
 /**
- * Convert Latin1 string into UTF8 string with output limit.
+ * Convert Latin1 string into UTF-8 string with output limit.
  *
  * This function is suitable to work with inputs from untrusted sources.
  *
@@ -1638,7 +1660,7 @@ simdutf_really_inline simdutf_warn_unused size_t convert_latin1_to_utf8_safe(
  *
  * This function is suitable to work with inputs from untrusted sources.
  *
- * @param input         the Latin1  string to convert
+ * @param input         the Latin1 string to convert
  * @param length        the length of the string in bytes
  * @param utf16_buffer  the pointer to buffer that can hold conversion result
  * @return the number of written char16_t; 0 if conversion is not possible
@@ -1777,7 +1799,7 @@ convert_utf8_to_utf16(const detail::input_span_of_byte_like auto &input,
 /**
  * Using native endianness, convert a Latin1 string into a UTF-16 string.
  *
- * @param input         the UTF-8 string to convert
+ * @param input         the Latin1 string to convert
  * @param length        the length of the string in bytes
  * @param utf16_buffer  the pointer to buffer that can hold conversion result
  * @return the number of written char16_t.
@@ -4039,7 +4061,7 @@ maximal_binary_length_from_base64(std::span<const char16_t> input) noexcept {
  * maximal_binary_length_from_base64(input, length) bytes long. If you fail to
  * provide that much space, the function may cause a buffer overflow.
  *
- * Advanced users may want to taylor how the last chunk is handled. By default,
+ * Advanced users may want to tailor how the last chunk is handled. By default,
  * we use a loose (forgiving) approach but we also support a strict approach
  * as well as a stop_before_partial approach, as per the following proposal:
  *
@@ -4210,7 +4232,7 @@ atomic_binary_to_base64(const detail::input_span_of_byte_like auto &input,
  * maximal_binary_length_from_base64(input, length) bytes long. If you fail
  * to provide that much space, the function may cause a buffer overflow.
  *
- * Advanced users may want to taylor how the last chunk is handled. By default,
+ * Advanced users may want to tailor how the last chunk is handled. By default,
  * we use a loose (forgiving) approach but we also support a strict approach
  * as well as a stop_before_partial approach, as per the following proposal:
  *
@@ -4337,7 +4359,7 @@ base64_valid_or_padding(char16_t input,
  * true. In that case, the function will decode up to the first invalid
  * character. Extra padding characters ('=') are considered invalid characters.
  *
- * Advanced users may want to taylor how the last chunk is handled. By default,
+ * Advanced users may want to tailor how the last chunk is handled. By default,
  * we use a loose (forgiving) approach but we also support a strict approach
  * as well as a stop_before_partial approach, as per the following proposal:
  *
@@ -4804,7 +4826,7 @@ public:
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
   /**
-   * Convert Latin1 string into UTF8 string.
+   * Convert Latin1 string into UTF-8 string.
    *
    * This function is suitable to work with inputs from untrusted sources.
    *
