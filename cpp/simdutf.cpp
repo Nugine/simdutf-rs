@@ -939,7 +939,7 @@ encoding_type check_bom(const uint8_t *byte, size_t length) {
   } else if (length >= 4 && byte[0] == 0x00 and byte[1] == 0x00 and
              byte[2] == 0xfe and byte[3] == 0xff) {
     return encoding_type::UTF32_BE;
-  } else if (length >= 4 && byte[0] == 0xef and byte[1] == 0xbb and
+  } else if (length >= 3 && byte[0] == 0xef and byte[1] == 0xbb and
              byte[2] == 0xbf) {
     return encoding_type::UTF8;
   }
@@ -13559,9 +13559,8 @@ struct reduced_input {
 // find the end of the base64 input buffer
 // It returns the number of padding characters, the location of the first
 // padding character if any, the length of the input buffer before padding
-// and the length of the input buffer with padding but without ignorable
-// characters. The input buffer is not modified.
-// The function assumes that there are at most two padding characters.
+// and the length of the input buffer with padding. The input buffer is not
+// modified. The function assumes that there are at most two padding characters.
 template <class char_type>
 reduced_input find_end(const char_type *src, size_t srclen,
                        simdutf::base64_options options) {
@@ -13576,13 +13575,15 @@ reduced_input find_end(const char_type *src, size_t srclen,
       (options == base64_options::base64_default_or_url_accept_garbage);
 
   size_t equalsigns = 0;
+  // We intentionally include trailing spaces in the full input length.
+  // See https://github.com/simdutf/simdutf/issues/824
+  size_t full_input_length = srclen;
   // skip trailing spaces
   while (!ignore_garbage && srclen > 0 &&
          scalar::base64::is_eight_byte(src[srclen - 1]) &&
          to_base64[uint8_t(src[srclen - 1])] == 64) {
     srclen--;
   }
-  size_t full_input_length = srclen;
   size_t equallocation =
       srclen; // location of the first padding character if any
   if (ignore_garbage) {
@@ -13730,6 +13731,13 @@ full_result base64_tail_decode_impl(
     }
     if (idx != 4) {
       simdutf_log_assert(idx < 4, "idx should be less than 4");
+      // We never should have that the number of base64 characters + the
+      // number of padding characters is more than 4.
+      if (!ignore_garbage && (idx + padding_characters > 4)) {
+        return {INVALID_BASE64_CHARACTER, size_t(src - srcinit),
+                size_t(dst - dstinit), true};
+      }
+
       // The idea here is that in loose mode,
       // if there is padding at all, it must be used
       // to form 4-wise chunk. However, in loose mode,
@@ -13757,24 +13765,14 @@ full_result base64_tail_decode_impl(
           // mode, skip the minute there are padding characters.
           if ((last_chunk_options ==
                    last_chunk_handling_options::stop_before_partial &&
-               (padding_characters + idx < 4) &&
+               (padding_characters + idx < 4) && (idx != 0) &&
                (idx >= 2 || padding_characters == 0)) ||
               (last_chunk_options ==
                    last_chunk_handling_options::only_full_chunks &&
                (idx >= 2 || padding_characters == 0))) {
-            // Rewind src to before partial chunk
-
             // partial means that we are *not* going to consume the read
             // characters. We need to rewind the src pointer.
             src = srccur;
-            // adjust, skipping ignorable characters
-            for (; src < srcend; src++) {
-              char_type c = *src;
-              uint8_t code = to_base64[uint8_t(c)];
-              if (is_eight_byte(c) && code <= 63) {
-                break;
-              }
-            }
             return {SUCCESS, size_t(src - srcinit), size_t(dst - dstinit)};
           } else {
             if (idx == 2) {
@@ -13997,12 +13995,11 @@ simdutf_warn_unused full_result base64_to_binary_details_impl(
   size_t equalsigns = ri.equalsigns;
   length = ri.srclen;
   size_t full_input_length = ri.full_input_length;
-  (void)full_input_length;
   if (length == 0) {
     if (!ignore_garbage && equalsigns > 0) {
       return {INVALID_BASE64_CHARACTER, equallocation, 0};
     }
-    return {SUCCESS, 0, 0};
+    return {SUCCESS, full_input_length, 0};
   }
   full_result r = scalar::base64::base64_tail_decode(
       output, input, length, equalsigns, options, last_chunk_options);
@@ -14014,6 +14011,26 @@ simdutf_warn_unused full_result base64_to_binary_details_impl(
     if ((r.output_count % 3 == 0) ||
         ((r.output_count % 3) + 1 + equalsigns != 4)) {
       return {INVALID_BASE64_CHARACTER, equallocation, r.output_count};
+    }
+  }
+  // When is_partial(last_chunk_options) is true, we must either end with
+  // the end of the stream (beyond whitespace) or right after a non-ignorable
+  // character or at the very beginning of the stream.
+  // See https://tc39.es/proposal-arraybuffer-base64/spec/#sec-frombase64
+  if (is_partial(last_chunk_options) && r.error == error_code::SUCCESS &&
+      r.input_count < full_input_length) {
+    // First check if we can extend the input to the end of the stream
+    while (r.input_count < full_input_length &&
+           base64_ignorable(*(input + r.input_count), options)) {
+      r.input_count++;
+    }
+    // If we are still not at the end of the stream, then we must backtrack
+    // to the last non-ignorable character.
+    if (r.input_count < full_input_length) {
+      while (r.input_count > 0 &&
+             base64_ignorable(*(input + r.input_count - 1), options)) {
+        r.input_count--;
+      }
     }
   }
   return r;
@@ -14033,12 +14050,11 @@ simdutf_warn_unused full_result base64_to_binary_details_safe_impl(
   size_t equalsigns = ri.equalsigns;
   length = ri.srclen;
   size_t full_input_length = ri.full_input_length;
-  (void)full_input_length;
   if (length == 0) {
     if (!ignore_garbage && equalsigns > 0) {
       return {INVALID_BASE64_CHARACTER, equallocation, 0};
     }
-    return {SUCCESS, 0, 0};
+    return {SUCCESS, full_input_length, 0};
   }
   full_result r = scalar::base64::base64_tail_decode_safe(
       output, outlen, input, length, equalsigns, options, last_chunk_options);
@@ -14050,6 +14066,27 @@ simdutf_warn_unused full_result base64_to_binary_details_safe_impl(
     if ((r.output_count % 3 == 0) ||
         ((r.output_count % 3) + 1 + equalsigns != 4)) {
       return {INVALID_BASE64_CHARACTER, equallocation, r.output_count};
+    }
+  }
+
+  // When is_partial(last_chunk_options) is true, we must either end with
+  // the end of the stream (beyond whitespace) or right after a non-ignorable
+  // character or at the very beginning of the stream.
+  // See https://tc39.es/proposal-arraybuffer-base64/spec/#sec-frombase64
+  if (is_partial(last_chunk_options) && r.error == error_code::SUCCESS &&
+      r.input_count < full_input_length) {
+    // First check if we can extend the input to the end of the stream
+    while (r.input_count < full_input_length &&
+           base64_ignorable(*(input + r.input_count), options)) {
+      r.input_count++;
+    }
+    // If we are still not at the end of the stream, then we must backtrack
+    // to the last non-ignorable character.
+    if (r.input_count < full_input_length) {
+      while (r.input_count > 0 &&
+             base64_ignorable(*(input + r.input_count - 1), options)) {
+        r.input_count--;
+      }
     }
   }
   return r;
@@ -18062,6 +18099,7 @@ simdutf_warn_unused result atomic_base64_to_binary_safe_impl(
   const char_type *const input_init = input;
   size_t actual_out = 0;
   bool last_chunk = false;
+  const size_t length_init = length;
   result r;
   while (!last_chunk) {
     last_chunk |= (temp_buffer.size() >= outlen - actual_out);
@@ -18098,6 +18136,14 @@ simdutf_warn_unused result atomic_base64_to_binary_safe_impl(
 
     if (r.error != error_code::OUTPUT_BUFFER_TOO_SMALL) {
       break;
+    }
+  }
+  if (size_t(input - input_init) != length_init) {
+    // We did not process all input characters. In such case, we
+    // should not end with an ignorable character. See
+    // https://tc39.es/proposal-arraybuffer-base64/spec/#sec-frombase64
+    while (input > input_init && base64_ignorable(*(input - 1), options)) {
+      --input;
     }
   }
   outlen = actual_out;
@@ -18804,18 +18850,17 @@ simdutf_warn_unused result base64_to_binary_safe_impl(
     outlen = output_position;
     return {r.error, input_position};
   }
+
   if (done_with_partial) {
     // We are done. We have decoded everything.
     outlen = output_position;
     return {simdutf::error_code::SUCCESS, input_position};
   }
-
   // We have decoded some data, but we still have some data to decode.
   // We need to decode the rest of the input buffer.
   r = simdutf::scalar::base64::base64_to_binary_details_safe_impl(
       input + input_position, remaining_input_length, output + output_position,
       remaining_output_length, options, last_chunk_handling_options);
-
   input_position += r.input_count;
   output_position += r.output_count;
   remaining_input_length -= r.input_count;
@@ -18830,6 +18875,21 @@ simdutf_warn_unused result base64_to_binary_safe_impl(
     }
     outlen = output_position;
     return {r.error, input_position};
+  }
+  if (input_position < length) {
+    // We cannot process the entire input in one go, so we need to
+    // process it in two steps: first the fast path, then the slow path.
+    // In some cases, the processing might 'eat up' trailing ignorable
+    // characters in the fast path, but that can be a problem.
+    // suppose we have just white space followed by a single base64 character.
+    // If we first process the white space with the fast path, it will
+    // eat all of it. But, by the JavaScript standard, we should consume
+    // no character. See
+    // https://tc39.es/proposal-arraybuffer-base64/spec/#sec-frombase64
+    while (input_position > 0 &&
+           base64_ignorable(input[input_position - 1], options)) {
+      input_position--;
+    }
   }
   outlen = output_position;
   return {simdutf::error_code::SUCCESS, input_position};
@@ -21572,12 +21632,11 @@ compress_decode_base64(char *dst, const char_type *src, size_t srclen,
   size_t equalsigns = ri.equalsigns;
   srclen = ri.srclen;
   size_t full_input_length = ri.full_input_length;
-  (void)full_input_length;
   if (srclen == 0) {
     if (!ignore_garbage && equalsigns > 0) {
       return {INVALID_BASE64_CHARACTER, equallocation, 0};
     }
-    return {SUCCESS, 0, 0};
+    return {SUCCESS, full_input_length, 0};
   }
   const char_type *const srcinit = src;
   const char *const dstinit = dst;
@@ -21706,6 +21765,26 @@ compress_decode_base64(char *dst, const char_type *src, size_t srclen,
     r = scalar::base64::patch_tail_result(
         r, size_t(src - srcinit), size_t(dst - dstinit), equallocation,
         full_input_length, last_chunk_options);
+    // When is_partial(last_chunk_options) is true, we must either end with
+    // the end of the stream (beyond whitespace) or right after a non-ignorable
+    // character or at the very beginning of the stream.
+    // See https://tc39.es/proposal-arraybuffer-base64/spec/#sec-frombase64
+    if (is_partial(last_chunk_options) && r.error == error_code::SUCCESS &&
+        r.input_count < full_input_length) {
+      // First check if we can extend the input to the end of the stream
+      while (r.input_count < full_input_length &&
+             base64_ignorable(*(srcinit + r.input_count), options)) {
+        r.input_count++;
+      }
+      // If we are still not at the end of the stream, then we must backtrack
+      // to the last non-ignorable character.
+      if (r.input_count < full_input_length) {
+        while (r.input_count > 0 &&
+               base64_ignorable(*(srcinit + r.input_count - 1), options)) {
+          r.input_count--;
+        }
+      }
+    }
     return r;
   }
   if (equalsigns > 0 && !ignore_garbage) {
@@ -30088,7 +30167,6 @@ full_result
 compress_decode_base64(char *dst, const chartype *src, size_t srclen,
                        base64_options options,
                        last_chunk_handling_options last_chunk_options) {
-
   (void)options;
   const uint8_t *to_base64 =
       default_or_url ? tables::base64::to_base64_default_or_url_value
@@ -30099,12 +30177,11 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
   size_t padding_characters = ri.equalsigns;
   srclen = ri.srclen;
   size_t full_input_length = ri.full_input_length;
-  (void)full_input_length;
   if (srclen == 0) {
     if (!ignore_garbage && padding_characters > 0) {
       return {INVALID_BASE64_CHARACTER, equallocation, 0};
     }
-    return {SUCCESS, 0, 0};
+    return {SUCCESS, full_input_length, 0};
   }
   const chartype *const srcinit = src;
   const char *const dstinit = dst;
@@ -30177,8 +30254,10 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
     base64_decode_block(dst, buffer_start);
     dst += 48;
   }
-
   if ((bufferptr - buffer_start) != 0) {
+    // For efficiency reasons, we end up reproducing much of the code
+    // in base64_tail_decode_impl. Better engineering would be to
+    // refactor the code so that we can call it without a performance hit.
     size_t rem = (bufferptr - buffer_start);
     int idx = rem % 4;
     __mmask64 mask = ((__mmask64)1 << rem) - 1;
@@ -30195,7 +30274,12 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
         28, 29, 30, 24, 25, 26, 20, 21, 22, 16, 17, 18, 12, 13, 14, 8, 9, 10, 4,
         5, 6, 0, 1, 2);
     const __m512i shuffled = _mm512_permutexvar_epi8(pack, merged);
-
+    // We never should have that the number of base64 characters + the
+    // number of padding characters is more than 4.
+    if (!ignore_garbage && (idx + padding_characters > 4)) {
+      return {INVALID_BASE64_CHARACTER, size_t(src - srcinit),
+              size_t(dst - dstinit), true};
+    }
     // The idea here is that in loose mode,
     // if there is padding at all, it must be used
     // to form 4-wise chunk. However, in loose mode,
@@ -30207,7 +30291,6 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
       return {INVALID_BASE64_CHARACTER, size_t(src - srcinit),
               size_t(dst - dstinit), true};
     } else
-
       // The idea here is that in strict mode, we do not want to accept
       // incomplete base64 chunks. So if the chunk was otherwise valid, we
       // return BASE64_INPUT_REMAINDER.
@@ -30224,7 +30307,7 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
         // skip the minute there are padding characters.
         if ((last_chunk_options ==
                  last_chunk_handling_options::stop_before_partial &&
-             (padding_characters + idx < 4) &&
+             (padding_characters + idx < 4) && (idx != 0) &&
              (idx >= 2 || padding_characters == 0)) ||
             (last_chunk_options ==
                  last_chunk_handling_options::only_full_chunks &&
@@ -30240,6 +30323,16 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
             if (simdutf::scalar::base64::is_eight_byte(c) && code <= 63) {
               characters_to_skip--;
             }
+          }
+          // And then we need to skip ignored characters
+          // See https://github.com/simdutf/simdutf/issues/824
+          while (src > srcinit) {
+            auto c = *(src - 1);
+            uint8_t code = to_base64[uint8_t(c)];
+            if (simdutf::scalar::base64::is_eight_byte(c) && code <= 63) {
+              break;
+            }
+            src--;
           }
           return {SUCCESS, size_t(src - srcinit), size_t(dst - dstinit)};
         } else {
@@ -30294,7 +30387,6 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
             dst += output_len;
           }
         }
-
     if (!ignore_garbage && !is_partial(last_chunk_options) &&
         padding_characters > 0) {
       size_t output_count = size_t(dst - dstinit);
@@ -37739,12 +37831,11 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
   size_t equalsigns = ri.equalsigns;
   srclen = ri.srclen;
   size_t full_input_length = ri.full_input_length;
-  (void)full_input_length;
   if (srclen == 0) {
     if (!ignore_garbage && equalsigns > 0) {
       return {INVALID_BASE64_CHARACTER, equallocation, 0};
     }
-    return {SUCCESS, 0, 0};
+    return {SUCCESS, full_input_length, 0};
   }
   char *end_of_safe_64byte_zone =
       dst == nullptr
@@ -37884,6 +37975,26 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
     r = scalar::base64::patch_tail_result(
         r, size_t(src - srcinit), size_t(dst - dstinit), equallocation,
         full_input_length, last_chunk_options);
+    // When is_partial(last_chunk_options) is true, we must either end with
+    // the end of the stream (beyond whitespace) or right after a non-ignorable
+    // character or at the very beginning of the stream.
+    // See https://tc39.es/proposal-arraybuffer-base64/spec/#sec-frombase64
+    if (is_partial(last_chunk_options) && r.error == error_code::SUCCESS &&
+        r.input_count < full_input_length) {
+      // First check if we can extend the input to the end of the stream
+      while (r.input_count < full_input_length &&
+             base64_ignorable(*(srcinit + r.input_count), options)) {
+        r.input_count++;
+      }
+      // If we are still not at the end of the stream, then we must backtrack
+      // to the last non-ignorable character.
+      if (r.input_count < full_input_length) {
+        while (r.input_count > 0 &&
+               base64_ignorable(*(srcinit + r.input_count - 1), options)) {
+          r.input_count--;
+        }
+      }
+    }
     return r;
   }
   if (!ignore_garbage && equalsigns > 0) {
@@ -44535,12 +44646,11 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
   size_t equalsigns = ri.equalsigns;
   srclen = ri.srclen;
   size_t full_input_length = ri.full_input_length;
-  (void)full_input_length;
   if (srclen == 0) {
     if (!ignore_garbage && equalsigns > 0) {
       return {INVALID_BASE64_CHARACTER, equallocation, 0};
     }
-    return {SUCCESS, 0, 0};
+    return {SUCCESS, full_input_length, 0};
   }
   char *end_of_safe_64byte_zone =
       dst == nullptr
@@ -44680,6 +44790,26 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
     r = scalar::base64::patch_tail_result(
         r, size_t(src - srcinit), size_t(dst - dstinit), equallocation,
         full_input_length, last_chunk_options);
+    // When is_partial(last_chunk_options) is true, we must either end with
+    // the end of the stream (beyond whitespace) or right after a non-ignorable
+    // character or at the very beginning of the stream.
+    // See https://tc39.es/proposal-arraybuffer-base64/spec/#sec-frombase64
+    if (is_partial(last_chunk_options) && r.error == error_code::SUCCESS &&
+        r.input_count < full_input_length) {
+      // First check if we can extend the input to the end of the stream
+      while (r.input_count < full_input_length &&
+             base64_ignorable(*(srcinit + r.input_count), options)) {
+        r.input_count++;
+      }
+      // If we are still not at the end of the stream, then we must backtrack
+      // to the last non-ignorable character.
+      if (r.input_count < full_input_length) {
+        while (r.input_count > 0 &&
+               base64_ignorable(*(srcinit + r.input_count - 1), options)) {
+          r.input_count--;
+        }
+      }
+    }
     return r;
   }
   if (!ignore_garbage && equalsigns > 0) {
@@ -52865,12 +52995,11 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
   size_t equalsigns = ri.equalsigns;
   srclen = ri.srclen;
   size_t full_input_length = ri.full_input_length;
-  (void)full_input_length;
   if (srclen == 0) {
     if (!ignore_garbage && equalsigns > 0) {
       return {INVALID_BASE64_CHARACTER, equallocation, 0};
     }
-    return {SUCCESS, 0, 0};
+    return {SUCCESS, full_input_length, 0};
   }
   char *end_of_safe_64byte_zone =
       dst == nullptr
@@ -53010,6 +53139,26 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
     r = scalar::base64::patch_tail_result(
         r, size_t(src - srcinit), size_t(dst - dstinit), equallocation,
         full_input_length, last_chunk_options);
+    // When is_partial(last_chunk_options) is true, we must either end with
+    // the end of the stream (beyond whitespace) or right after a non-ignorable
+    // character or at the very beginning of the stream.
+    // See https://tc39.es/proposal-arraybuffer-base64/spec/#sec-frombase64
+    if (is_partial(last_chunk_options) && r.error == error_code::SUCCESS &&
+        r.input_count < full_input_length) {
+      // First check if we can extend the input to the end of the stream
+      while (r.input_count < full_input_length &&
+             base64_ignorable(*(srcinit + r.input_count), options)) {
+        r.input_count++;
+      }
+      // If we are still not at the end of the stream, then we must backtrack
+      // to the last non-ignorable character.
+      if (r.input_count < full_input_length) {
+        while (r.input_count > 0 &&
+               base64_ignorable(*(srcinit + r.input_count - 1), options)) {
+          r.input_count--;
+        }
+      }
+    }
     return r;
   }
   if (!ignore_garbage && equalsigns > 0) {
@@ -57128,12 +57277,11 @@ compress_decode_base64(char *dst, const char_type *src, size_t srclen,
   size_t equalsigns = ri.equalsigns;
   srclen = ri.srclen;
   size_t full_input_length = ri.full_input_length;
-  (void)full_input_length;
   if (srclen == 0) {
     if (!ignore_garbage && equalsigns > 0) {
       return {INVALID_BASE64_CHARACTER, equallocation, 0};
     }
-    return {SUCCESS, 0, 0};
+    return {SUCCESS, full_input_length, 0};
   }
   const char_type *const srcinit = src;
   const char *const dstinit = dst;
@@ -57258,6 +57406,26 @@ compress_decode_base64(char *dst, const char_type *src, size_t srclen,
     r = scalar::base64::patch_tail_result(
         r, size_t(src - srcinit), size_t(dst - dstinit), equallocation,
         full_input_length, last_chunk_options);
+    // When is_partial(last_chunk_options) is true, we must either end with
+    // the end of the stream (beyond whitespace) or right after a non-ignorable
+    // character or at the very beginning of the stream.
+    // See https://tc39.es/proposal-arraybuffer-base64/spec/#sec-frombase64
+    if (is_partial(last_chunk_options) && r.error == error_code::SUCCESS &&
+        r.input_count < full_input_length) {
+      // First check if we can extend the input to the end of the stream
+      while (r.input_count < full_input_length &&
+             base64_ignorable(*(srcinit + r.input_count), options)) {
+        r.input_count++;
+      }
+      // If we are still not at the end of the stream, then we must backtrack
+      // to the last non-ignorable character.
+      if (r.input_count < full_input_length) {
+        while (r.input_count > 0 &&
+               base64_ignorable(*(srcinit + r.input_count - 1), options)) {
+          r.input_count--;
+        }
+      }
+    }
     return r;
   }
   if (equalsigns > 0 && !ignore_garbage) {
@@ -64037,12 +64205,11 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
   size_t equalsigns = ri.equalsigns;
   srclen = ri.srclen;
   size_t full_input_length = ri.full_input_length;
-  (void)full_input_length;
   if (srclen == 0) {
     if (!ignore_garbage && equalsigns > 0) {
       return {INVALID_BASE64_CHARACTER, equallocation, 0};
     }
-    return {SUCCESS, 0, 0};
+    return {SUCCESS, full_input_length, 0};
   }
   char *end_of_safe_64byte_zone =
       (srclen + 3) / 4 * 3 >= 63 ? dst + (srclen + 3) / 4 * 3 - 63 : dst;
@@ -64182,6 +64349,26 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
     r = scalar::base64::patch_tail_result(
         r, size_t(src - srcinit), size_t(dst - dstinit), equallocation,
         full_input_length, last_chunk_options);
+    // When is_partial(last_chunk_options) is true, we must either end with
+    // the end of the stream (beyond whitespace) or right after a non-ignorable
+    // character or at the very beginning of the stream.
+    // See https://tc39.es/proposal-arraybuffer-base64/spec/#sec-frombase64
+    if (is_partial(last_chunk_options) && r.error == error_code::SUCCESS &&
+        r.input_count < full_input_length) {
+      // First check if we can extend the input to the end of the stream
+      while (r.input_count < full_input_length &&
+             base64_ignorable(*(srcinit + r.input_count), options)) {
+        r.input_count++;
+      }
+      // If we are still not at the end of the stream, then we must backtrack
+      // to the last non-ignorable character.
+      if (r.input_count < full_input_length) {
+        while (r.input_count > 0 &&
+               base64_ignorable(*(srcinit + r.input_count - 1), options)) {
+          r.input_count--;
+        }
+      }
+    }
     return r;
   }
   if (equalsigns > 0 && !ignore_garbage) {
