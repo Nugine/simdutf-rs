@@ -742,7 +742,7 @@ SIMDUTF_DISABLE_UNDESIRED_WARNINGS
 #define SIMDUTF_SIMDUTF_VERSION_H
 
 /** The version of simdutf being used (major.minor.revision) */
-#define SIMDUTF_VERSION "7.3.4"
+#define SIMDUTF_VERSION "7.3.5"
 
 namespace simdutf {
 enum {
@@ -757,7 +757,7 @@ enum {
   /**
    * The revision (major.minor.REVISION) of simdutf being used.
    */
-  SIMDUTF_VERSION_REVISION = 4
+  SIMDUTF_VERSION_REVISION = 5
 };
 } // namespace simdutf
 
