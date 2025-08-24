@@ -2705,7 +2705,15 @@ public:
   simdutf_warn_unused result
   validate_ascii_with_errors(const char *buf, size_t len) const noexcept final;
 #endif // SIMDUTF_FEATURE_ASCII
+#if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
+  simdutf_warn_unused bool
+  validate_utf16le_as_ascii(const char16_t *buf,
+                            size_t len) const noexcept final;
 
+  simdutf_warn_unused bool
+  validate_utf16be_as_ascii(const char16_t *buf,
+                            size_t len) const noexcept final;
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 #if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
   simdutf_warn_unused bool validate_utf16le(const char16_t *buf,
                                             size_t len) const noexcept final;
@@ -3876,6 +3884,12 @@ template <typename T> struct simd16x32 {
     this->chunks[2] = this->chunks[2].swap_bytes();
     this->chunks[3] = this->chunks[3].swap_bytes();
   }
+  simdutf_really_inline uint64_t gt(const T m) const {
+    const simd16<T> mask = simd16<T>::splat(m);
+    return simd16x32<bool>(this->chunks[0] > mask, this->chunks[1] > mask,
+                           this->chunks[2] > mask, this->chunks[3] > mask)
+        .to_bitmask();
+  }
 
   simdutf_really_inline uint64_t lteq(const T m) const {
     const simd16<T> mask = simd16<T>::splat(m);
@@ -4122,8 +4136,16 @@ simdutf_really_inline simd64<uint64_t> sum_8bytes(const simd8<uint8_t> v) {
     // Visual Studio 2019 technically supports VBMI2, but the implementation
     // might be unreliable. Search for visualstudio2019icelakeissue in our
     // tests.
-    #define SIMDUTF_COMPILER_SUPPORTS_VBMI2 1
+    #ifndef SIMDUTF_COMPILER_SUPPORTS_VBMI2
+      #define SIMDUTF_COMPILER_SUPPORTS_VBMI2 1
+    #endif
   #endif
+#endif
+
+#if SIMDUTF_GCC9OROLDER && SIMDUTF_IS_X86_64
+  #define SIMDUTF_IMPLEMENTATION_ICELAKE 0
+  #warning                                                                     \
+      "You are using a legacy GCC compiler, we are disabling AVX-512 support"
 #endif
 
 // We allow icelake on x64 as long as the compiler is known to support VBMI2.
@@ -4347,6 +4369,16 @@ public:
   simdutf_warn_unused result
   validate_ascii_with_errors(const char *buf, size_t len) const noexcept final;
 #endif // SIMDUTF_FEATURE_ASCII
+
+#if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
+  simdutf_warn_unused bool
+  validate_utf16le_as_ascii(const char16_t *buf,
+                            size_t len) const noexcept final;
+
+  simdutf_warn_unused bool
+  validate_utf16be_as_ascii(const char16_t *buf,
+                            size_t len) const noexcept final;
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 
 #if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
   simdutf_warn_unused bool validate_utf16le(const char16_t *buf,
@@ -4935,6 +4967,15 @@ public:
   simdutf_warn_unused result
   validate_ascii_with_errors(const char *buf, size_t len) const noexcept final;
 #endif // SIMDUTF_FEATURE_ASCII
+#if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
+  simdutf_warn_unused bool
+  validate_utf16le_as_ascii(const char16_t *buf,
+                            size_t len) const noexcept final;
+
+  simdutf_warn_unused bool
+  validate_utf16be_as_ascii(const char16_t *buf,
+                            size_t len) const noexcept final;
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 
 #if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
   simdutf_warn_unused bool validate_utf16le(const char16_t *buf,
@@ -5911,6 +5952,11 @@ template <typename T> struct simd16x32 {
     this->chunks[0] = this->chunks[0].swap_bytes();
     this->chunks[1] = this->chunks[1].swap_bytes();
   }
+  simdutf_really_inline uint64_t gt(const T m) const {
+    const simd16<T> mask = simd16<T>::splat(m);
+    return simd16x32<bool>(this->chunks[0] > mask, this->chunks[1] > mask)
+        .to_bitmask();
+  }
 
   simdutf_really_inline uint64_t lteq(const T m) const {
     const simd16<T> mask = simd16<T>::splat(m);
@@ -6201,6 +6247,15 @@ public:
   simdutf_warn_unused result
   validate_ascii_with_errors(const char *buf, size_t len) const noexcept final;
 #endif // SIMDUTF_FEATURE_ASCII
+#if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
+  simdutf_warn_unused bool
+  validate_utf16le_as_ascii(const char16_t *buf,
+                            size_t len) const noexcept final;
+
+  simdutf_warn_unused bool
+  validate_utf16be_as_ascii(const char16_t *buf,
+                            size_t len) const noexcept final;
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 
 #if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
   simdutf_warn_unused bool validate_utf16le(const char16_t *buf,
@@ -7027,7 +7082,6 @@ template <> struct simd16<uint16_t> : base16_numeric<uint16_t> {
   operator>=(const simd16<uint16_t> other) const {
     return other.min_val(*this) == other;
   }
-
   // Bit-specific operations
   simdutf_really_inline simd16<bool> bits_not_set() const {
     return *this == uint16_t(0);
@@ -7444,6 +7498,16 @@ public:
   simdutf_warn_unused result
   validate_ascii_with_errors(const char *buf, size_t len) const noexcept final;
 #endif // SIMDUTF_FEATURE_ASCII
+
+#if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
+  simdutf_warn_unused bool
+  validate_utf16le_as_ascii(const char16_t *buf,
+                            size_t len) const noexcept final;
+
+  simdutf_warn_unused bool
+  validate_utf16be_as_ascii(const char16_t *buf,
+                            size_t len) const noexcept final;
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 
 #if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
   simdutf_warn_unused bool validate_utf16le(const char16_t *buf,
@@ -8772,6 +8836,13 @@ template <typename T> struct simd16x32 {
     this->chunks[3] = this->chunks[3].swap_bytes();
   }
 
+  simdutf_really_inline uint64_t gt(const T m) const {
+    const simd16<T> mask = simd16<T>::splat(m);
+    return simd16x32<bool>(this->chunks[0] > mask, this->chunks[1] > mask,
+                           this->chunks[2] > mask, this->chunks[3] > mask)
+        .to_bitmask();
+  }
+
   simdutf_really_inline uint64_t lteq(const T m) const {
     const simd16<T> mask = simd16<T>::splat(m);
     return simd16x32<bool>(this->chunks[0] <= mask, this->chunks[1] <= mask,
@@ -9222,6 +9293,15 @@ public:
   simdutf_warn_unused result
   validate_ascii_with_errors(const char *buf, size_t len) const noexcept final;
 #endif // SIMDUTF_FEATURE_ASCII
+#if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
+  simdutf_warn_unused bool
+  validate_utf16le_as_ascii(const char16_t *buf,
+                            size_t len) const noexcept final;
+
+  simdutf_warn_unused bool
+  validate_utf16be_as_ascii(const char16_t *buf,
+                            size_t len) const noexcept final;
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 
 #if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
   simdutf_warn_unused bool validate_utf16le(const char16_t *buf,
@@ -9697,6 +9777,16 @@ public:
   simdutf_warn_unused result
   validate_ascii_with_errors(const char *buf, size_t len) const noexcept final;
 #endif // SIMDUTF_FEATURE_ASCII
+
+#if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
+  simdutf_warn_unused bool
+  validate_utf16le_as_ascii(const char16_t *buf,
+                            size_t len) const noexcept final;
+
+  simdutf_warn_unused bool
+  validate_utf16be_as_ascii(const char16_t *buf,
+                            size_t len) const noexcept final;
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 
 #if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
   simdutf_warn_unused bool validate_utf16le(const char16_t *buf,
@@ -10610,6 +10700,8 @@ template <typename T, typename Mask = simd16<bool>> struct base_u16 {
 
 template <typename T, typename Mask = simd16<bool>>
 struct base16 : base_u16<T> {
+  using bitmask_type = uint16_t;
+
   simdutf_really_inline base16() : base_u16<T>() {}
   simdutf_really_inline base16(const __m128i _value) : base_u16<T>(_value) {}
   template <typename Pointer>
@@ -10633,6 +10725,12 @@ template <> struct simd16<bool> : base16<bool> {
 
   simdutf_really_inline simd16() : base16() {}
   simdutf_really_inline simd16(const __m128i _value) : base16<bool>(_value) {}
+
+  simdutf_really_inline bitmask_type to_bitmask() const {
+    __m128i mask = __lsx_vmsknz_b(this->value);
+    bitmask_type mask0 = bitmask_type(__lsx_vpickve2gr_wu(mask, 0));
+    return mask0;
+  }
 
   simdutf_really_inline bool is_zero() const { return __lsx_bz_v(this->value); }
 };
@@ -10711,6 +10809,26 @@ template <> struct simd16<uint16_t> : base16_numeric<uint16_t> {
   }
 };
 
+simdutf_really_inline simd16<bool> operator<(const simd16<uint16_t> a,
+                                             const simd16<uint16_t> b) {
+  return __lsx_vslt_hu(a.value, b.value);
+}
+
+simdutf_really_inline simd16<bool> operator>(const simd16<uint16_t> a,
+                                             const simd16<uint16_t> b) {
+  return __lsx_vslt_hu(b.value, a.value);
+}
+
+simdutf_really_inline simd16<bool> operator<=(const simd16<uint16_t> a,
+                                              const simd16<uint16_t> b) {
+  return __lsx_vsle_hu(a.value, b.value);
+}
+
+simdutf_really_inline simd16<bool> operator>=(const simd16<uint16_t> a,
+                                              const simd16<uint16_t> b) {
+  return __lsx_vsle_hu(b.value, a.value);
+}
+
 template <typename T> struct simd16x32 {
   static constexpr int NUM_CHUNKS = 64 / sizeof(simd16<T>);
   static_assert(
@@ -10745,6 +10863,19 @@ template <typename T> struct simd16x32 {
     this->chunks[1] = this->chunks[1].swap_bytes();
     this->chunks[2] = this->chunks[2].swap_bytes();
     this->chunks[3] = this->chunks[3].swap_bytes();
+  }
+  simdutf_really_inline uint64_t to_bitmask() const {
+    uint64_t r0 = uint32_t(this->chunks[0].to_bitmask());
+    uint64_t r1 = this->chunks[1].to_bitmask();
+    uint64_t r2 = this->chunks[2].to_bitmask();
+    uint64_t r3 = this->chunks[3].to_bitmask();
+    return r0 | (r1 << 16) | (r2 << 32) | (r3 << 48);
+  }
+  simdutf_really_inline uint64_t lteq(const T m) const {
+    const simd16<T> mask = simd16<T>::splat(m);
+    return simd16x32<bool>(this->chunks[0] <= mask, this->chunks[1] <= mask,
+                           this->chunks[2] <= mask, this->chunks[3] <= mask)
+        .to_bitmask();
   }
 }; // struct simd16x32<T>
 
@@ -10973,6 +11104,16 @@ public:
   simdutf_warn_unused result
   validate_ascii_with_errors(const char *buf, size_t len) const noexcept final;
 #endif // SIMDUTF_FEATURE_ASCII
+
+#if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
+  simdutf_warn_unused bool
+  validate_utf16le_as_ascii(const char16_t *buf,
+                            size_t len) const noexcept final;
+
+  simdutf_warn_unused bool
+  validate_utf16be_as_ascii(const char16_t *buf,
+                            size_t len) const noexcept final;
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 
 #if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
   simdutf_warn_unused bool validate_utf16le(const char16_t *buf,
@@ -12200,6 +12341,26 @@ template <> struct simd16<uint16_t> : base16_numeric<uint16_t> {
   }
 };
 
+simdutf_really_inline simd16<bool> operator<(const simd16<uint16_t> a,
+                                             const simd16<uint16_t> b) {
+  return __lasx_xvslt_hu(a.value, b.value);
+}
+
+simdutf_really_inline simd16<bool> operator>(const simd16<uint16_t> a,
+                                             const simd16<uint16_t> b) {
+  return __lasx_xvslt_hu(b.value, a.value);
+}
+
+simdutf_really_inline simd16<bool> operator<=(const simd16<uint16_t> a,
+                                              const simd16<uint16_t> b) {
+  return __lasx_xvsle_hu(a.value, b.value);
+}
+
+simdutf_really_inline simd16<bool> operator>=(const simd16<uint16_t> a,
+                                              const simd16<uint16_t> b) {
+  return __lasx_xvsle_hu(b.value, a.value);
+}
+
 template <typename T> struct simd16x32 {
   static constexpr int NUM_CHUNKS = 64 / sizeof(simd16<T>);
   static_assert(NUM_CHUNKS == 2,
@@ -12226,6 +12387,16 @@ template <typename T> struct simd16x32 {
   simdutf_really_inline void swap_bytes() {
     this->chunks[0] = this->chunks[0].swap_bytes();
     this->chunks[1] = this->chunks[1].swap_bytes();
+  }
+  simdutf_really_inline uint64_t to_bitmask() const {
+    uint64_t r_lo = uint32_t(this->chunks[0].to_bitmask());
+    uint64_t r_hi = this->chunks[1].to_bitmask();
+    return r_lo | (r_hi << 32);
+  }
+  simdutf_really_inline uint64_t lteq(const T m) const {
+    const simd16<T> mask = simd16<T>::splat(m);
+    return simd16x32<bool>(this->chunks[0] <= mask, this->chunks[1] <= mask)
+        .to_bitmask();
   }
 }; // struct simd16x32<T>
 
@@ -12483,6 +12654,15 @@ public:
   simdutf_warn_unused result
   validate_ascii_with_errors(const char *buf, size_t len) const noexcept final;
 #endif // SIMDUTF_FEATURE_ASCII
+#if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
+  simdutf_warn_unused bool
+  validate_utf16le_as_ascii(const char16_t *buf,
+                            size_t len) const noexcept final;
+
+  simdutf_warn_unused bool
+  validate_utf16be_as_ascii(const char16_t *buf,
+                            size_t len) const noexcept final;
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 
 #if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
   simdutf_warn_unused bool validate_utf16le(const char16_t *buf,
@@ -12838,7 +13018,6 @@ inline simdutf_warn_unused bool validate(const char *buf, size_t len) noexcept {
   return true;
 }
 #endif
-
 inline simdutf_warn_unused result validate_with_errors(const char *buf,
                                                        size_t len) noexcept {
   const uint8_t *data = reinterpret_cast<const uint8_t *>(buf);
@@ -13184,6 +13363,19 @@ namespace simdutf {
 namespace scalar {
 namespace {
 namespace utf16 {
+
+template <endianness big_endian>
+inline simdutf_warn_unused bool validate_as_ascii(const char16_t *data,
+                                                  size_t len) noexcept {
+  for (size_t pos = 0; pos < len; pos++) {
+    char16_t word =
+        !match_system(big_endian) ? u16_swap_bytes(data[pos]) : data[pos];
+    if (word >= 0x80) {
+      return false;
+    }
+  }
+  return true;
+}
 
 template <endianness big_endian>
 inline simdutf_warn_unused bool validate(const char16_t *data,
@@ -16790,12 +16982,24 @@ public:
   validate_ascii(const char *buf, size_t len) const noexcept final override {
     return set_best()->validate_ascii(buf, len);
   }
-
   simdutf_warn_unused result validate_ascii_with_errors(
       const char *buf, size_t len) const noexcept final override {
     return set_best()->validate_ascii_with_errors(buf, len);
   }
 #endif // SIMDUTF_FEATURE_ASCII
+
+#if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
+  simdutf_warn_unused bool
+  validate_utf16le_as_ascii(const char16_t *buf,
+                            size_t len) const noexcept final override {
+    return set_best()->validate_utf16le_as_ascii(buf, len);
+  }
+  simdutf_warn_unused bool
+  validate_utf16be_as_ascii(const char16_t *buf,
+                            size_t len) const noexcept final override {
+    return set_best()->validate_utf16be_as_ascii(buf, len);
+  }
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 
 #if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
   simdutf_warn_unused bool
@@ -17395,6 +17599,20 @@ public:
   }
 #endif // SIMDUTF_FEATURE_ASCII
 
+#if SIMDUTF_FEATURE_ASCII
+  simdutf_warn_unused bool
+  validate_utf16le_as_ascii(const char16_t *,
+                            size_t) const noexcept final override {
+    return false;
+  }
+
+  simdutf_warn_unused bool
+  validate_utf16be_as_ascii(const char16_t *,
+                            size_t) const noexcept final override {
+    return false;
+  }
+#endif // SIMDUTF_FEATURE_ASCII
+
 #if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
   simdutf_warn_unused bool
   validate_utf16le(const char16_t *, size_t) const noexcept final override {
@@ -17937,6 +18155,25 @@ simdutf_warn_unused result validate_ascii_with_errors(const char *buf,
   return get_default_implementation()->validate_ascii_with_errors(buf, len);
 }
 #endif // SIMDUTF_FEATURE_ASCII
+
+#if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
+simdutf_warn_unused bool validate_utf16le_as_ascii(const char16_t *buf,
+                                                   size_t len) noexcept {
+  return get_default_implementation()->validate_utf16le_as_ascii(buf, len);
+}
+simdutf_warn_unused bool validate_utf16be_as_ascii(const char16_t *buf,
+                                                   size_t len) noexcept {
+  return get_default_implementation()->validate_utf16be_as_ascii(buf, len);
+}
+simdutf_warn_unused bool validate_utf16_as_ascii(const char16_t *input,
+                                                 size_t length) noexcept {
+  #if SIMDUTF_IS_BIG_ENDIAN
+  return validate_utf16be_as_ascii(input, length);
+  #else
+  return validate_utf16le_as_ascii(input, length);
+  #endif
+}
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 simdutf_warn_unused size_t convert_utf8_to_utf16(
@@ -19405,6 +19642,28 @@ const char16_t *arm_validate_utf16(const char16_t *input, size_t size) {
         return nullptr;
       }
     }
+  }
+  return input;
+}
+
+template <endianness big_endian>
+const char16_t *arm_validate_utf16_as_ascii(const char16_t *input,
+                                            size_t size) {
+  const char16_t *end = input + size;
+  while (end - input >= 16) {
+    uint16x8_t in1 = vld1q_u16(reinterpret_cast<const uint16_t *>(input));
+    uint16x8_t in2 = vld1q_u16(reinterpret_cast<const uint16_t *>(input + 8));
+    uint16x8_t inor = vorrq_u16(in1, in2);
+    if (!match_system(big_endian)) {
+      inor = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(inor)));
+    }
+    // next we compute inor > 0x7f
+    uint16x8_t cmp = vcgtq_u16(inor, vdupq_n_u16(0x7f));
+    uint64_t mask = vget_lane_u64(vreinterpret_u64_u8(vshrn_n_u16(cmp, 4)), 0);
+    if (mask) {
+      return nullptr;
+    }
+    input += 16;
   }
   return input;
 }
@@ -24685,6 +24944,40 @@ simdutf_warn_unused result implementation::validate_ascii_with_errors(
 }
 #endif // SIMDUTF_FEATURE_ASCII
 
+#if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
+simdutf_warn_unused bool
+implementation::validate_utf16le_as_ascii(const char16_t *buf,
+                                          size_t len) const noexcept {
+  if (simdutf_unlikely(len == 0)) {
+    // empty input is valid. protected the implementation from nullptr.
+    return true;
+  }
+  const char16_t *tail =
+      arm_validate_utf16_as_ascii<endianness::LITTLE>(buf, len);
+  if (tail) {
+    return scalar::utf16::validate_as_ascii<endianness::LITTLE>(
+        tail, len - (tail - buf));
+  } else {
+    return false;
+  }
+}
+
+simdutf_warn_unused bool
+implementation::validate_utf16be_as_ascii(const char16_t *buf,
+                                          size_t len) const noexcept {
+  if (simdutf_unlikely(len == 0)) {
+    // empty input is valid. protected the implementation from nullptr.
+    return true;
+  }
+  const char16_t *tail = arm_validate_utf16_as_ascii<endianness::BIG>(buf, len);
+  if (tail) {
+    return scalar::utf16::validate_as_ascii<endianness::BIG>(
+        tail, len - (tail - buf));
+  } else {
+    return false;
+  }
+}
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 #if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
 simdutf_warn_unused bool
 implementation::validate_utf16le(const char16_t *buf,
@@ -25855,6 +26148,19 @@ simdutf_warn_unused result implementation::validate_ascii_with_errors(
 }
 #endif // SIMDUTF_FEATURE_ASCII
 
+#if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
+simdutf_warn_unused bool
+implementation::validate_utf16le_as_ascii(const char16_t *buf,
+                                          size_t len) const noexcept {
+  return scalar::utf16::validate_as_ascii<endianness::LITTLE>(buf, len);
+}
+
+simdutf_warn_unused bool
+implementation::validate_utf16be_as_ascii(const char16_t *buf,
+                                          size_t len) const noexcept {
+  return scalar::utf16::validate_as_ascii<endianness::BIG>(buf, len);
+}
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 #if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
 simdutf_warn_unused bool
 implementation::validate_utf16le(const char16_t *buf,
@@ -27871,6 +28177,8 @@ validating_utf8_to_fixed_length_with_constant_checks(const char *str,
 
 #if SIMDUTF_FEATURE_UTF16
 /* begin file src/icelake/icelake_utf16fix.cpp */
+#include <immintrin.h>
+
 /*
  * Process one block of 32 characters.  If in_place is false,
  * copy the block from in to out.  If there is a sequencing
@@ -31013,7 +31321,61 @@ simdutf_warn_unused result implementation::validate_ascii_with_errors(
   return result(error_code::SUCCESS, len);
 }
 #endif // SIMDUTF_FEATURE_ASCII
+#if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
+simdutf_warn_unused bool
+implementation::validate_utf16le_as_ascii(const char16_t *buf,
+                                          size_t len) const noexcept {
+  const char16_t *end = buf + len;
+  __m512i limit = _mm512_set1_epi16(uint16_t(0x007F));
+  for (; end - buf >= 32;) {
+    __m512i in = _mm512_loadu_si512((__m512i *)buf);
+    auto mask = _mm512_cmpgt_epu16_mask(in, limit);
+    if (mask) {
+      return false;
+    }
+    buf += 32;
+  }
+  if (buf < end) {
+    __m512i in =
+        _mm512_maskz_loadu_epi16((1U << (end - buf)) - 1, (__m512i *)buf);
+    auto mask = _mm512_cmpgt_epu16_mask(in, limit);
+    if (mask) {
+      return false;
+    }
+  }
+  return true;
+}
 
+simdutf_warn_unused bool
+implementation::validate_utf16be_as_ascii(const char16_t *buf,
+                                          size_t len) const noexcept {
+  const char16_t *end = buf + len;
+  const __m512i byteflip = _mm512_setr_epi64(
+      0x0607040502030001, 0x0e0f0c0d0a0b0809, 0x0607040502030001,
+      0x0e0f0c0d0a0b0809, 0x0607040502030001, 0x0e0f0c0d0a0b0809,
+      0x0607040502030001, 0x0e0f0c0d0a0b0809);
+  __m512i limit = _mm512_set1_epi16(uint16_t(0x007F));
+  for (; end - buf >= 32;) {
+    __m512i in = _mm512_loadu_si512((__m512i *)buf);
+    in = _mm512_shuffle_epi8(in, byteflip);
+    auto mask = _mm512_cmpgt_epu16_mask(in, limit);
+    if (mask) {
+      return false;
+    }
+    buf += 32;
+  }
+  if (buf < end) {
+    __m512i in =
+        _mm512_maskz_loadu_epi16((1U << (end - buf)) - 1, (__m512i *)buf);
+    in = _mm512_shuffle_epi8(in, byteflip);
+    auto mask = _mm512_cmpgt_epu16_mask(in, limit);
+    if (mask) {
+      return false;
+    }
+  }
+  return true;
+}
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 #if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
 simdutf_warn_unused bool
 implementation::validate_utf16le(const char16_t *buf,
@@ -32148,7 +32510,8 @@ simdutf_warn_unused size_t implementation::utf8_length_from_latin1(
   const uint8_t *str = reinterpret_cast<const uint8_t *>(input);
   size_t answer = length / sizeof(__m512i) * sizeof(__m512i);
   size_t i = 0;
-  if (answer >= 2048) { // long strings optimization
+  if (answer >= 2048) // long strings optimization
+  {
     unsigned char v_0xFF = 0xff;
     __m512i eight_64bits = _mm512_setzero_si512();
     while (i + sizeof(__m512i) <= length) {
@@ -32297,14 +32660,12 @@ simdutf_warn_unused size_t implementation::utf16_length_from_utf8(
          scalar::utf8::utf16_length_from_utf8(input + pos, length - pos);
 }
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
-
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
 simdutf_warn_unused size_t implementation::utf8_length_from_utf32(
     const char32_t *input, size_t length) const noexcept {
   return utf32::utf8_length_from_utf32(input, length);
 }
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
-
 #if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_UTF32
 simdutf_warn_unused size_t implementation::utf16_length_from_utf32(
     const char32_t *input, size_t length) const noexcept {
@@ -32477,7 +32838,6 @@ const char16_t *implementation::find(const char16_t *start, const char16_t *end,
                                      char16_t character) const noexcept {
   return util_find(start, end, character);
 }
-
 #endif // SIMDUTF_FEATURE_BASE64
 
 } // namespace icelake
@@ -32607,15 +32967,30 @@ void utf16fix_block(char16_t *out, const char16_t *in) {
 
     /* compute the cause of the illegal sequencing */
     lb_illseq = _mm256_andnot_si256(block_is_low, lb_is_high);
+#if SIMDUTF_GCC9OROLDER
+    // Old GCC versions are missing _mm256_zextsi128_si256, so we emulate it.
+    __m128i tmp_legacygcc =
+        _mm_bslli_si128(_mm256_extracti128_si256(lb_illseq, 1), 14);
+    __m256i tmp_legacygcc256 =
+        _mm256_set_m128i(_mm_setzero_si128(), tmp_legacygcc);
+    lb_illseq_shifted =
+        _mm256_or_si256(_mm256_bsrli_epi128(lb_illseq, 2), tmp_legacygcc256);
+#else
     lb_illseq_shifted =
         _mm256_or_si256(_mm256_bsrli_epi128(lb_illseq, 2),
                         _mm256_zextsi128_si256(_mm_bslli_si128(
                             _mm256_extracti128_si256(lb_illseq, 1), 14)));
+#endif // SIMDUTF_GCC9OROLDER
     block_illseq = _mm256_or_si256(
         _mm256_andnot_si256(lb_is_high, block_is_low), lb_illseq_shifted);
 
     /* fix illegal sequencing in the lookback */
+#if SIMDUTF_GCC10 || SIMDUTF_GCC9OROLDER
+    // GCC 10 is missing important intrinsics.
+    lb = _mm_cvtsi128_si32(_mm256_extractf128_si256(lb_illseq, 0));
+#else
     lb = _mm256_cvtsi256_si32(lb_illseq);
+#endif
     lb = (lb & replacement) | (~lb & out[-1]);
     out[-1] = char16_t(lb);
 
@@ -37441,6 +37816,38 @@ const result validate_utf16_with_errors(const char16_t *input, size_t size) {
   return result(error_code::SUCCESS, input - start);
 }
 
+template <endianness big_endian>
+const result validate_utf16_as_ascii_with_errors(const char16_t *input,
+                                                 size_t size) {
+  if (simdutf_unlikely(size == 0)) {
+    return result(error_code::SUCCESS, 0);
+  }
+  size_t pos = 0;
+  for (; pos < size / 32 * 32; pos += 32) {
+    simd16x32<uint16_t> input_vec(
+        reinterpret_cast<const uint16_t *>(input + pos));
+    if (!match_system(big_endian)) {
+      input_vec.swap_bytes();
+    }
+    uint64_t matches = input_vec.lteq(uint16_t(0x7f));
+    if (~matches) {
+      // Found a match, return the first one
+      int index = trailing_zeroes(~matches) / 2;
+      return result(error_code::TOO_LARGE, pos + index);
+    }
+  }
+
+  // Scalar tail
+  while (pos < size) {
+    char16_t v = big_endian ? scalar::u16_swap_bytes(input[pos]) : input[pos];
+    if (v > 0x7F) {
+      return result(error_code::TOO_LARGE, pos);
+    }
+    pos++;
+  }
+  return result(error_code::SUCCESS, size);
+}
+
 } // namespace utf16
 } // unnamed namespace
 } // namespace haswell
@@ -38409,6 +38816,24 @@ simdutf_warn_unused result implementation::validate_ascii_with_errors(
                                                                        len);
 }
 #endif // SIMDUTF_FEATURE_ASCII
+
+#if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
+simdutf_warn_unused bool
+implementation::validate_utf16le_as_ascii(const char16_t *buf,
+                                          size_t len) const noexcept {
+  return haswell::utf16::validate_utf16_as_ascii_with_errors<
+             endianness::LITTLE>(buf, len)
+             .error == SUCCESS;
+}
+
+simdutf_warn_unused bool
+implementation::validate_utf16be_as_ascii(const char16_t *buf,
+                                          size_t len) const noexcept {
+  return haswell::utf16::validate_utf16_as_ascii_with_errors<endianness::BIG>(
+             buf, len)
+             .error == SUCCESS;
+}
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 
 #if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
 simdutf_warn_unused bool
@@ -44101,6 +44526,38 @@ const result validate_utf16_with_errors(const char16_t *input, size_t size) {
   return result(error_code::SUCCESS, input - start);
 }
 
+template <endianness big_endian>
+const result validate_utf16_as_ascii_with_errors(const char16_t *input,
+                                                 size_t size) {
+  if (simdutf_unlikely(size == 0)) {
+    return result(error_code::SUCCESS, 0);
+  }
+  size_t pos = 0;
+  for (; pos < size / 32 * 32; pos += 32) {
+    simd16x32<uint16_t> input_vec(
+        reinterpret_cast<const uint16_t *>(input + pos));
+    if (!match_system(big_endian)) {
+      input_vec.swap_bytes();
+    }
+    uint64_t matches = input_vec.lteq(uint16_t(0x7f));
+    if (~matches) {
+      // Found a match, return the first one
+      int index = trailing_zeroes(~matches) / 2;
+      return result(error_code::TOO_LARGE, pos + index);
+    }
+  }
+
+  // Scalar tail
+  while (pos < size) {
+    char16_t v = big_endian ? scalar::u16_swap_bytes(input[pos]) : input[pos];
+    if (v > 0x7F) {
+      return result(error_code::TOO_LARGE, pos);
+    }
+    pos++;
+  }
+  return result(error_code::SUCCESS, size);
+}
+
 } // namespace utf16
 } // unnamed namespace
 } // namespace ppc64
@@ -45281,7 +45738,19 @@ simdutf_warn_unused result implementation::validate_ascii_with_errors(
   return ppc64::ascii_validation::generic_validate_ascii_with_errors(buf, len);
 }
 #endif // SIMDUTF_FEATURE_ASCII
+#if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
+simdutf_warn_unused bool
+implementation::validate_utf16le_as_ascii(const char16_t *buf,
+                                          size_t len) const noexcept {
+  return scalar::utf16::validate_as_ascii<endianness::LITTLE>(buf, len);
+}
 
+simdutf_warn_unused bool
+implementation::validate_utf16be_as_ascii(const char16_t *buf,
+                                          size_t len) const noexcept {
+  return scalar::utf16::validate_as_ascii<endianness::BIG>(buf, len);
+}
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 #if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
 simdutf_warn_unused bool
 implementation::validate_utf16le(const char16_t *buf,
@@ -46247,7 +46716,19 @@ simdutf_warn_unused result implementation::validate_ascii_with_errors(
   return result(error_code::SUCCESS, src - beg);
 }
 #endif // SIMDUTF_FEATURE_ASCII
+#if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
+simdutf_warn_unused bool
+implementation::validate_utf16le_as_ascii(const char16_t *buf,
+                                          size_t len) const noexcept {
+  return scalar::utf16::validate_as_ascii<endianness::LITTLE>(buf, len);
+}
 
+simdutf_warn_unused bool
+implementation::validate_utf16be_as_ascii(const char16_t *buf,
+                                          size_t len) const noexcept {
+  return scalar::utf16::validate_as_ascii<endianness::BIG>(buf, len);
+}
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 #if SIMDUTF_FEATURE_UTF8 || SIMDUTF_FEATURE_DETECT_ENCODING
 /* Returns a close estimation of the number of valid UTF-8 bytes up to the
  * first invalid one, but never overestimating. */
@@ -52683,6 +53164,38 @@ const result validate_utf16_with_errors(const char16_t *input, size_t size) {
   return result(error_code::SUCCESS, input - start);
 }
 
+template <endianness big_endian>
+const result validate_utf16_as_ascii_with_errors(const char16_t *input,
+                                                 size_t size) {
+  if (simdutf_unlikely(size == 0)) {
+    return result(error_code::SUCCESS, 0);
+  }
+  size_t pos = 0;
+  for (; pos < size / 32 * 32; pos += 32) {
+    simd16x32<uint16_t> input_vec(
+        reinterpret_cast<const uint16_t *>(input + pos));
+    if (!match_system(big_endian)) {
+      input_vec.swap_bytes();
+    }
+    uint64_t matches = input_vec.lteq(uint16_t(0x7f));
+    if (~matches) {
+      // Found a match, return the first one
+      int index = trailing_zeroes(~matches) / 2;
+      return result(error_code::TOO_LARGE, pos + index);
+    }
+  }
+
+  // Scalar tail
+  while (pos < size) {
+    char16_t v = big_endian ? scalar::u16_swap_bytes(input[pos]) : input[pos];
+    if (v > 0x7F) {
+      return result(error_code::TOO_LARGE, pos);
+    }
+    pos++;
+  }
+  return result(error_code::SUCCESS, size);
+}
+
 } // namespace utf16
 } // unnamed namespace
 } // namespace westmere
@@ -53678,15 +54191,31 @@ simdutf_warn_unused bool
 implementation::validate_ascii(const char *buf, size_t len) const noexcept {
   return westmere::ascii_validation::generic_validate_ascii(buf, len);
 }
-#endif // SIMDUTF_FEATURE_ASCII
 
-#if SIMDUTF_FEATURE_ASCII
 simdutf_warn_unused result implementation::validate_ascii_with_errors(
     const char *buf, size_t len) const noexcept {
   return westmere::ascii_validation::generic_validate_ascii_with_errors(buf,
                                                                         len);
 }
 #endif // SIMDUTF_FEATURE_ASCII
+
+#if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
+simdutf_warn_unused bool
+implementation::validate_utf16le_as_ascii(const char16_t *buf,
+                                          size_t len) const noexcept {
+  return westmere::utf16::validate_utf16_as_ascii_with_errors<
+             endianness::LITTLE>(buf, len)
+             .error == SUCCESS;
+}
+
+simdutf_warn_unused bool
+implementation::validate_utf16be_as_ascii(const char16_t *buf,
+                                          size_t len) const noexcept {
+  return westmere::utf16::validate_utf16_as_ascii_with_errors<endianness::BIG>(
+             buf, len)
+             .error == SUCCESS;
+}
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 
 #if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
 simdutf_warn_unused bool
@@ -60037,6 +60566,38 @@ const result validate_utf16_with_errors(const char16_t *input, size_t size) {
   return result(error_code::SUCCESS, input - start);
 }
 
+template <endianness big_endian>
+const result validate_utf16_as_ascii_with_errors(const char16_t *input,
+                                                 size_t size) {
+  if (simdutf_unlikely(size == 0)) {
+    return result(error_code::SUCCESS, 0);
+  }
+  size_t pos = 0;
+  for (; pos < size / 32 * 32; pos += 32) {
+    simd16x32<uint16_t> input_vec(
+        reinterpret_cast<const uint16_t *>(input + pos));
+    if (!match_system(big_endian)) {
+      input_vec.swap_bytes();
+    }
+    uint64_t matches = input_vec.lteq(uint16_t(0x7f));
+    if (~matches) {
+      // Found a match, return the first one
+      int index = trailing_zeroes(~matches) / 2;
+      return result(error_code::TOO_LARGE, pos + index);
+    }
+  }
+
+  // Scalar tail
+  while (pos < size) {
+    char16_t v = big_endian ? scalar::u16_swap_bytes(input[pos]) : input[pos];
+    if (v > 0x7F) {
+      return result(error_code::TOO_LARGE, pos);
+    }
+    pos++;
+  }
+  return result(error_code::SUCCESS, size);
+}
+
 } // namespace utf16
 } // unnamed namespace
 } // namespace lsx
@@ -60245,7 +60806,19 @@ simdutf_warn_unused result implementation::validate_ascii_with_errors(
   return lsx::ascii_validation::generic_validate_ascii_with_errors(buf, len);
 }
 #endif // SIMDUTF_FEATURE_ASCII
+#if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
+simdutf_warn_unused bool
+implementation::validate_utf16le_as_ascii(const char16_t *buf,
+                                          size_t len) const noexcept {
+  return scalar::utf16::validate_as_ascii<endianness::LITTLE>(buf, len);
+}
 
+simdutf_warn_unused bool
+implementation::validate_utf16be_as_ascii(const char16_t *buf,
+                                          size_t len) const noexcept {
+  return scalar::utf16::validate_as_ascii<endianness::BIG>(buf, len);
+}
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 #if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
 simdutf_warn_unused bool
 implementation::validate_utf16le(const char16_t *buf,
@@ -66982,6 +67555,38 @@ const result validate_utf16_with_errors(const char16_t *input, size_t size) {
   return result(error_code::SUCCESS, input - start);
 }
 
+template <endianness big_endian>
+const result validate_utf16_as_ascii_with_errors(const char16_t *input,
+                                                 size_t size) {
+  if (simdutf_unlikely(size == 0)) {
+    return result(error_code::SUCCESS, 0);
+  }
+  size_t pos = 0;
+  for (; pos < size / 32 * 32; pos += 32) {
+    simd16x32<uint16_t> input_vec(
+        reinterpret_cast<const uint16_t *>(input + pos));
+    if (!match_system(big_endian)) {
+      input_vec.swap_bytes();
+    }
+    uint64_t matches = input_vec.lteq(uint16_t(0x7f));
+    if (~matches) {
+      // Found a match, return the first one
+      int index = trailing_zeroes(~matches) / 2;
+      return result(error_code::TOO_LARGE, pos + index);
+    }
+  }
+
+  // Scalar tail
+  while (pos < size) {
+    char16_t v = big_endian ? scalar::u16_swap_bytes(input[pos]) : input[pos];
+    if (v > 0x7F) {
+      return result(error_code::TOO_LARGE, pos);
+    }
+    pos++;
+  }
+  return result(error_code::SUCCESS, size);
+}
+
 } // namespace utf16
 } // unnamed namespace
 } // namespace lasx
@@ -67190,7 +67795,19 @@ simdutf_warn_unused result implementation::validate_ascii_with_errors(
   return lasx::ascii_validation::generic_validate_ascii_with_errors(buf, len);
 }
 #endif // SIMDUTF_FEATURE_ASCII
+#if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
+simdutf_warn_unused bool
+implementation::validate_utf16le_as_ascii(const char16_t *buf,
+                                          size_t len) const noexcept {
+  return scalar::utf16::validate_as_ascii<endianness::LITTLE>(buf, len);
+}
 
+simdutf_warn_unused bool
+implementation::validate_utf16be_as_ascii(const char16_t *buf,
+                                          size_t len) const noexcept {
+  return scalar::utf16::validate_as_ascii<endianness::BIG>(buf, len);
+}
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 #if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
 simdutf_warn_unused bool
 implementation::validate_utf16le(const char16_t *buf,
