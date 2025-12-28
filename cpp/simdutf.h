@@ -525,6 +525,13 @@
 
 #endif // MSC_VER
 
+// Conditional constexpr macro: expands to constexpr for C++17+, empty otherwise
+#if SIMDUTF_CPLUSPLUS17
+  #define simdutf_constexpr constexpr
+#else
+  #define simdutf_constexpr
+#endif
+
 #ifndef SIMDUTF_DLLIMPORTEXPORT
   #if defined(SIMDUTF_VISUAL_STUDIO) // Visual Studio
                                      /**
@@ -592,7 +599,16 @@ enum encoding_type {
 
 enum endianness { LITTLE = 0, BIG = 1 };
 
-bool match_system(endianness e);
+constexpr bool match_system(endianness e) {
+#ifndef SIMDUTF_IS_BIG_ENDIAN
+  #error "SIMDUTF_IS_BIG_ENDIAN needs to be defined."
+#endif
+#if SIMDUTF_IS_BIG_ENDIAN
+  return e == endianness::BIG;
+#else
+  return e == endianness::LITTLE;
+#endif
+}
 
 std::string to_string(encoding_type bom);
 
@@ -640,9 +656,19 @@ enum error_code {
              // U+10FFFF,less than or equal than U+7F for ASCII OR less than
              // equal than U+FF for Latin1
   SURROGATE, // The decoded character must be not be in U+D800...DFFF (UTF-8 or
-             // UTF-32) OR a high surrogate must be followed by a low surrogate
+             // UTF-32)
+             // OR
+             // a high surrogate must be followed by a low surrogate
              // and a low surrogate must be preceded by a high surrogate
-             // (UTF-16) OR there must be no surrogate at all (Latin1)
+             // (UTF-16)
+             // OR
+             // there must be no surrogate at all and one is
+             // found (Latin1 functions)
+             // OR
+             // *specifically* for the function
+             // utf8_length_from_utf16_with_replacement, a surrogate (whether
+             // in error or not) has been found (I.e., whether we are in the
+             // Basic Multilingual Plane or not).
   INVALID_BASE64_CHARACTER, // Found a character that cannot be part of a valid
                             // base64 string. This may include a misplaced
                             // padding character ('=').
@@ -748,7 +774,7 @@ SIMDUTF_DISABLE_UNDESIRED_WARNINGS
 #define SIMDUTF_SIMDUTF_VERSION_H
 
 /** The version of simdutf being used (major.minor.revision) */
-#define SIMDUTF_VERSION "7.5.0"
+#define SIMDUTF_VERSION "7.7.1"
 
 namespace simdutf {
 enum {
@@ -759,11 +785,11 @@ enum {
   /**
    * The minor version (major.MINOR.revision) of simdutf being used.
    */
-  SIMDUTF_VERSION_MINOR = 5,
+  SIMDUTF_VERSION_MINOR = 7,
   /**
    * The revision (major.minor.REVISION) of simdutf being used.
    */
-  SIMDUTF_VERSION_REVISION = 0
+  SIMDUTF_VERSION_REVISION = 1
 };
 } // namespace simdutf
 
@@ -1145,10 +1171,11 @@ namespace detail {
  * are all distinct types.
  */
 template <typename T>
-concept byte_like = std::is_same_v<T, std::byte> ||   //
-                    std::is_same_v<T, char> ||        //
-                    std::is_same_v<T, signed char> || //
-                    std::is_same_v<T, unsigned char>;
+concept byte_like = std::is_same_v<T, std::byte> ||     //
+                    std::is_same_v<T, char> ||          //
+                    std::is_same_v<T, signed char> ||   //
+                    std::is_same_v<T, unsigned char> || //
+                    std::is_same_v<T, char8_t>;
 
 template <typename T>
 concept is_byte_like = byte_like<std::remove_cvref_t<T>>;
@@ -1376,7 +1403,6 @@ validate_utf16be_as_ascii(std::span<const char16_t> input) noexcept {
   return validate_utf16be_as_ascii(input.data(), input.size());
 }
   #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 
 /**
  * Validate the ASCII string as a UTF-16LE sequence.
@@ -1391,12 +1417,13 @@ validate_utf16be_as_ascii(std::span<const char16_t> input) noexcept {
  */
 simdutf_warn_unused bool validate_utf16le_as_ascii(const char16_t *buf,
                                                    size_t len) noexcept;
-#if SIMDUTF_SPAN
+  #if SIMDUTF_SPAN
 simdutf_really_inline simdutf_warn_unused bool
 validate_utf16le_as_ascii(std::span<const char16_t> input) noexcept {
   return validate_utf16le_as_ascii(input.data(), input.size());
 }
-#endif // SIMDUTF_SPAN
+  #endif // SIMDUTF_SPAN
+#endif   // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_ASCII
 
 #if SIMDUTF_FEATURE_UTF16
 /**
@@ -1864,7 +1891,64 @@ convert_utf8_to_utf16(const detail::input_span_of_byte_like auto &input,
                                input.size(), output.data());
 }
   #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
+
+/**
+ * Compute the number of bytes that this UTF-16LE string would require in UTF-8
+ * format even when the UTF-16LE content contains mismatched surrogates
+ * that have to be replaced by the replacement character (0xFFFD).
+ *
+ * @param input         the UTF-16LE string to convert
+ * @param length        the length of the string in 2-byte code units (char16_t)
+ * @return a result pair struct (of type simdutf::result containing the two
+ * fields error and count) where the count is the number of bytes required to
+ * encode the UTF-16LE string as UTF-8, and the error code is either SUCCESS or
+ * SURROGATE. The count is correct regardless of the error field.
+ * When SURROGATE is returned, it does not indicate an error in the case of this
+ * function: it indicates that at least one surrogate has been encountered: the
+ * surrogates may be matched or not (thus this function does not validate). If
+ * the returned error code is SUCCESS, then the input contains no surrogate, is
+ * in the Basic Multilingual Plane, and is necessarily valid.
+ */
+simdutf_warn_unused result utf8_length_from_utf16le_with_replacement(
+    const char16_t *input, size_t length) noexcept;
+  #if SIMDUTF_SPAN
+simdutf_really_inline simdutf_warn_unused result
+utf8_length_from_utf16le_with_replacement(
+    std::span<const char16_t> valid_utf16_input) noexcept {
+  return utf8_length_from_utf16le_with_replacement(valid_utf16_input.data(),
+                                                   valid_utf16_input.size());
+}
+  #endif // SIMDUTF_SPAN
+
+/**
+ * Compute the number of bytes that this UTF-16BE string would require in UTF-8
+ * format even when the UTF-16BE content contains mismatched surrogates
+ * that have to be replaced by the replacement character (0xFFFD).
+ *
+ * @param input         the UTF-16BE string to convert
+ * @param length        the length of the string in 2-byte code units (char16_t)
+ * @return a result pair struct (of type simdutf::result containing the two
+ * fields error and count) where the count is the number of bytes required to
+ * encode the UTF-16BE string as UTF-8, and the error code is either SUCCESS or
+ * SURROGATE. The count is correct regardless of the error field.
+ * When SURROGATE is returned, it does not indicate an error in the case of this
+ * function: it indicates that at least one surrogate has been encountered: the
+ * surrogates may be matched or not (thus this function does not validate). If
+ * the returned error code is SUCCESS, then the input contains no surrogate, is
+ * in the Basic Multilingual Plane, and is necessarily valid.
+ */
+simdutf_warn_unused result utf8_length_from_utf16be_with_replacement(
+    const char16_t *input, size_t length) noexcept;
+  #if SIMDUTF_SPAN
+simdutf_really_inline simdutf_warn_unused result
+utf8_length_from_utf16be_with_replacement(
+    std::span<const char16_t> valid_utf16_input) noexcept {
+  return utf8_length_from_utf16be_with_replacement(valid_utf16_input.data(),
+                                                   valid_utf16_input.size());
+}
+  #endif // SIMDUTF_SPAN
+
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_LATIN1
 /**
@@ -3138,6 +3222,9 @@ convert_valid_utf16be_to_utf32(std::span<const char16_t> valid_utf16_input,
  */
 simdutf_warn_unused size_t latin1_length_from_utf16(size_t length) noexcept;
 
+#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_LATIN1
+
+#if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 /**
  * Using native endianness; Compute the number of bytes that this UTF-16
  * string would require in UTF-8 format.
@@ -3158,9 +3245,36 @@ utf8_length_from_utf16(std::span<const char16_t> valid_utf16_input) noexcept {
                                 valid_utf16_input.size());
 }
   #endif // SIMDUTF_SPAN
-#endif   // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_LATIN1
 
-#if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
+/**
+ * Using native endianness; compute the number of bytes that this UTF-16
+ * string would require in UTF-8 format even when the UTF-16LE content contains
+ * mismatched surrogates that have to be replaced by the replacement character
+ * (0xFFFD).
+ *
+ * @param input         the UTF-16 string to convert
+ * @param length        the length of the string in 2-byte code units (char16_t)
+ * @return a result pair struct (of type simdutf::result containing the two
+ * fields error and count) where the count is the number of bytes required to
+ * encode the UTF-16 string as UTF-8, and the error code is either SUCCESS or
+ * SURROGATE. The count is correct regardless of the error field.
+ * When SURROGATE is returned, it does not indicate an error in the case of this
+ * function: it indicates that at least one surrogate has been encountered: the
+ * surrogates may be matched or not (thus this function does not validate). If
+ * the returned error code is SUCCESS, then the input contains no surrogate, is
+ * in the Basic Multilingual Plane, and is necessarily valid.
+ */
+simdutf_warn_unused result utf8_length_from_utf16_with_replacement(
+    const char16_t *input, size_t length) noexcept;
+  #if SIMDUTF_SPAN
+simdutf_really_inline simdutf_warn_unused result
+utf8_length_from_utf16_with_replacement(
+    std::span<const char16_t> valid_utf16_input) noexcept {
+  return utf8_length_from_utf16_with_replacement(valid_utf16_input.data(),
+                                                 valid_utf16_input.size());
+}
+  #endif // SIMDUTF_SPAN
+
 /**
  * Compute the number of bytes that this UTF-16LE string would require in UTF-8
  * format.
@@ -4062,8 +4176,12 @@ inline std::string_view to_string(last_chunk_handling_options options) {
 
 /**
  * Provide the maximal binary length in bytes given the base64 input.
- * In general, if the input contains ASCII spaces, the result will be less than
- * the maximum length.
+ * As long as the input does not contain ignorable characters (e.g., ASCII
+ * spaces or linefeed characters), the result is exact. In particular, the
+ * function checks for padding characters.
+ *
+ * The function is fast (constant time). It checks up to two characters at
+ * the end of the string. The input is not otherwise validated or read.
  *
  * @param input         the base64 input to process
  * @param length        the length of the base64 input in bytes
@@ -4082,8 +4200,12 @@ maximal_binary_length_from_base64(
 
 /**
  * Provide the maximal binary length in bytes given the base64 input.
- * In general, if the input contains ASCII spaces, the result will be less than
- * the maximum length.
+ * As long as the input does not contain ignorable characters (e.g., ASCII
+ * spaces or linefeed characters), the result is exact. In particular, the
+ * function checks for padding characters.
+ *
+ * The function is fast (constant time). It checks up to two characters at
+ * the end of the string. The input is not otherwise validated or read.
  *
  * @param input         the base64 input to process, in ASCII stored as 16-bit
  * units
@@ -5172,6 +5294,50 @@ public:
   simdutf_warn_unused virtual result convert_utf8_to_utf16be_with_errors(
       const char *input, size_t length,
       char16_t *utf16_output) const noexcept = 0;
+  /**
+   * Compute the number of bytes that this UTF-16LE string would require in
+   * UTF-8 format even when the UTF-16LE content contains mismatched
+   * surrogates that have to be replaced by the replacement character (0xFFFD).
+   *
+   * @param input         the UTF-16LE string to convert
+   * @param length        the length of the string in 2-byte code units
+   * (char16_t)
+   * @return a result pair struct (of type simdutf::result containing the two
+   * fields error and count) where the count is the number of bytes required to
+   * encode the UTF-16LE string as UTF-8, and the error code is either SUCCESS
+   * or SURROGATE. The count is correct regardless of the error field.
+   * When SURROGATE is returned, it does not indicate an error in the case of
+   * this function: it indicates that at least one surrogate has been
+   * encountered: the surrogates may be matched or not (thus this function does
+   * not validate). If the returned error code is SUCCESS, then the input
+   * contains no surrogate, is in the Basic Multilingual Plane, and is
+   * necessarily valid.
+   */
+  virtual simdutf_warn_unused result utf8_length_from_utf16le_with_replacement(
+      const char16_t *input, size_t length) const noexcept = 0;
+
+  /**
+   * Compute the number of bytes that this UTF-16BE string would require in
+   * UTF-8 format even when the UTF-16BE content contains mismatched
+   * surrogates that have to be replaced by the replacement character (0xFFFD).
+   *
+   * @param input         the UTF-16BE string to convert
+   * @param length        the length of the string in 2-byte code units
+   * (char16_t)
+   * @return a result pair struct (of type simdutf::result containing the two
+   * fields error and count) where the count is the number of bytes required to
+   * encode the UTF-16BE string as UTF-8, and the error code is either SUCCESS
+   * or SURROGATE. The count is correct regardless of the error field.
+   * When SURROGATE is returned, it does not indicate an error in the case of
+   * this function: it indicates that at least one surrogate has been
+   * encountered: the surrogates may be matched or not (thus this function does
+   * not validate). If the returned error code is SUCCESS, then the input
+   * contains no surrogate, is in the Basic Multilingual Plane, and is
+   * necessarily valid.
+   */
+  virtual simdutf_warn_unused result utf8_length_from_utf16be_with_replacement(
+      const char16_t *input, size_t length) const noexcept = 0;
+
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
@@ -6215,9 +6381,12 @@ public:
 #if SIMDUTF_FEATURE_BASE64
   /**
    * Provide the maximal binary length in bytes given the base64 input.
-   * In general, if the input contains ASCII spaces, the result will be less
-   * than the maximum length. It is acceptable to pass invalid base64 strings
-   * but in such cases the result is implementation defined.
+   * As long as the input does not contain ignorable characters (e.g., ASCII
+   * spaces or linefeed characters), the result is exact. In particular, the
+   * function checks for padding characters.
+   *
+   * The function is fast (constant time). It checks up to two characters at
+   * the end of the string. The input is not otherwise validated or read..
    *
    * @param input         the base64 input to process
    * @param length        the length of the base64 input in bytes
@@ -6228,9 +6397,12 @@ public:
 
   /**
    * Provide the maximal binary length in bytes given the base64 input.
-   * In general, if the input contains ASCII spaces, the result will be less
-   * than the maximum length. It is acceptable to pass invalid base64 strings
-   * but in such cases the result is implementation defined.
+   * As long as the input does not contain ignorable characters (e.g., ASCII
+   * spaces or linefeed characters), the result is exact. In particular, the
+   * function checks for padding characters.
+   *
+   * The function is fast (constant time). It checks up to two characters at
+   * the end of the string. The input is not otherwise validated or read.
    *
    * @param input         the base64 input to process, in ASCII stored as 16-bit
    * units
