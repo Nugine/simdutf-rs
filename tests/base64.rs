@@ -13,6 +13,7 @@ fn base64_decoding() {
             &mut out_len,
             simdutf::Base64Options::Default,
             simdutf::LastChunkHandlingOptions::Loose,
+            false,
         )
     };
     assert_eq!(result.error, simdutf::ErrorCode::Success);
@@ -61,6 +62,7 @@ fn tc39_illegal_padded_chunks() {
                     &mut out_len,
                     simdutf::Base64Options::Default,
                     option,
+                    true,
                 )
             };
             assert_ne!(result.error, simdutf::ErrorCode::Success);
@@ -90,6 +92,7 @@ fn tc39_4a() {
                 &mut out_len,
                 simdutf::Base64Options::Default,
                 simdutf::LastChunkHandlingOptions::StopBeforePartial,
+                true,
             )
         };
         assert_eq!(result.error, simdutf::ErrorCode::Success);
@@ -113,6 +116,7 @@ fn tc39_3a() {
             &mut out_len,
             simdutf::Base64Options::Default,
             simdutf::LastChunkHandlingOptions::StopBeforePartial,
+            true,
         )
     };
     assert_ne!(result.error, simdutf::ErrorCode::Success);
@@ -134,6 +138,7 @@ fn tc39_1a() {
             &mut out_len,
             simdutf::Base64Options::Default,
             simdutf::LastChunkHandlingOptions::StopBeforePartial,
+            true,
         )
     };
     assert_eq!(result.error, simdutf::ErrorCode::Success);
@@ -158,10 +163,45 @@ fn tc39_2() {
             &mut out_len,
             simdutf::Base64Options::Default,
             simdutf::LastChunkHandlingOptions::StopBeforePartial,
+            true,
         )
     };
     assert_eq!(result.error, simdutf::ErrorCode::Success);
     assert_eq!(result.count, 4);
     assert_eq!(out_len, 3);
     assert_eq!(out_buf, expected);
+}
+
+// https://bugs.webkit.org/show_bug.cgi?id=290829
+// Test decode_up_to_bad_char parameter - should decode up to first invalid character
+#[test]
+fn decode_up_to_bad_char() {
+    let input = "MjYyZg==="; // Invalid: too much padding
+    let len = input.len();
+    let expected = [0x32, 0x36, 0x32]; // "262" decoded
+    let options = [
+        simdutf::LastChunkHandlingOptions::Strict,
+        simdutf::LastChunkHandlingOptions::Loose,
+        simdutf::LastChunkHandlingOptions::StopBeforePartial,
+    ];
+    for option in options {
+        let mut out_buf = [0u8; 5];
+        let mut out_len = out_buf.len();
+        let result = unsafe {
+            simdutf::base64_to_binary_safe(
+                input.as_ptr(),
+                len,
+                out_buf.as_mut_ptr(),
+                &mut out_len,
+                simdutf::Base64Options::Default,
+                option,
+                true, // decode_up_to_bad_char
+            )
+        };
+        // Should fail but decode up to the invalid character
+        assert_ne!(result.error, simdutf::ErrorCode::Success);
+        assert_eq!(result.count, 6); // Position of invalid character
+        assert_eq!(out_len, 3);
+        assert_eq!(out_buf[..3], expected);
+    }
 }

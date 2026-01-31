@@ -109,6 +109,7 @@ extern "C" {
         out_len: *mut usize,
         options: u64,
         last_chunk_options: u64,
+        decode_up_to_bad_char: bool,
     ) -> Result;
 
     pub fn simdutf_binary_to_base64(input: *const u8, len: usize, output: *mut u8, options: u64) -> usize;

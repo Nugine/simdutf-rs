@@ -1553,6 +1553,7 @@ pub unsafe fn base64_to_binary_safe(
     out_len: *mut usize,
     options: Base64Options,
     last_chunk_options: LastChunkHandlingOptions,
+    decode_up_to_bad_char: bool,
 ) -> Result {
     crate::bindings::simdutf_base64_to_binary_safe(
         input,
@@ -1561,6 +1562,7 @@ pub unsafe fn base64_to_binary_safe(
         out_len,
         options as u64,
         last_chunk_options as u64,
+        decode_up_to_bad_char,
     )
 }
 
