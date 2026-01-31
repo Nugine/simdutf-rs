@@ -495,10 +495,12 @@ size_t simdutf_convert_valid_utf32_to_utf16le(const char32_t *src, size_t len,
 simdutfrs_result_t simdutf_base64_to_binary_safe(const char *input,
                                                  size_t length, char *output,
                                                  size_t *outlen,
-                                                 uint64_t options) {
+                                                 uint64_t options,
+                                                 uint64_t last_chunk_options) {
     const simdutf::result res = simdutf::base64_to_binary_safe(
         input, length, output, *outlen,
-        static_cast<simdutf::base64_options>(options));
+        static_cast<simdutf::base64_options>(options),
+        static_cast<simdutf::last_chunk_handling_options>(last_chunk_options));
     return {static_cast<uint32_t>(res.error), res.count};
 }
 

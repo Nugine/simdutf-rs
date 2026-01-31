@@ -132,3 +132,17 @@ pub enum Base64Options {
     /// Base64url format accepting garbage characters
     UrlAcceptGarbage = 5,
 }
+
+/// The last chunk handling options for base64 decoding.
+#[repr(u64)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum LastChunkHandlingOptions {
+    /// Standard base64 format, decode partial final chunk.
+    Loose = 0,
+    /// Error when the last chunk is partial, 2 or 3 chars, and unpadded, or non-zero bit padding.
+    Strict = 1,
+    /// If the last chunk is partial, ignore it (no error).
+    StopBeforePartial = 2,
+    /// Only decode full blocks (4 base64 characters, no padding).
+    OnlyFullChunks = 3,
+}

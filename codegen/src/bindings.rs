@@ -95,10 +95,12 @@ pub fn codegen_cpp() {
     g!("simdutfrs_result_t simdutf_base64_to_binary_safe(const char *input,");
     g!("                                               size_t length, char *output,");
     g!("                                               size_t *outlen,");
-    g!("                                               uint64_t options) {{");
+    g!("                                               uint64_t options,");
+    g!("                                               uint64_t last_chunk_options) {{");
     g!("    const simdutf::result res =");
     g!("        simdutf::base64_to_binary_safe(input, length, output, *outlen,");
-    g!("            static_cast<simdutf::base64_options>(options));");
+    g!("            static_cast<simdutf::base64_options>(options),");
+    g!("            static_cast<simdutf::last_chunk_handling_options>(last_chunk_options));");
     g!("    return {{static_cast<uint32_t>(res.error), res.count}};");
     g!("}}");
     g!();
@@ -191,6 +193,7 @@ pub fn codegen_rust() {
         output: *mut u8,
         out_len: *mut usize,
         options: u64,
+        last_chunk_options: u64,
         ) -> Result;");
     g!();
 
