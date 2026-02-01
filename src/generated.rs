@@ -1765,7 +1765,7 @@ pub unsafe fn binary_to_base64_with_lines(
 /// # Safety
 /// + `input` and `output` must be non-null and properly aligned.
 /// + `input` must be valid for reads of `len * size_of::<u16>()` bytes.
-/// + `output` must be valid for writes.
+/// + `output` must be valid for writes of `maximal_binary_length_from_base64_utf16(input, len)` bytes.
 /// + The memory regions of `input` and `output` must not overlap.
 #[inline]
 #[must_use]
