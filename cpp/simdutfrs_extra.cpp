@@ -14,13 +14,17 @@ void simdutf_change_endianness_utf16(const char16_t *src, size_t len,
     return simdutf::change_endianness_utf16(src, len, dst);
 }
 
-uint32_t simdutf_autodetect_encoding(const char *src, size_t len) {
+// Note: upstream simdutf v8.0.0 provides simdutf_autodetect_encoding but with different return type
+// We provide a wrapper with simdutfrs_ prefix that returns uint32_t for Rust compatibility
+uint32_t simdutfrs_autodetect_encoding(const char *src, size_t len) {
     const simdutf::encoding_type encoding =
         simdutf::autodetect_encoding(src, len);
     return static_cast<uint32_t>(encoding);
 }
 
-uint32_t simdutf_detect_encodings(const char *src, size_t len) {
+// Note: upstream simdutf v8.0.0 provides simdutf_detect_encodings but with different return type
+// We provide a wrapper with simdutfrs_ prefix that returns uint32_t for Rust compatibility
+uint32_t simdutfrs_detect_encodings(const char *src, size_t len) {
     const int encoding = simdutf::detect_encodings(src, len);
     return static_cast<uint32_t>(encoding);
 }
