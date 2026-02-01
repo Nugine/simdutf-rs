@@ -13,58 +13,22 @@ pub fn codegen_cpp() {
         ""
     ];
 
-    for_each_validate(|encoding| {
-        let ch = map_cpp_char_type(encoding);
-        g!("bool simdutf_validate_{encoding}(const {ch}* buf, size_t len) {{");
-        g!("    return simdutf::validate_{encoding}(buf, len);");
-        g!("}}");
-        g!();
-    });
+    // Note: Most functions (validate, count, *_length_from_*, convert_*, convert_valid_*) are now
+    // provided by upstream simdutf v8.0.0 C API, so we don't need to generate wrappers for them.
 
+    // Note: upstream simdutf v8.0.0 now provides *_with_errors functions that return simdutf_result
+    // We provide wrapper functions with simdutfrs_ prefix that return simdutfrs_result_t for Rust compatibility
     for_each_validate(|encoding| {
         let ch = map_cpp_char_type(encoding);
-        g!("simdutfrs_result_t simdutf_validate_{encoding}_with_errors(const {ch}* buf, size_t len) {{");
+        g!("simdutfrs_result_t simdutfrs_validate_{encoding}_with_errors(const {ch}* buf, size_t len) {{");
         g!("    const simdutf::result ans = simdutf::validate_{encoding}_with_errors(buf, len);");
         g!("    return {{ static_cast<uint32_t>(ans.error), ans.count }};");
         g!("}}");
         g!();
     });
 
-    for_each_count(|encoding| {
-        let ch = map_cpp_char_type(encoding);
-        g!("size_t simdutf_count_{encoding}(const {ch}* buf, size_t len) {{");
-        g!("    return simdutf::count_{encoding}(buf, len);");
-        g!("}}");
-        g!();
-    });
-
-    for_each_transcoding_length(|from, to| {
-        if from == "latin1" && to == "utf32" {
-            return;
-        }
-        if is_fixed_length_for_latin1(from, to) {
-            g!("size_t simdutf_{to}_length_from_{from}(size_t len) {{");
-            g!("    return simdutf::{to}_length_from_{from}(len);");
-            g!("}}");
-            g!();
-            return;
-        }
-        let from_ch = map_cpp_char_type(from);
-        g!("size_t simdutf_{to}_length_from_{from}(const {from_ch}* buf, size_t len) {{");
-        g!("    return simdutf::{to}_length_from_{from}(buf, len);");
-        g!("}}");
-        g!();
-    });
-
-    for_each_transcoding_convert(|from, to| {
-        let from_ch = map_cpp_char_type(from);
-        let to_ch = map_cpp_char_type(to);
-        g!("size_t simdutf_convert_{from}_to_{to}(const {from_ch}* src, size_t len, {to_ch}* dst) {{");
-        g!("    return simdutf::convert_{from}_to_{to}(src, len, dst);");
-        g!("}}");
-        g!();
-    });
-
+    // Note: upstream simdutf v8.0.0 now provides *_with_errors functions that return simdutf_result
+    // We provide wrapper functions with simdutfrs_ prefix that return simdutfrs_result_t for Rust compatibility
     for_each_transcoding_convert(|from, to| {
         if from == "latin1" || (from == "utf32" && to == "latin1") {
             return;
@@ -72,7 +36,7 @@ pub fn codegen_cpp() {
         let from_ch = map_cpp_char_type(from);
         let to_ch = map_cpp_char_type(to);
         g!("simdutfrs_result_t \
-            simdutf_convert_{from}_to_{to}_with_errors(const {from_ch}* src, size_t len, {to_ch}* dst) {{");
+            simdutfrs_convert_{from}_to_{to}_with_errors(const {from_ch}* src, size_t len, {to_ch}* dst) {{");
         g!("const simdutf::result ans = \
             simdutf::convert_{from}_to_{to}_with_errors(src, len, dst);");
         g!("    return {{ static_cast<uint32_t>(ans.error), ans.count }};");
@@ -80,19 +44,11 @@ pub fn codegen_cpp() {
         g!();
     });
 
-    for_each_transcoding_convert(|from, to| {
-        if from == "latin1" || (from == "utf32" && to == "latin1") {
-            return;
-        }
-        let from_ch = map_cpp_char_type(from);
-        let to_ch = map_cpp_char_type(to);
-        g!("size_t simdutf_convert_valid_{from}_to_{to}(const {from_ch}* src, size_t len, {to_ch}* dst) {{");
-        g!("    return simdutf::convert_valid_{from}_to_{to}(src, len, dst);");
-        g!("}}");
-        g!();
-    });
+    // Note: convert_valid_* functions are now provided by upstream simdutf v8.0.0
+    // so we don't need to generate custom wrappers for them anymore.
 
-    g!("simdutfrs_result_t simdutf_base64_to_binary_safe(const char *input,");
+    // Custom wrappers for base64 functions to maintain API compatibility
+    g!("simdutfrs_result_t simdutfrs_base64_to_binary_safe(const char *input,");
     g!("                                               size_t length, char *output,");
     g!("                                               size_t *outlen,");
     g!("                                               uint64_t options) {{");
@@ -103,7 +59,7 @@ pub fn codegen_cpp() {
     g!("}}");
     g!();
 
-    g!("size_t simdutf_binary_to_base64(const char *input,");
+    g!("size_t simdutfrs_binary_to_base64(const char *input,");
     g!("                        size_t length, char *output,");
     g!("                        uint64_t options) {{");
     g!("    return simdutf::binary_to_base64(");
@@ -129,9 +85,11 @@ pub fn codegen_rust() {
     });
     g!();
 
+    // Note: upstream simdutf v8.0.0 now provides *_with_errors functions that return simdutf_result
+    // We use wrapper functions with simdutfrs_ prefix that return simdutfrs_result_t (which is Result in Rust)
     for_each_validate(|encoding| {
         let ch = map_rs_char_type(encoding);
-        g!("pub fn simdutf_validate_{encoding}_with_errors\
+        g!("pub fn simdutfrs_validate_{encoding}_with_errors\
             (buf: *const {ch}, len: usize) -> Result;");
     });
     g!();
@@ -163,17 +121,21 @@ pub fn codegen_rust() {
     });
     g!();
 
+    // Note: upstream simdutf v8.0.0 now provides *_with_errors functions that return simdutf_result
+    // We use wrapper functions with simdutfrs_ prefix that return simdutfrs_result_t (which is Result in Rust)
     for_each_transcoding_convert(|from, to| {
         if from == "latin1" || (from == "utf32" && to == "latin1") {
             return;
         }
         let from_ch = map_rs_char_type(from);
         let to_ch = map_rs_char_type(to);
-        g!("pub fn simdutf_convert_{from}_to_{to}_with_errors\
+        g!("pub fn simdutfrs_convert_{from}_to_{to}_with_errors\
             (src: *const {from_ch}, len: usize, dst: *mut {to_ch}) -> Result;");
     });
     g!();
 
+    // Note: convert_valid_* functions are now provided by upstream simdutf v8.0.0
+    // We declare them as coming from the upstream C API
     for_each_transcoding_convert(|from, to| {
         if from == "latin1" || (from == "utf32" && to == "latin1") {
             return;
@@ -185,7 +147,8 @@ pub fn codegen_rust() {
     });
     g!();
 
-    g!("pub fn simdutf_base64_to_binary_safe(
+    // Custom wrapper functions for base64 to maintain API compatibility
+    g!("pub fn simdutfrs_base64_to_binary_safe(
         input: *const u8,
         len: usize,
         output: *mut u8,
@@ -194,7 +157,7 @@ pub fn codegen_rust() {
         ) -> Result;");
     g!();
 
-    g!("pub fn simdutf_binary_to_base64(
+    g!("pub fn simdutfrs_binary_to_base64(
         input: *const u8,
         len: usize,
         output: *mut u8,
