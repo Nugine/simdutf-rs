@@ -492,6 +492,61 @@ size_t simdutf_convert_valid_utf32_to_utf16le(const char32_t *src, size_t len,
     return simdutf::convert_valid_utf32_to_utf16le(src, len, dst);
 }
 
+size_t simdutf_maximal_binary_length_from_base64(const char *input,
+                                                 size_t length) {
+    return simdutf::maximal_binary_length_from_base64(input, length);
+}
+
+size_t simdutf_maximal_binary_length_from_base64_utf16(const char16_t *input,
+                                                       size_t length) {
+    return simdutf::maximal_binary_length_from_base64(input, length);
+}
+
+simdutfrs_result_t simdutf_base64_to_binary(const char *input, size_t length,
+                                            char *output, uint64_t options,
+                                            uint64_t last_chunk_options) {
+    const simdutf::result res = simdutf::base64_to_binary(
+        input, length, output, static_cast<simdutf::base64_options>(options),
+        static_cast<simdutf::last_chunk_handling_options>(last_chunk_options));
+    return {static_cast<uint32_t>(res.error), res.count};
+}
+
+size_t simdutf_base64_length_from_binary(size_t length, uint64_t options) {
+    return simdutf::base64_length_from_binary(
+        length, static_cast<simdutf::base64_options>(options));
+}
+
+size_t simdutf_base64_length_from_binary_with_lines(size_t length,
+                                                    uint64_t options,
+                                                    size_t line_length) {
+    return simdutf::base64_length_from_binary_with_lines(
+        length, static_cast<simdutf::base64_options>(options), line_length);
+}
+
+size_t simdutf_binary_to_base64(const char *input, size_t length, char *output,
+                                uint64_t options) {
+    return simdutf::binary_to_base64(
+        input, length, output, static_cast<simdutf::base64_options>(options));
+}
+
+size_t simdutf_binary_to_base64_with_lines(const char *input, size_t length,
+                                           char *output, size_t line_length,
+                                           uint64_t options) {
+    return simdutf::binary_to_base64_with_lines(
+        input, length, output, line_length,
+        static_cast<simdutf::base64_options>(options));
+}
+
+simdutfrs_result_t simdutf_base64_to_binary_utf16(const char16_t *input,
+                                                  size_t length, char *output,
+                                                  uint64_t options,
+                                                  uint64_t last_chunk_options) {
+    const simdutf::result res = simdutf::base64_to_binary(
+        input, length, output, static_cast<simdutf::base64_options>(options),
+        static_cast<simdutf::last_chunk_handling_options>(last_chunk_options));
+    return {static_cast<uint32_t>(res.error), res.count};
+}
+
 simdutfrs_result_t simdutf_base64_to_binary_safe(
     const char *input, size_t length, char *output, size_t *outlen,
     uint64_t options, uint64_t last_chunk_options, bool decode_up_to_bad_char) {
@@ -503,19 +558,14 @@ simdutfrs_result_t simdutf_base64_to_binary_safe(
     return {static_cast<uint32_t>(res.error), res.count};
 }
 
-size_t simdutf_binary_to_base64(const char *input, size_t length, char *output,
-                                uint64_t options) {
-    return simdutf::binary_to_base64(
-        input, length, output, static_cast<simdutf::base64_options>(options));
-}
-
-size_t simdutf_maximal_binary_length_from_base64(const char *input,
-                                                 size_t length) {
-    return simdutf::maximal_binary_length_from_base64(input, length);
-}
-
-size_t simdutf_base64_length_from_binary(size_t length, uint64_t options) {
-    return simdutf::base64_length_from_binary(
-        length, static_cast<simdutf::base64_options>(options));
+simdutfrs_result_t simdutf_base64_to_binary_safe_utf16(
+    const char16_t *input, size_t length, char *output, size_t *outlen,
+    uint64_t options, uint64_t last_chunk_options, bool decode_up_to_bad_char) {
+    const simdutf::result res = simdutf::base64_to_binary_safe(
+        input, length, output, *outlen,
+        static_cast<simdutf::base64_options>(options),
+        static_cast<simdutf::last_chunk_handling_options>(last_chunk_options),
+        decode_up_to_bad_char);
+    return {static_cast<uint32_t>(res.error), res.count};
 }
 }

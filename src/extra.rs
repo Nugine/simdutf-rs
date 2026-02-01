@@ -141,6 +141,10 @@ pub enum Base64Options {
     DefaultAcceptGarbage = 4,
     /// Base64url format accepting garbage characters
     UrlAcceptGarbage = 5,
+    /// Standard/base64url hybrid format (only meaningful for decoding!)
+    DefaultOrUrl = 8,
+    /// Standard/base64url hybrid format accepting garbage characters (only meaningful for decoding!)
+    DefaultOrUrlAcceptGarbage = 12,
 }
 
 /// The last chunk handling options for base64 decoding.
