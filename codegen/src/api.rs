@@ -511,7 +511,7 @@ fn codegen_base64() {
     g!("/// # Safety");
     g!("/// + `input` and `output` must be non-null and properly aligned.");
     g!("/// + `input` must be valid for reads of `len * size_of::<u16>()` bytes.");
-    g!("/// + `output` must be valid for writes.");
+    g!("/// + `output` must be valid for writes of `maximal_binary_length_from_base64_utf16(input, len)` bytes.");  
     g!("/// + The memory regions of `input` and `output` must not overlap.");
     g!("#[inline]");
     g!("#[must_use]");
