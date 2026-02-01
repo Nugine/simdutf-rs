@@ -111,8 +111,18 @@ pub enum ErrorCode {
     /// a high surrogate must be followed by a low surrogate and a low surrogate must be preceded by a high surrogate (UTF-16)
     Surrogate = 6,
 
-    /// Not related to validation/transcoding.
-    Other = 7,
+    /// Found a character that cannot be part of a valid base64 string.
+    InvalidBase64Character = 7,
+
+    /// The base64 input terminates with a single character, excluding padding (=).
+    /// It is also used in strict mode when padding is not adequate.
+    Base64InputRemainder = 8,
+
+    /// The base64 input terminates with non-zero padding bits.
+    Base64ExtraBits = 9,
+
+    /// The output buffer is too small.
+    OutputBufferTooSmall = 10,
 }
 
 /// The error code type of validation and transcoding.
