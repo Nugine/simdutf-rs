@@ -110,8 +110,7 @@ pub enum ErrorCode {
     /// The decoded character must be not be in U+D800...DFFF (UTF-8 or UTF-32)
     /// OR
     /// a high surrogate must be followed by a low surrogate
-    /// and a low surrogate must be preceded by a high surrogate
-    /// (UTF-16)
+    /// and a low surrogate must be preceded by a high surrogate (UTF-16)
     /// OR
     /// there must be no surrogate at all and one is found (Latin1 functions)
     /// OR
