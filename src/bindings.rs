@@ -102,13 +102,58 @@ extern "C" {
     pub fn simdutf_convert_valid_utf32_to_utf16be(src: *const u32, len: usize, dst: *mut u16) -> usize;
     pub fn simdutf_convert_valid_utf32_to_utf16le(src: *const u32, len: usize, dst: *mut u16) -> usize;
 
+    pub fn simdutf_maximal_binary_length_from_base64(input: *const u8, len: usize) -> usize;
+
+    pub fn simdutf_maximal_binary_length_from_base64_utf16(input: *const u16, len: usize) -> usize;
+
+    pub fn simdutf_base64_to_binary(
+        input: *const u8,
+        len: usize,
+        output: *mut u8,
+        options: u64,
+        last_chunk_options: u64,
+    ) -> Result;
+
+    pub fn simdutf_base64_length_from_binary(len: usize, options: u64) -> usize;
+
+    pub fn simdutf_base64_length_from_binary_with_lines(len: usize, options: u64, line_length: usize) -> usize;
+
+    pub fn simdutf_binary_to_base64(input: *const u8, len: usize, output: *mut u8, options: u64) -> usize;
+
+    pub fn simdutf_binary_to_base64_with_lines(
+        input: *const u8,
+        len: usize,
+        output: *mut u8,
+        line_length: usize,
+        options: u64,
+    ) -> usize;
+
+    pub fn simdutf_base64_to_binary_utf16(
+        input: *const u16,
+        len: usize,
+        output: *mut u8,
+        options: u64,
+        last_chunk_options: u64,
+    ) -> Result;
+
     pub fn simdutf_base64_to_binary_safe(
         input: *const u8,
         len: usize,
         output: *mut u8,
         out_len: *mut usize,
         options: u64,
+        last_chunk_options: u64,
+        decode_up_to_bad_char: bool,
     ) -> Result;
 
-    pub fn simdutf_binary_to_base64(input: *const u8, len: usize, output: *mut u8, options: u64) -> usize;
+    pub fn simdutf_base64_to_binary_safe_utf16(
+        input: *const u16,
+        len: usize,
+        output: *mut u8,
+        out_len: *mut usize,
+        options: u64,
+        last_chunk_options: u64,
+        decode_up_to_bad_char: bool,
+    ) -> Result;
+
 }

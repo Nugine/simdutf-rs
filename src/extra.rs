@@ -107,12 +107,34 @@ pub enum ErrorCode {
     /// The decoded character must be less than or equal to U+10FFFF OR less than or equal than U+7F for ASCII.
     TooLarge = 5,
 
-    /// The decoded character must be not be in U+D800...DFFF (UTF-8 or UTF-32) OR
-    /// a high surrogate must be followed by a low surrogate and a low surrogate must be preceded by a high surrogate (UTF-16)
+    /// The decoded character must be not be in U+D800...DFFF (UTF-8 or UTF-32)
+    /// OR
+    /// a high surrogate must be followed by a low surrogate
+    /// and a low surrogate must be preceded by a high surrogate (UTF-16)
+    /// OR
+    /// there must be no surrogate at all and one is found (Latin1 functions)
+    /// OR
+    /// *specifically* for the function utf8_length_from_utf16_with_replacement,
+    /// a surrogate (whether in error or not) has been found
+    /// (I.e., whether we are in the Basic Multilingual Plane or not).
     Surrogate = 6,
 
+    /// Found a character that cannot be part of a valid base64 string.
+    /// This may include a misplaced padding character ('=').
+    InvalidBase64Character = 7,
+
+    /// The base64 input terminates with a single character, excluding padding (=).
+    /// It is also used in strict mode when padding is not adequate.
+    Base64InputRemainder = 8,
+
+    /// The base64 input terminates with non-zero padding bits.
+    Base64ExtraBits = 9,
+
+    /// The output buffer is too small.
+    OutputBufferTooSmall = 10,
+
     /// Not related to validation/transcoding.
-    Other = 7,
+    Other = 11,
 }
 
 /// The error code type of validation and transcoding.
@@ -131,4 +153,22 @@ pub enum Base64Options {
     DefaultAcceptGarbage = 4,
     /// Base64url format accepting garbage characters
     UrlAcceptGarbage = 5,
+    /// Standard/base64url hybrid format (only meaningful for decoding!)
+    DefaultOrUrl = 8,
+    /// Standard/base64url hybrid format accepting garbage characters (only meaningful for decoding!)
+    DefaultOrUrlAcceptGarbage = 12,
+}
+
+/// The last chunk handling options for base64 decoding.
+#[repr(u64)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum LastChunkHandlingOptions {
+    /// Standard base64 format, decode partial final chunk.
+    Loose = 0,
+    /// Error when the last chunk is partial, 2 or 3 chars, and unpadded, or non-zero bit padding.
+    Strict = 1,
+    /// If the last chunk is partial, ignore it (no error).
+    StopBeforePartial = 2,
+    /// Only decode full blocks (4 base64 characters, no padding).
+    OnlyFullChunks = 3,
 }

@@ -92,23 +92,115 @@ pub fn codegen_cpp() {
         g!();
     });
 
-    g!("simdutfrs_result_t simdutf_base64_to_binary_safe(const char *input,");
+    // Base64 functions
+
+    // maximal_binary_length_from_base64 (char* version)
+    g!("size_t simdutf_maximal_binary_length_from_base64(const char *input,");
+    g!("                                               size_t length) {{");
+    g!("    return simdutf::maximal_binary_length_from_base64(input, length);");
+    g!("}}");
+    g!();
+
+    // maximal_binary_length_from_base64 (char16_t* version)
+    g!("size_t simdutf_maximal_binary_length_from_base64_utf16(const char16_t *input,");
+    g!("                                               size_t length) {{");
+    g!("    return simdutf::maximal_binary_length_from_base64(input, length);");
+    g!("}}");
+    g!();
+
+    // base64_to_binary (char* version)
+    g!("simdutfrs_result_t simdutf_base64_to_binary(const char *input,");
     g!("                                               size_t length, char *output,");
-    g!("                                               size_t *outlen,");
-    g!("                                               uint64_t options) {{");
+    g!("                                               uint64_t options,");
+    g!("                                               uint64_t last_chunk_options) {{");
     g!("    const simdutf::result res =");
-    g!("        simdutf::base64_to_binary_safe(input, length, output, *outlen,");
-    g!("            static_cast<simdutf::base64_options>(options));");
+    g!("        simdutf::base64_to_binary(input, length, output,");
+    g!("            static_cast<simdutf::base64_options>(options),");
+    g!("            static_cast<simdutf::last_chunk_handling_options>(last_chunk_options));");
     g!("    return {{static_cast<uint32_t>(res.error), res.count}};");
     g!("}}");
     g!();
 
+    // base64_length_from_binary
+    g!("size_t simdutf_base64_length_from_binary(size_t length,");
+    g!("                                        uint64_t options) {{");
+    g!("    return simdutf::base64_length_from_binary(");
+    g!("       length, static_cast<simdutf::base64_options>(options));");
+    g!("}}");
+    g!();
+
+    // base64_length_from_binary_with_lines
+    g!("size_t simdutf_base64_length_from_binary_with_lines(size_t length,");
+    g!("                                        uint64_t options,");
+    g!("                                        size_t line_length) {{");
+    g!("    return simdutf::base64_length_from_binary_with_lines(");
+    g!("       length, static_cast<simdutf::base64_options>(options), line_length);");
+    g!("}}");
+    g!();
+
+    // binary_to_base64
     g!("size_t simdutf_binary_to_base64(const char *input,");
     g!("                        size_t length, char *output,");
     g!("                        uint64_t options) {{");
     g!("    return simdutf::binary_to_base64(");
     g!("       input, length, output, static_cast<simdutf::base64_options>(options));");
     g!("}}");
+    g!();
+
+    // binary_to_base64_with_lines
+    g!("size_t simdutf_binary_to_base64_with_lines(const char *input,");
+    g!("                        size_t length, char *output,");
+    g!("                        size_t line_length,");
+    g!("                        uint64_t options) {{");
+    g!("    return simdutf::binary_to_base64_with_lines(");
+    g!("       input, length, output, line_length, static_cast<simdutf::base64_options>(options));");
+    g!("}}");
+    g!();
+
+    // base64_to_binary (char16_t* version)
+    g!("simdutfrs_result_t simdutf_base64_to_binary_utf16(const char16_t *input,");
+    g!("                                               size_t length, char *output,");
+    g!("                                               uint64_t options,");
+    g!("                                               uint64_t last_chunk_options) {{");
+    g!("    const simdutf::result res =");
+    g!("        simdutf::base64_to_binary(input, length, output,");
+    g!("            static_cast<simdutf::base64_options>(options),");
+    g!("            static_cast<simdutf::last_chunk_handling_options>(last_chunk_options));");
+    g!("    return {{static_cast<uint32_t>(res.error), res.count}};");
+    g!("}}");
+    g!();
+
+    // base64_to_binary_safe (char* version)
+    g!("simdutfrs_result_t simdutf_base64_to_binary_safe(const char *input,");
+    g!("                                               size_t length, char *output,");
+    g!("                                               size_t *outlen,");
+    g!("                                               uint64_t options,");
+    g!("                                               uint64_t last_chunk_options,");
+    g!("                                               bool decode_up_to_bad_char) {{");
+    g!("    const simdutf::result res =");
+    g!("        simdutf::base64_to_binary_safe(input, length, output, *outlen,");
+    g!("            static_cast<simdutf::base64_options>(options),");
+    g!("            static_cast<simdutf::last_chunk_handling_options>(last_chunk_options),");
+    g!("            decode_up_to_bad_char);");
+    g!("    return {{static_cast<uint32_t>(res.error), res.count}};");
+    g!("}}");
+    g!();
+
+    // base64_to_binary_safe (char16_t* version)
+    g!("simdutfrs_result_t simdutf_base64_to_binary_safe_utf16(const char16_t *input,");
+    g!("                                               size_t length, char *output,");
+    g!("                                               size_t *outlen,");
+    g!("                                               uint64_t options,");
+    g!("                                               uint64_t last_chunk_options,");
+    g!("                                               bool decode_up_to_bad_char) {{");
+    g!("    const simdutf::result res =");
+    g!("        simdutf::base64_to_binary_safe(input, length, output, *outlen,");
+    g!("            static_cast<simdutf::base64_options>(options),");
+    g!("            static_cast<simdutf::last_chunk_handling_options>(last_chunk_options),");
+    g!("            decode_up_to_bad_char);");
+    g!("    return {{static_cast<uint32_t>(res.error), res.count}};");
+    g!("}}");
+    g!();
 
     g!("}}");
 }
@@ -185,21 +277,98 @@ pub fn codegen_rust() {
     });
     g!();
 
-    g!("pub fn simdutf_base64_to_binary_safe(
+    // Base64 functions
+    // maximal_binary_length_from_base64 (char* version)
+    g!("pub fn simdutf_maximal_binary_length_from_base64(
+        input: *const u8,
+        len: usize,
+    ) -> usize;");
+    g!();
+
+    // maximal_binary_length_from_base64 (char16_t* version)
+    g!("pub fn simdutf_maximal_binary_length_from_base64_utf16(
+        input: *const u16,
+        len: usize,
+    ) -> usize;");
+    g!();
+
+    // base64_to_binary (char* version)
+    g!("pub fn simdutf_base64_to_binary(
         input: *const u8,
         len: usize,
         output: *mut u8,
-        out_len: *mut usize,
         options: u64,
-        ) -> Result;");
+        last_chunk_options: u64,
+    ) -> Result;");
     g!();
 
+    // base64_length_from_binary
+    g!("pub fn simdutf_base64_length_from_binary(
+        len: usize,
+        options: u64,
+    ) -> usize;");
+    g!();
+
+    // base64_length_from_binary_with_lines
+    g!("pub fn simdutf_base64_length_from_binary_with_lines(
+        len: usize,
+        options: u64,
+        line_length: usize,
+    ) -> usize;");
+    g!();
+
+    // binary_to_base64
     g!("pub fn simdutf_binary_to_base64(
         input: *const u8,
         len: usize,
         output: *mut u8,
         options: u64,
     ) -> usize;");
+    g!();
+
+    // binary_to_base64_with_lines
+    g!("pub fn simdutf_binary_to_base64_with_lines(
+        input: *const u8,
+        len: usize,
+        output: *mut u8,
+        line_length: usize,
+        options: u64,
+    ) -> usize;");
+    g!();
+
+    // base64_to_binary (char16_t* version)
+    g!("pub fn simdutf_base64_to_binary_utf16(
+        input: *const u16,
+        len: usize,
+        output: *mut u8,
+        options: u64,
+        last_chunk_options: u64,
+    ) -> Result;");
+    g!();
+
+    // base64_to_binary_safe (char* version)
+    g!("pub fn simdutf_base64_to_binary_safe(
+        input: *const u8,
+        len: usize,
+        output: *mut u8,
+        out_len: *mut usize,
+        options: u64,
+        last_chunk_options: u64,
+        decode_up_to_bad_char: bool,
+    ) -> Result;");
+    g!();
+
+    // base64_to_binary_safe (char16_t* version)
+    g!("pub fn simdutf_base64_to_binary_safe_utf16(
+        input: *const u16,
+        len: usize,
+        output: *mut u8,
+        out_len: *mut usize,
+        options: u64,
+        last_chunk_options: u64,
+        decode_up_to_bad_char: bool,
+    ) -> Result;");
+    g!();
 
     g!("}}");
 }
