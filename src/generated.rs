@@ -1578,3 +1578,21 @@ pub unsafe fn base64_to_binary_safe(
 pub unsafe fn binary_to_base64(input: *const u8, len: usize, output: *mut u8, options: Base64Options) -> usize {
     crate::bindings::simdutf_binary_to_base64(input, len, output, options as u64)
 }
+
+/// Provide the maximal binary length in bytes given the base64 input.
+///
+/// # Safety
+/// + `input` must be non-null and properly aligned.
+/// + `input` must be valid for reads of `len` bytes.
+#[inline]
+#[must_use]
+pub unsafe fn maximal_binary_length_from_base64(input: *const u8, len: usize) -> usize {
+    crate::bindings::simdutf_maximal_binary_length_from_base64(input, len)
+}
+
+/// Provide the base64 length in bytes given the length of a binary input.
+#[inline]
+#[must_use]
+pub fn base64_length_from_binary(len: usize, options: Base64Options) -> usize {
+    unsafe { crate::bindings::simdutf_base64_length_from_binary(len, options as u64) }
+}

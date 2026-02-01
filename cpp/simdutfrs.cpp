@@ -508,4 +508,14 @@ size_t simdutf_binary_to_base64(const char *input, size_t length, char *output,
     return simdutf::binary_to_base64(
         input, length, output, static_cast<simdutf::base64_options>(options));
 }
+
+size_t simdutf_maximal_binary_length_from_base64(const char *input,
+                                                 size_t length) {
+    return simdutf::maximal_binary_length_from_base64(input, length);
+}
+
+size_t simdutf_base64_length_from_binary(size_t length, uint64_t options) {
+    return simdutf::base64_length_from_binary(
+        length, static_cast<simdutf::base64_options>(options));
+}
 }

@@ -113,4 +113,8 @@ extern "C" {
     ) -> Result;
 
     pub fn simdutf_binary_to_base64(input: *const u8, len: usize, output: *mut u8, options: u64) -> usize;
+
+    pub fn simdutf_maximal_binary_length_from_base64(input: *const u8, len: usize) -> usize;
+
+    pub fn simdutf_base64_length_from_binary(len: usize, options: u64) -> usize;
 }

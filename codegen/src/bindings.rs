@@ -113,6 +113,19 @@ pub fn codegen_cpp() {
     g!("    return simdutf::binary_to_base64(");
     g!("       input, length, output, static_cast<simdutf::base64_options>(options));");
     g!("}}");
+    g!();
+
+    g!("size_t simdutf_maximal_binary_length_from_base64(const char *input,");
+    g!("                                               size_t length) {{");
+    g!("    return simdutf::maximal_binary_length_from_base64(input, length);");
+    g!("}}");
+    g!();
+
+    g!("size_t simdutf_base64_length_from_binary(size_t length,");
+    g!("                                        uint64_t options) {{");
+    g!("    return simdutf::base64_length_from_binary(");
+    g!("       length, static_cast<simdutf::base64_options>(options));");
+    g!("}}");
 
     g!("}}");
 }
@@ -204,6 +217,18 @@ pub fn codegen_rust() {
         input: *const u8,
         len: usize,
         output: *mut u8,
+        options: u64,
+    ) -> usize;");
+    g!();
+
+    g!("pub fn simdutf_maximal_binary_length_from_base64(
+        input: *const u8,
+        len: usize,
+    ) -> usize;");
+    g!();
+
+    g!("pub fn simdutf_base64_length_from_binary(
+        len: usize,
         options: u64,
     ) -> usize;");
 

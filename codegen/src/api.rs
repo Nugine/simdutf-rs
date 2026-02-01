@@ -281,4 +281,30 @@ fn codegen_base64() {
     g!(") -> usize {{");
     g!("    crate::bindings::simdutf_binary_to_base64(input, len, output, options as u64)");
     g!("}}");
+    g!();
+
+    g!("/// Provide the maximal binary length in bytes given the base64 input.");
+    g!("///");
+    g!("/// # Safety");
+    g!("/// + `input` must be non-null and properly aligned.");
+    g!("/// + `input` must be valid for reads of `len` bytes.");
+    g!("#[inline]");
+    g!("#[must_use]");
+    g!("pub unsafe fn maximal_binary_length_from_base64(");
+    g!("    input: *const u8,");
+    g!("    len: usize,");
+    g!(") -> usize {{");
+    g!("    crate::bindings::simdutf_maximal_binary_length_from_base64(input, len)");
+    g!("}}");
+    g!();
+
+    g!("/// Provide the base64 length in bytes given the length of a binary input.");
+    g!("#[inline]");
+    g!("#[must_use]");
+    g!("pub fn base64_length_from_binary(");
+    g!("    len: usize,");
+    g!("    options: Base64Options,");
+    g!(") -> usize {{");
+    g!("    unsafe {{ crate::bindings::simdutf_base64_length_from_binary(len, options as u64) }}");
+    g!("}}");
 }
