@@ -13,10 +13,10 @@ readme = "README.md"
 rustdoc-args = ["--cfg", "docsrs"]
 
 [build-dependencies]
-cc = "1.2.10"
+cc = "1.2.55"
 
 [dependencies]
-bitflags = "2.8.0"
+bitflags = "2.10.0"
 
 [workspace]
 members = ["codegen"]
