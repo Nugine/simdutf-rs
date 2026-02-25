@@ -15,7 +15,7 @@ pub fn codegen_cpp() {
 
     for_each_validate(|encoding| {
         let ch = map_cpp_char_type(encoding);
-        g!("bool simdutf_validate_{encoding}(const {ch}* buf, size_t len) {{");
+        g!("bool simdutfrs_validate_{encoding}(const {ch}* buf, size_t len) {{");
         g!("    return simdutf::validate_{encoding}(buf, len);");
         g!("}}");
         g!();
@@ -23,7 +23,7 @@ pub fn codegen_cpp() {
 
     for_each_validate(|encoding| {
         let ch = map_cpp_char_type(encoding);
-        g!("simdutfrs_result_t simdutf_validate_{encoding}_with_errors(const {ch}* buf, size_t len) {{");
+        g!("simdutfrs_result_t simdutfrs_validate_{encoding}_with_errors(const {ch}* buf, size_t len) {{");
         g!("    const simdutf::result ans = simdutf::validate_{encoding}_with_errors(buf, len);");
         g!("    return {{ static_cast<uint32_t>(ans.error), ans.count }};");
         g!("}}");
@@ -32,7 +32,7 @@ pub fn codegen_cpp() {
 
     for_each_count(|encoding| {
         let ch = map_cpp_char_type(encoding);
-        g!("size_t simdutf_count_{encoding}(const {ch}* buf, size_t len) {{");
+        g!("size_t simdutfrs_count_{encoding}(const {ch}* buf, size_t len) {{");
         g!("    return simdutf::count_{encoding}(buf, len);");
         g!("}}");
         g!();
@@ -43,14 +43,14 @@ pub fn codegen_cpp() {
             return;
         }
         if is_fixed_length_for_latin1(from, to) {
-            g!("size_t simdutf_{to}_length_from_{from}(size_t len) {{");
+            g!("size_t simdutfrs_{to}_length_from_{from}(size_t len) {{");
             g!("    return simdutf::{to}_length_from_{from}(len);");
             g!("}}");
             g!();
             return;
         }
         let from_ch = map_cpp_char_type(from);
-        g!("size_t simdutf_{to}_length_from_{from}(const {from_ch}* buf, size_t len) {{");
+        g!("size_t simdutfrs_{to}_length_from_{from}(const {from_ch}* buf, size_t len) {{");
         g!("    return simdutf::{to}_length_from_{from}(buf, len);");
         g!("}}");
         g!();
@@ -59,7 +59,7 @@ pub fn codegen_cpp() {
     for_each_transcoding_convert(|from, to| {
         let from_ch = map_cpp_char_type(from);
         let to_ch = map_cpp_char_type(to);
-        g!("size_t simdutf_convert_{from}_to_{to}(const {from_ch}* src, size_t len, {to_ch}* dst) {{");
+        g!("size_t simdutfrs_convert_{from}_to_{to}(const {from_ch}* src, size_t len, {to_ch}* dst) {{");
         g!("    return simdutf::convert_{from}_to_{to}(src, len, dst);");
         g!("}}");
         g!();
@@ -72,7 +72,7 @@ pub fn codegen_cpp() {
         let from_ch = map_cpp_char_type(from);
         let to_ch = map_cpp_char_type(to);
         g!("simdutfrs_result_t \
-            simdutf_convert_{from}_to_{to}_with_errors(const {from_ch}* src, size_t len, {to_ch}* dst) {{");
+            simdutfrs_convert_{from}_to_{to}_with_errors(const {from_ch}* src, size_t len, {to_ch}* dst) {{");
         g!("const simdutf::result ans = \
             simdutf::convert_{from}_to_{to}_with_errors(src, len, dst);");
         g!("    return {{ static_cast<uint32_t>(ans.error), ans.count }};");
@@ -86,7 +86,7 @@ pub fn codegen_cpp() {
         }
         let from_ch = map_cpp_char_type(from);
         let to_ch = map_cpp_char_type(to);
-        g!("size_t simdutf_convert_valid_{from}_to_{to}(const {from_ch}* src, size_t len, {to_ch}* dst) {{");
+        g!("size_t simdutfrs_convert_valid_{from}_to_{to}(const {from_ch}* src, size_t len, {to_ch}* dst) {{");
         g!("    return simdutf::convert_valid_{from}_to_{to}(src, len, dst);");
         g!("}}");
         g!();
@@ -95,21 +95,21 @@ pub fn codegen_cpp() {
     // Base64 functions
 
     // maximal_binary_length_from_base64 (char* version)
-    g!("size_t simdutf_maximal_binary_length_from_base64(const char *input,");
+    g!("size_t simdutfrs_maximal_binary_length_from_base64(const char *input,");
     g!("                                               size_t length) {{");
     g!("    return simdutf::maximal_binary_length_from_base64(input, length);");
     g!("}}");
     g!();
 
     // maximal_binary_length_from_base64 (char16_t* version)
-    g!("size_t simdutf_maximal_binary_length_from_base64_utf16(const char16_t *input,");
+    g!("size_t simdutfrs_maximal_binary_length_from_base64_utf16(const char16_t *input,");
     g!("                                               size_t length) {{");
     g!("    return simdutf::maximal_binary_length_from_base64(input, length);");
     g!("}}");
     g!();
 
     // base64_to_binary (char* version)
-    g!("simdutfrs_result_t simdutf_base64_to_binary(const char *input,");
+    g!("simdutfrs_result_t simdutfrs_base64_to_binary(const char *input,");
     g!("                                               size_t length, char *output,");
     g!("                                               uint64_t options,");
     g!("                                               uint64_t last_chunk_options) {{");
@@ -122,7 +122,7 @@ pub fn codegen_cpp() {
     g!();
 
     // base64_length_from_binary
-    g!("size_t simdutf_base64_length_from_binary(size_t length,");
+    g!("size_t simdutfrs_base64_length_from_binary(size_t length,");
     g!("                                        uint64_t options) {{");
     g!("    return simdutf::base64_length_from_binary(");
     g!("       length, static_cast<simdutf::base64_options>(options));");
@@ -130,7 +130,7 @@ pub fn codegen_cpp() {
     g!();
 
     // base64_length_from_binary_with_lines
-    g!("size_t simdutf_base64_length_from_binary_with_lines(size_t length,");
+    g!("size_t simdutfrs_base64_length_from_binary_with_lines(size_t length,");
     g!("                                        uint64_t options,");
     g!("                                        size_t line_length) {{");
     g!("    return simdutf::base64_length_from_binary_with_lines(");
@@ -139,7 +139,7 @@ pub fn codegen_cpp() {
     g!();
 
     // binary_to_base64
-    g!("size_t simdutf_binary_to_base64(const char *input,");
+    g!("size_t simdutfrs_binary_to_base64(const char *input,");
     g!("                        size_t length, char *output,");
     g!("                        uint64_t options) {{");
     g!("    return simdutf::binary_to_base64(");
@@ -148,7 +148,7 @@ pub fn codegen_cpp() {
     g!();
 
     // binary_to_base64_with_lines
-    g!("size_t simdutf_binary_to_base64_with_lines(const char *input,");
+    g!("size_t simdutfrs_binary_to_base64_with_lines(const char *input,");
     g!("                        size_t length, char *output,");
     g!("                        size_t line_length,");
     g!("                        uint64_t options) {{");
@@ -158,7 +158,7 @@ pub fn codegen_cpp() {
     g!();
 
     // base64_to_binary (char16_t* version)
-    g!("simdutfrs_result_t simdutf_base64_to_binary_utf16(const char16_t *input,");
+    g!("simdutfrs_result_t simdutfrs_base64_to_binary_utf16(const char16_t *input,");
     g!("                                               size_t length, char *output,");
     g!("                                               uint64_t options,");
     g!("                                               uint64_t last_chunk_options) {{");
@@ -171,7 +171,7 @@ pub fn codegen_cpp() {
     g!();
 
     // base64_to_binary_safe (char* version)
-    g!("simdutfrs_result_t simdutf_base64_to_binary_safe(const char *input,");
+    g!("simdutfrs_result_t simdutfrs_base64_to_binary_safe(const char *input,");
     g!("                                               size_t length, char *output,");
     g!("                                               size_t *outlen,");
     g!("                                               uint64_t options,");
@@ -187,7 +187,7 @@ pub fn codegen_cpp() {
     g!();
 
     // base64_to_binary_safe (char16_t* version)
-    g!("simdutfrs_result_t simdutf_base64_to_binary_safe_utf16(const char16_t *input,");
+    g!("simdutfrs_result_t simdutfrs_base64_to_binary_safe_utf16(const char16_t *input,");
     g!("                                               size_t length, char *output,");
     g!("                                               size_t *outlen,");
     g!("                                               uint64_t options,");
@@ -217,20 +217,20 @@ pub fn codegen_rust() {
 
     for_each_validate(|encoding| {
         let ch = map_rs_char_type(encoding);
-        g!("pub fn simdutf_validate_{encoding}(buf: *const {ch}, len: usize) -> bool;");
+        g!("pub fn simdutfrs_validate_{encoding}(buf: *const {ch}, len: usize) -> bool;");
     });
     g!();
 
     for_each_validate(|encoding| {
         let ch = map_rs_char_type(encoding);
-        g!("pub fn simdutf_validate_{encoding}_with_errors\
+        g!("pub fn simdutfrs_validate_{encoding}_with_errors\
             (buf: *const {ch}, len: usize) -> Result;");
     });
     g!();
 
     for_each_count(|encoding| {
         let ch = map_rs_char_type(encoding);
-        g!("pub fn simdutf_count_{encoding}(buf: *const {ch}, len: usize) -> usize;");
+        g!("pub fn simdutfrs_count_{encoding}(buf: *const {ch}, len: usize) -> usize;");
     });
     g!();
 
@@ -239,18 +239,18 @@ pub fn codegen_rust() {
             return;
         }
         if is_fixed_length_for_latin1(from, to) {
-            g!("pub fn simdutf_{to}_length_from_{from}(len: usize) -> usize;");
+            g!("pub fn simdutfrs_{to}_length_from_{from}(len: usize) -> usize;");
             return;
         }
         let from_ch = map_rs_char_type(from);
-        g!("pub fn simdutf_{to}_length_from_{from}(buf: *const {from_ch}, len: usize) -> usize;");
+        g!("pub fn simdutfrs_{to}_length_from_{from}(buf: *const {from_ch}, len: usize) -> usize;");
     });
     g!();
 
     for_each_transcoding_convert(|from, to| {
         let from_ch = map_rs_char_type(from);
         let to_ch = map_rs_char_type(to);
-        g!("pub fn simdutf_convert_{from}_to_{to}\
+        g!("pub fn simdutfrs_convert_{from}_to_{to}\
             (src: *const {from_ch}, len: usize, dst: *mut {to_ch}) -> usize;");
     });
     g!();
@@ -261,7 +261,7 @@ pub fn codegen_rust() {
         }
         let from_ch = map_rs_char_type(from);
         let to_ch = map_rs_char_type(to);
-        g!("pub fn simdutf_convert_{from}_to_{to}_with_errors\
+        g!("pub fn simdutfrs_convert_{from}_to_{to}_with_errors\
             (src: *const {from_ch}, len: usize, dst: *mut {to_ch}) -> Result;");
     });
     g!();
@@ -272,28 +272,28 @@ pub fn codegen_rust() {
         }
         let from_ch = map_rs_char_type(from);
         let to_ch = map_rs_char_type(to);
-        g!("pub fn simdutf_convert_valid_{from}_to_{to}\
+        g!("pub fn simdutfrs_convert_valid_{from}_to_{to}\
             (src: *const {from_ch}, len: usize, dst: *mut {to_ch}) -> usize;");
     });
     g!();
 
     // Base64 functions
     // maximal_binary_length_from_base64 (char* version)
-    g!("pub fn simdutf_maximal_binary_length_from_base64(
+    g!("pub fn simdutfrs_maximal_binary_length_from_base64(
         input: *const u8,
         len: usize,
     ) -> usize;");
     g!();
 
     // maximal_binary_length_from_base64 (char16_t* version)
-    g!("pub fn simdutf_maximal_binary_length_from_base64_utf16(
+    g!("pub fn simdutfrs_maximal_binary_length_from_base64_utf16(
         input: *const u16,
         len: usize,
     ) -> usize;");
     g!();
 
     // base64_to_binary (char* version)
-    g!("pub fn simdutf_base64_to_binary(
+    g!("pub fn simdutfrs_base64_to_binary(
         input: *const u8,
         len: usize,
         output: *mut u8,
@@ -303,14 +303,14 @@ pub fn codegen_rust() {
     g!();
 
     // base64_length_from_binary
-    g!("pub fn simdutf_base64_length_from_binary(
+    g!("pub fn simdutfrs_base64_length_from_binary(
         len: usize,
         options: u64,
     ) -> usize;");
     g!();
 
     // base64_length_from_binary_with_lines
-    g!("pub fn simdutf_base64_length_from_binary_with_lines(
+    g!("pub fn simdutfrs_base64_length_from_binary_with_lines(
         len: usize,
         options: u64,
         line_length: usize,
@@ -318,7 +318,7 @@ pub fn codegen_rust() {
     g!();
 
     // binary_to_base64
-    g!("pub fn simdutf_binary_to_base64(
+    g!("pub fn simdutfrs_binary_to_base64(
         input: *const u8,
         len: usize,
         output: *mut u8,
@@ -327,7 +327,7 @@ pub fn codegen_rust() {
     g!();
 
     // binary_to_base64_with_lines
-    g!("pub fn simdutf_binary_to_base64_with_lines(
+    g!("pub fn simdutfrs_binary_to_base64_with_lines(
         input: *const u8,
         len: usize,
         output: *mut u8,
@@ -337,7 +337,7 @@ pub fn codegen_rust() {
     g!();
 
     // base64_to_binary (char16_t* version)
-    g!("pub fn simdutf_base64_to_binary_utf16(
+    g!("pub fn simdutfrs_base64_to_binary_utf16(
         input: *const u16,
         len: usize,
         output: *mut u8,
@@ -347,7 +347,7 @@ pub fn codegen_rust() {
     g!();
 
     // base64_to_binary_safe (char* version)
-    g!("pub fn simdutf_base64_to_binary_safe(
+    g!("pub fn simdutfrs_base64_to_binary_safe(
         input: *const u8,
         len: usize,
         output: *mut u8,
@@ -359,7 +359,7 @@ pub fn codegen_rust() {
     g!();
 
     // base64_to_binary_safe (char16_t* version)
-    g!("pub fn simdutf_base64_to_binary_safe_utf16(
+    g!("pub fn simdutfrs_base64_to_binary_safe_utf16(
         input: *const u16,
         len: usize,
         output: *mut u8,
