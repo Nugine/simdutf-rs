@@ -54,9 +54,8 @@ def download():
     shell(f"git clone {git_url} -b master --depth={depth}", cwd=TEMP_DIR)
 
 
-def postprocess(src: Path, dst: Path, strip_c_api: bool = False):
+def postprocess(src: Path, dst: Path):
     with open(dst, "w") as dst_file:
-        skip = False
         with open(src, "r") as src_file:
             for line in src_file.read().splitlines():
                 if re.match(r"^/\* auto-generated on.+$", line):
@@ -68,16 +67,6 @@ def postprocess(src: Path, dst: Path, strip_c_api: bool = False):
                 if re.match(r"^// /.+simdutf-rs.+simdutf/src.+\.cpp:.+$", line):
                     continue
 
-                if strip_c_api:
-                    if line.strip() == "/* begin file src/simdutf_c.cpp */":
-                        skip = True
-                        continue
-                    if line.strip() == "/* end file src/simdutf_c.cpp */":
-                        skip = False
-                        continue
-                    if skip:
-                        continue
-
                 dst_file.write(line + "\n")
 
 
@@ -85,7 +74,7 @@ def postprocess(src: Path, dst: Path, strip_c_api: bool = False):
 def vendor():
     shell("python3 ./singleheader/amalgamate.py", cwd=SIMDUTF_DIR)
     postprocess(SIMDUTF_DIR / "singleheader/simdutf.h", Path("cpp/simdutf.h"))
-    postprocess(SIMDUTF_DIR / "singleheader/simdutf.cpp", Path("cpp/simdutf.cpp"), strip_c_api=True)
+    postprocess(SIMDUTF_DIR / "singleheader/simdutf.cpp", Path("cpp/simdutf.cpp"))
 
 
 @cli.command()
