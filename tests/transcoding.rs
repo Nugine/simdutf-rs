@@ -1,3 +1,4 @@
+#![cfg(all(feature = "utf8", feature = "utf16", feature = "latin1"))]
 #![allow(clippy::bool_assert_comparison)]
 
 #[test]
