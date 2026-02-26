@@ -1,8 +1,11 @@
 //! Hand-written bindings and wrappers.
 
 extern "C" {
+    #[cfg(feature = "utf16")]
     fn simdutfrs_change_endianness_utf16(src: *const u16, len: usize, dst: *mut u16);
+    #[cfg(feature = "detect_encoding")]
     fn simdutfrs_autodetect_encoding(src: *const u8, len: usize) -> u32;
+    #[cfg(feature = "detect_encoding")]
     fn simdutfrs_detect_encodings(src: *const u8, len: usize) -> u32;
 }
 
@@ -17,6 +20,7 @@ extern "C" {
 /// + `src` must be valid for reads of `len * size_of::<u16>()` bytes.
 /// + `dst` must be valid for writes of `len * size_of::<u16>()` bytes.
 /// + `src` and `dst` can alias.
+#[cfg(feature = "utf16")]
 #[inline]
 pub unsafe fn change_endianness_utf16(src: *const u16, len: usize, dst: *mut u16) {
     simdutfrs_change_endianness_utf16(src, len, dst);
@@ -50,6 +54,7 @@ bitflags::bitflags! {
 ///
 /// This function returns a single encoding.
 ///
+#[cfg(feature = "detect_encoding")]
 #[inline]
 #[must_use]
 pub fn autodetect_single_encoding(src: &[u8]) -> Encoding {
@@ -62,6 +67,7 @@ pub fn autodetect_single_encoding(src: &[u8]) -> Encoding {
 /// Autodetect the possible encodings of the input in one pass.
 ///
 /// This function returns a bitset of possible encodings.
+#[cfg(feature = "detect_encoding")]
 #[inline]
 #[must_use]
 pub fn autodetect_encodings(src: &[u8]) -> Encoding {
