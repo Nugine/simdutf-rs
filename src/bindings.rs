@@ -102,6 +102,11 @@ extern "C" {
     pub fn simdutfrs_convert_valid_utf32_to_utf16be(src: *const u32, len: usize, dst: *mut u16) -> usize;
     pub fn simdutfrs_convert_valid_utf32_to_utf16le(src: *const u32, len: usize, dst: *mut u16) -> usize;
 
+    pub fn simdutfrs_trim_partial_utf8(buf: *const u8, len: usize) -> usize;
+    pub fn simdutfrs_trim_partial_utf16(buf: *const u16, len: usize) -> usize;
+    pub fn simdutfrs_trim_partial_utf16be(buf: *const u16, len: usize) -> usize;
+    pub fn simdutfrs_trim_partial_utf16le(buf: *const u16, len: usize) -> usize;
+
     pub fn simdutfrs_maximal_binary_length_from_base64(input: *const u8, len: usize) -> usize;
 
     pub fn simdutfrs_maximal_binary_length_from_base64_utf16(input: *const u16, len: usize) -> usize;
