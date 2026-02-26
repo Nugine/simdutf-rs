@@ -67,7 +67,7 @@ fn codegen_validate() {
         g!("pub fn validate_{encoding}(src: &[{ch}]) -> bool {{");
         g!("let len = src.len();");
         g!("let buf = src.as_ptr();");
-        g!("unsafe {{ crate::bindings::simdutf_validate_{encoding}(buf, len) }}");
+        g!("unsafe {{ crate::bindings::simdutfrs_validate_{encoding}(buf, len) }}");
         g!("}}");
         g!();
     });
@@ -86,7 +86,7 @@ fn codegen_validate() {
         g!("pub fn validate_{encoding}_with_errors(src: &[{ch}]) -> Result {{");
         g!("let len = src.len();");
         g!("let buf = src.as_ptr();");
-        g!("unsafe {{ crate::bindings::simdutf_validate_{encoding}_with_errors(buf, len) }}");
+        g!("unsafe {{ crate::bindings::simdutfrs_validate_{encoding}_with_errors(buf, len) }}");
         g!("}}");
         g!();
     });
@@ -111,7 +111,7 @@ fn codegen_count() {
         g!("pub fn count_{encoding}(src: &[{ch}]) -> usize {{");
         g!("let len = src.len();");
         g!("let buf = src.as_ptr();");
-        g!("unsafe{{ crate::bindings::simdutf_count_{encoding}(buf, len) }}");
+        g!("unsafe{{ crate::bindings::simdutfrs_count_{encoding}(buf, len) }}");
         g!("}}");
         g!();
     });
@@ -145,13 +145,13 @@ fn codegen_transcoding_length() {
         g!("#[must_use]");
         if is_fixed_length_for_latin1(from, to) {
             g!("pub fn {to}_length_from_{from}(src_len: usize) -> usize {{");
-            g!("    unsafe{{ crate::bindings::simdutf_{to}_length_from_{from}(src_len) }}");
+            g!("    unsafe{{ crate::bindings::simdutfrs_{to}_length_from_{from}(src_len) }}");
             g!("}}");
         } else {
             g!("pub fn {to}_length_from_{from}(src: &[{from_ch}]) -> usize {{");
             g!("    let len = src.len();");
             g!("    let buf = src.as_ptr();");
-            g!("    unsafe{{ crate::bindings::simdutf_{to}_length_from_{from}(buf, len) }}");
+            g!("    unsafe{{ crate::bindings::simdutfrs_{to}_length_from_{from}(buf, len) }}");
             g!("}}");
         }
         g!();
@@ -183,7 +183,7 @@ fn codegen_transcoding_convert() {
         g!("#[must_use]");
         g!("pub unsafe fn convert_{from}_to_{to}\
             (src: *const {from_ch}, len: usize, dst: *mut {to_ch}) -> usize {{");
-        g!("crate::bindings::simdutf_convert_{from}_to_{to}(src, len, dst)");
+        g!("crate::bindings::simdutfrs_convert_{from}_to_{to}(src, len, dst)");
         g!("}}");
         g!();
     });
@@ -212,7 +212,7 @@ fn codegen_transcoding_convert() {
         g!("#[must_use]");
         g!("pub unsafe fn convert_{from}_to_{to}_with_errors\
             (src: *const {from_ch}, len: usize, dst: *mut {to_ch}) -> Result {{");
-        g!("crate::bindings::simdutf_convert_{from}_to_{to}_with_errors(src, len, dst)");
+        g!("crate::bindings::simdutfrs_convert_{from}_to_{to}_with_errors(src, len, dst)");
         g!("}}");
         g!();
     });
@@ -241,7 +241,7 @@ fn codegen_transcoding_convert() {
         g!("#[must_use]");
         g!("pub unsafe fn convert_valid_{from}_to_{to}\
             (src: *const {from_ch}, len: usize, dst: *mut {to_ch}) -> usize {{");
-        g!("crate::bindings::simdutf_convert_valid_{from}_to_{to}(src, len, dst)");
+        g!("crate::bindings::simdutfrs_convert_valid_{from}_to_{to}(src, len, dst)");
         g!("}}");
         g!();
     })
@@ -268,7 +268,7 @@ fn codegen_base64() {
     g!("    input: *const u8,");
     g!("    len: usize,");
     g!(") -> usize {{");
-    g!("    crate::bindings::simdutf_maximal_binary_length_from_base64(input, len)");
+    g!("    crate::bindings::simdutfrs_maximal_binary_length_from_base64(input, len)");
     g!("}}");
     g!();
 
@@ -290,7 +290,7 @@ fn codegen_base64() {
     g!("    input: *const u16,");
     g!("    len: usize,");
     g!(") -> usize {{");
-    g!("    crate::bindings::simdutf_maximal_binary_length_from_base64_utf16(input, len)");
+    g!("    crate::bindings::simdutfrs_maximal_binary_length_from_base64_utf16(input, len)");
     g!("}}");
     g!();
 
@@ -347,7 +347,7 @@ fn codegen_base64() {
     g!("    options: Base64Options,");
     g!("    last_chunk_options: LastChunkHandlingOptions,");
     g!(") -> Result {{");
-    g!("    crate::bindings::simdutf_base64_to_binary(input, len, output, options as u64, last_chunk_options as u64)");
+    g!("    crate::bindings::simdutfrs_base64_to_binary(input, len, output, options as u64, last_chunk_options as u64)");
     g!("}}");
     g!();
 
@@ -369,7 +369,7 @@ fn codegen_base64() {
     g!("    len: usize,");
     g!("    options: Base64Options,");
     g!(") -> usize {{");
-    g!("    unsafe {{ crate::bindings::simdutf_base64_length_from_binary(len, options as u64) }}");
+    g!("    unsafe {{ crate::bindings::simdutfrs_base64_length_from_binary(len, options as u64) }}");
     g!("}}");
     g!();
 
@@ -398,7 +398,7 @@ fn codegen_base64() {
     g!("    options: Base64Options,");
     g!("    line_length: usize,");
     g!(") -> usize {{");
-    g!("    unsafe {{ crate::bindings::simdutf_base64_length_from_binary_with_lines(len, options as u64, line_length) }}");
+    g!("    unsafe {{ crate::bindings::simdutfrs_base64_length_from_binary_with_lines(len, options as u64, line_length) }}");
     g!("}}");
     g!();
 
@@ -429,7 +429,7 @@ fn codegen_base64() {
     g!("    output: *mut u8,");
     g!("    options: Base64Options,");
     g!(") -> usize {{");
-    g!("    crate::bindings::simdutf_binary_to_base64(input, len, output, options as u64)");
+    g!("    crate::bindings::simdutfrs_binary_to_base64(input, len, output, options as u64)");
     g!("}}");
     g!();
 
@@ -465,7 +465,7 @@ fn codegen_base64() {
     g!("    line_length: usize,");
     g!("    options: Base64Options,");
     g!(") -> usize {{");
-    g!("    crate::bindings::simdutf_binary_to_base64_with_lines(input, len, output, line_length, options as u64)");
+    g!("    crate::bindings::simdutfrs_binary_to_base64_with_lines(input, len, output, line_length, options as u64)");
     g!("}}");
     g!();
 
@@ -522,7 +522,7 @@ fn codegen_base64() {
     g!("    options: Base64Options,");
     g!("    last_chunk_options: LastChunkHandlingOptions,");
     g!(") -> Result {{");
-    g!("    crate::bindings::simdutf_base64_to_binary_utf16(input, len, output, options as u64, last_chunk_options as u64)");
+    g!("    crate::bindings::simdutfrs_base64_to_binary_utf16(input, len, output, options as u64, last_chunk_options as u64)");
     g!("}}");
     g!();
 
@@ -590,7 +590,7 @@ fn codegen_base64() {
     g!("    last_chunk_options: LastChunkHandlingOptions,");
     g!("    decode_up_to_bad_char: bool,");
     g!(") -> Result {{");
-    g!("    crate::bindings::simdutf_base64_to_binary_safe(input, len, output, out_len, options as u64, last_chunk_options as u64, decode_up_to_bad_char)");
+    g!("    crate::bindings::simdutfrs_base64_to_binary_safe(input, len, output, out_len, options as u64, last_chunk_options as u64, decode_up_to_bad_char)");
     g!("}}");
     g!();
 
@@ -658,7 +658,7 @@ fn codegen_base64() {
     g!("    last_chunk_options: LastChunkHandlingOptions,");
     g!("    decode_up_to_bad_char: bool,");
     g!(") -> Result {{");
-    g!("    crate::bindings::simdutf_base64_to_binary_safe_utf16(input, len, output, out_len, options as u64, last_chunk_options as u64, decode_up_to_bad_char)");
+    g!("    crate::bindings::simdutfrs_base64_to_binary_safe_utf16(input, len, output, out_len, options as u64, last_chunk_options as u64, decode_up_to_bad_char)");
     g!("}}");
     g!();
 }
