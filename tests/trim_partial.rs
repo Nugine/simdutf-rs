@@ -65,12 +65,38 @@ fn trim_partial_utf16_truncated_surrogate() {
 
 #[test]
 fn trim_partial_utf16be_complete() {
-    let input: &[u16] = &[0x0048, 0x0065, 0x006C, 0x006C, 0x006F]; // "Hello"
+    let input: &[u16] = &[
+        0x0048u16.to_be(),
+        0x0065u16.to_be(),
+        0x006Cu16.to_be(),
+        0x006Cu16.to_be(),
+        0x006Fu16.to_be(),
+    ]; // "Hello"
     assert_eq!(simdutf::trim_partial_utf16be(input), input.len());
 }
 
 #[test]
+fn trim_partial_utf16be_truncated_surrogate() {
+    // 'A' followed by a lone high surrogate for U+1F600 (😀): [0xD83D, 0xDE00]
+    let input: &[u16] = &[0x0041u16.to_be(), 0xD83Du16.to_be()];
+    assert_eq!(simdutf::trim_partial_utf16be(input), 1);
+}
+
+#[test]
 fn trim_partial_utf16le_complete() {
-    let input: &[u16] = &[0x0048, 0x0065, 0x006C, 0x006C, 0x006F]; // "Hello"
+    let input: &[u16] = &[
+        0x0048u16.to_le(),
+        0x0065u16.to_le(),
+        0x006Cu16.to_le(),
+        0x006Cu16.to_le(),
+        0x006Fu16.to_le(),
+    ]; // "Hello"
     assert_eq!(simdutf::trim_partial_utf16le(input), input.len());
+}
+
+#[test]
+fn trim_partial_utf16le_truncated_surrogate() {
+    // 'A' followed by a lone high surrogate for U+1F600 (😀): [0xD83D, 0xDE00]
+    let input: &[u16] = &[0x0041u16.to_le(), 0xD83Du16.to_le()];
+    assert_eq!(simdutf::trim_partial_utf16le(input), 1);
 }
