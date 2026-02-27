@@ -301,7 +301,7 @@ pub fn trim_partial_utf16le(src: &[u16]) -> usize {
     unsafe { crate::bindings::simdutfrs_trim_partial_utf16le(buf, len) }
 }
 
-#[cfg(all(feature = "utf8", feature = "utf16"))]
+#[cfg(all(feature = "utf16", feature = "utf8"))]
 /// Count the number of code units that the UTF-16 string would require in UTF-8 format.
 ///
 /// This function uses native endianness.
@@ -319,7 +319,7 @@ pub fn utf8_length_from_utf16(src: &[u16]) -> usize {
     unsafe { crate::bindings::simdutfrs_utf8_length_from_utf16(buf, len) }
 }
 
-#[cfg(all(feature = "utf8", feature = "utf16"))]
+#[cfg(all(feature = "utf16", feature = "utf8"))]
 /// Count the number of code units that the UTF-16BE string would require in UTF-8 format.
 ///
 /// This function is not BOM-aware.
@@ -335,7 +335,7 @@ pub fn utf8_length_from_utf16be(src: &[u16]) -> usize {
     unsafe { crate::bindings::simdutfrs_utf8_length_from_utf16be(buf, len) }
 }
 
-#[cfg(all(feature = "utf8", feature = "utf16"))]
+#[cfg(all(feature = "utf16", feature = "utf8"))]
 /// Count the number of code units that the UTF-16LE string would require in UTF-8 format.
 ///
 /// This function is not BOM-aware.
@@ -351,7 +351,7 @@ pub fn utf8_length_from_utf16le(src: &[u16]) -> usize {
     unsafe { crate::bindings::simdutfrs_utf8_length_from_utf16le(buf, len) }
 }
 
-#[cfg(all(feature = "utf8", feature = "utf32"))]
+#[cfg(all(feature = "utf32", feature = "utf8"))]
 /// Count the number of code units that the UTF-32 string would require in UTF-8 format.
 ///
 /// This function uses native endianness.
@@ -367,7 +367,7 @@ pub fn utf8_length_from_utf32(src: &[u32]) -> usize {
     unsafe { crate::bindings::simdutfrs_utf8_length_from_utf32(buf, len) }
 }
 
-#[cfg(all(feature = "utf8", feature = "latin1"))]
+#[cfg(all(feature = "latin1", feature = "utf8"))]
 /// Count the number of code units that the Latin1 string would require in UTF-8 format.
 ///
 /// This function does not validate the input.
@@ -395,7 +395,7 @@ pub fn utf16_length_from_utf8(src: &[u8]) -> usize {
     unsafe { crate::bindings::simdutfrs_utf16_length_from_utf8(buf, len) }
 }
 
-#[cfg(all(feature = "utf16", feature = "utf32"))]
+#[cfg(all(feature = "utf32", feature = "utf16"))]
 /// Count the number of code units that the UTF-32 string would require in UTF-16 format.
 ///
 /// This function uses native endianness.
@@ -411,7 +411,7 @@ pub fn utf16_length_from_utf32(src: &[u32]) -> usize {
     unsafe { crate::bindings::simdutfrs_utf16_length_from_utf32(buf, len) }
 }
 
-#[cfg(all(feature = "utf16", feature = "latin1"))]
+#[cfg(all(feature = "latin1", feature = "utf16"))]
 /// Count the number of code units that the Latin1 string would require in UTF-16 format.
 ///
 /// This function does not validate the input.
@@ -634,7 +634,7 @@ pub unsafe fn convert_utf8_to_latin1(src: *const u8, len: usize, dst: *mut u8) -
     crate::bindings::simdutfrs_convert_utf8_to_latin1(src, len, dst)
 }
 
-#[cfg(all(feature = "utf8", feature = "utf16"))]
+#[cfg(all(feature = "utf16", feature = "utf8"))]
 /// Convert possibly broken UTF-16 string into UTF-8 string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -703,7 +703,7 @@ pub unsafe fn convert_utf16_to_latin1(src: *const u16, len: usize, dst: *mut u8)
     crate::bindings::simdutfrs_convert_utf16_to_latin1(src, len, dst)
 }
 
-#[cfg(all(feature = "utf8", feature = "utf16"))]
+#[cfg(all(feature = "utf16", feature = "utf8"))]
 /// Convert possibly broken UTF-16BE string into UTF-8 string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -766,7 +766,7 @@ pub unsafe fn convert_utf16be_to_latin1(src: *const u16, len: usize, dst: *mut u
     crate::bindings::simdutfrs_convert_utf16be_to_latin1(src, len, dst)
 }
 
-#[cfg(all(feature = "utf8", feature = "utf16"))]
+#[cfg(all(feature = "utf16", feature = "utf8"))]
 /// Convert possibly broken UTF-16LE string into UTF-8 string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -829,7 +829,7 @@ pub unsafe fn convert_utf16le_to_latin1(src: *const u16, len: usize, dst: *mut u
     crate::bindings::simdutfrs_convert_utf16le_to_latin1(src, len, dst)
 }
 
-#[cfg(all(feature = "utf8", feature = "utf32"))]
+#[cfg(all(feature = "utf32", feature = "utf8"))]
 /// Convert possibly broken UTF-32 string into UTF-8 string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -850,7 +850,7 @@ pub unsafe fn convert_utf32_to_utf8(src: *const u32, len: usize, dst: *mut u8) -
     crate::bindings::simdutfrs_convert_utf32_to_utf8(src, len, dst)
 }
 
-#[cfg(all(feature = "utf16", feature = "utf32"))]
+#[cfg(all(feature = "utf32", feature = "utf16"))]
 /// Convert possibly broken UTF-32 string into UTF-16 string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -871,7 +871,7 @@ pub unsafe fn convert_utf32_to_utf16(src: *const u32, len: usize, dst: *mut u16)
     crate::bindings::simdutfrs_convert_utf32_to_utf16(src, len, dst)
 }
 
-#[cfg(all(feature = "utf16", feature = "utf32"))]
+#[cfg(all(feature = "utf32", feature = "utf16"))]
 /// Convert possibly broken UTF-32 string into UTF-16BE string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -892,7 +892,7 @@ pub unsafe fn convert_utf32_to_utf16be(src: *const u32, len: usize, dst: *mut u1
     crate::bindings::simdutfrs_convert_utf32_to_utf16be(src, len, dst)
 }
 
-#[cfg(all(feature = "utf16", feature = "utf32"))]
+#[cfg(all(feature = "utf32", feature = "utf16"))]
 /// Convert possibly broken UTF-32 string into UTF-16LE string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -934,7 +934,7 @@ pub unsafe fn convert_utf32_to_latin1(src: *const u32, len: usize, dst: *mut u8)
     crate::bindings::simdutfrs_convert_utf32_to_latin1(src, len, dst)
 }
 
-#[cfg(all(feature = "utf8", feature = "latin1"))]
+#[cfg(all(feature = "latin1", feature = "utf8"))]
 /// Convert possibly broken Latin1 string into UTF-8 string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -953,7 +953,7 @@ pub unsafe fn convert_latin1_to_utf8(src: *const u8, len: usize, dst: *mut u8) -
     crate::bindings::simdutfrs_convert_latin1_to_utf8(src, len, dst)
 }
 
-#[cfg(all(feature = "utf16", feature = "latin1"))]
+#[cfg(all(feature = "latin1", feature = "utf16"))]
 /// Convert possibly broken Latin1 string into UTF-16 string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -972,7 +972,7 @@ pub unsafe fn convert_latin1_to_utf16(src: *const u8, len: usize, dst: *mut u16)
     crate::bindings::simdutfrs_convert_latin1_to_utf16(src, len, dst)
 }
 
-#[cfg(all(feature = "utf16", feature = "latin1"))]
+#[cfg(all(feature = "latin1", feature = "utf16"))]
 /// Convert possibly broken Latin1 string into UTF-16BE string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -991,7 +991,7 @@ pub unsafe fn convert_latin1_to_utf16be(src: *const u8, len: usize, dst: *mut u1
     crate::bindings::simdutfrs_convert_latin1_to_utf16be(src, len, dst)
 }
 
-#[cfg(all(feature = "utf16", feature = "latin1"))]
+#[cfg(all(feature = "latin1", feature = "utf16"))]
 /// Convert possibly broken Latin1 string into UTF-16LE string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -1010,7 +1010,7 @@ pub unsafe fn convert_latin1_to_utf16le(src: *const u8, len: usize, dst: *mut u1
     crate::bindings::simdutfrs_convert_latin1_to_utf16le(src, len, dst)
 }
 
-#[cfg(all(feature = "utf32", feature = "latin1"))]
+#[cfg(all(feature = "latin1", feature = "utf32"))]
 /// Convert possibly broken Latin1 string into UTF-32 string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -1114,7 +1114,7 @@ pub unsafe fn convert_utf8_to_latin1_with_errors(src: *const u8, len: usize, dst
     crate::bindings::simdutfrs_convert_utf8_to_latin1_with_errors(src, len, dst)
 }
 
-#[cfg(all(feature = "utf8", feature = "utf16"))]
+#[cfg(all(feature = "utf16", feature = "utf8"))]
 /// Convert possibly broken UTF-16 string into UTF-8 string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -1177,7 +1177,7 @@ pub unsafe fn convert_utf16_to_latin1_with_errors(src: *const u16, len: usize, d
     crate::bindings::simdutfrs_convert_utf16_to_latin1_with_errors(src, len, dst)
 }
 
-#[cfg(all(feature = "utf8", feature = "utf16"))]
+#[cfg(all(feature = "utf16", feature = "utf8"))]
 /// Convert possibly broken UTF-16BE string into UTF-8 string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -1234,7 +1234,7 @@ pub unsafe fn convert_utf16be_to_latin1_with_errors(src: *const u16, len: usize,
     crate::bindings::simdutfrs_convert_utf16be_to_latin1_with_errors(src, len, dst)
 }
 
-#[cfg(all(feature = "utf8", feature = "utf16"))]
+#[cfg(all(feature = "utf16", feature = "utf8"))]
 /// Convert possibly broken UTF-16LE string into UTF-8 string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -1291,7 +1291,7 @@ pub unsafe fn convert_utf16le_to_latin1_with_errors(src: *const u16, len: usize,
     crate::bindings::simdutfrs_convert_utf16le_to_latin1_with_errors(src, len, dst)
 }
 
-#[cfg(all(feature = "utf8", feature = "utf32"))]
+#[cfg(all(feature = "utf32", feature = "utf8"))]
 /// Convert possibly broken UTF-32 string into UTF-8 string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -1310,7 +1310,7 @@ pub unsafe fn convert_utf32_to_utf8_with_errors(src: *const u32, len: usize, dst
     crate::bindings::simdutfrs_convert_utf32_to_utf8_with_errors(src, len, dst)
 }
 
-#[cfg(all(feature = "utf16", feature = "utf32"))]
+#[cfg(all(feature = "utf32", feature = "utf16"))]
 /// Convert possibly broken UTF-32 string into UTF-16 string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -1329,7 +1329,7 @@ pub unsafe fn convert_utf32_to_utf16_with_errors(src: *const u32, len: usize, ds
     crate::bindings::simdutfrs_convert_utf32_to_utf16_with_errors(src, len, dst)
 }
 
-#[cfg(all(feature = "utf16", feature = "utf32"))]
+#[cfg(all(feature = "utf32", feature = "utf16"))]
 /// Convert possibly broken UTF-32 string into UTF-16BE string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -1348,7 +1348,7 @@ pub unsafe fn convert_utf32_to_utf16be_with_errors(src: *const u32, len: usize, 
     crate::bindings::simdutfrs_convert_utf32_to_utf16be_with_errors(src, len, dst)
 }
 
-#[cfg(all(feature = "utf16", feature = "utf32"))]
+#[cfg(all(feature = "utf32", feature = "utf16"))]
 /// Convert possibly broken UTF-32 string into UTF-16LE string.
 ///
 /// During the conversion also validation of the input string is done.
@@ -1452,7 +1452,7 @@ pub unsafe fn convert_valid_utf8_to_latin1(src: *const u8, len: usize, dst: *mut
     crate::bindings::simdutfrs_convert_valid_utf8_to_latin1(src, len, dst)
 }
 
-#[cfg(all(feature = "utf8", feature = "utf16"))]
+#[cfg(all(feature = "utf16", feature = "utf8"))]
 /// Convert valid UTF-16 string into UTF-8 string.
 ///
 /// Returns the number of written code units.
@@ -1515,7 +1515,7 @@ pub unsafe fn convert_valid_utf16_to_latin1(src: *const u16, len: usize, dst: *m
     crate::bindings::simdutfrs_convert_valid_utf16_to_latin1(src, len, dst)
 }
 
-#[cfg(all(feature = "utf8", feature = "utf16"))]
+#[cfg(all(feature = "utf16", feature = "utf8"))]
 /// Convert valid UTF-16BE string into UTF-8 string.
 ///
 /// Returns the number of written code units.
@@ -1572,7 +1572,7 @@ pub unsafe fn convert_valid_utf16be_to_latin1(src: *const u16, len: usize, dst: 
     crate::bindings::simdutfrs_convert_valid_utf16be_to_latin1(src, len, dst)
 }
 
-#[cfg(all(feature = "utf8", feature = "utf16"))]
+#[cfg(all(feature = "utf16", feature = "utf8"))]
 /// Convert valid UTF-16LE string into UTF-8 string.
 ///
 /// Returns the number of written code units.
@@ -1629,7 +1629,7 @@ pub unsafe fn convert_valid_utf16le_to_latin1(src: *const u16, len: usize, dst: 
     crate::bindings::simdutfrs_convert_valid_utf16le_to_latin1(src, len, dst)
 }
 
-#[cfg(all(feature = "utf8", feature = "utf32"))]
+#[cfg(all(feature = "utf32", feature = "utf8"))]
 /// Convert valid UTF-32 string into UTF-8 string.
 ///
 /// Returns the number of written code units.
@@ -1648,7 +1648,7 @@ pub unsafe fn convert_valid_utf32_to_utf8(src: *const u32, len: usize, dst: *mut
     crate::bindings::simdutfrs_convert_valid_utf32_to_utf8(src, len, dst)
 }
 
-#[cfg(all(feature = "utf16", feature = "utf32"))]
+#[cfg(all(feature = "utf32", feature = "utf16"))]
 /// Convert valid UTF-32 string into UTF-16 string.
 ///
 /// Returns the number of written code units.
@@ -1667,7 +1667,7 @@ pub unsafe fn convert_valid_utf32_to_utf16(src: *const u32, len: usize, dst: *mu
     crate::bindings::simdutfrs_convert_valid_utf32_to_utf16(src, len, dst)
 }
 
-#[cfg(all(feature = "utf16", feature = "utf32"))]
+#[cfg(all(feature = "utf32", feature = "utf16"))]
 /// Convert valid UTF-32 string into UTF-16BE string.
 ///
 /// Returns the number of written code units.
@@ -1686,7 +1686,7 @@ pub unsafe fn convert_valid_utf32_to_utf16be(src: *const u32, len: usize, dst: *
     crate::bindings::simdutfrs_convert_valid_utf32_to_utf16be(src, len, dst)
 }
 
-#[cfg(all(feature = "utf16", feature = "utf32"))]
+#[cfg(all(feature = "utf32", feature = "utf16"))]
 /// Convert valid UTF-32 string into UTF-16LE string.
 ///
 /// Returns the number of written code units.
