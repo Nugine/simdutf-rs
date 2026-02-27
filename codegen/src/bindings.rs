@@ -46,7 +46,7 @@ pub fn codegen_cpp() {
     for_each_validate(|encoding| {
         let ch = map_cpp_char_type(encoding);
         decl_cpp_cfg(encoding);
-        g!("bool simdutfrs_validate_{encoding}(const {ch}* buf, size_t len) {{");
+        g!("SIMDUTFRS_FLATTEN bool simdutfrs_validate_{encoding}(const {ch}* buf, size_t len) {{");
         g!("    return simdutf::validate_{encoding}(buf, len);");
         g!("}}");
         decl_cpp_endif(encoding);
@@ -56,7 +56,7 @@ pub fn codegen_cpp() {
     for_each_validate(|encoding| {
         let ch = map_cpp_char_type(encoding);
         decl_cpp_cfg(encoding);
-        g!("simdutfrs_result_t simdutfrs_validate_{encoding}_with_errors(const {ch}* buf, size_t len) {{");
+        g!("SIMDUTFRS_FLATTEN simdutfrs_result_t simdutfrs_validate_{encoding}_with_errors(const {ch}* buf, size_t len) {{");
         g!("    const simdutf::result ans = simdutf::validate_{encoding}_with_errors(buf, len);");
         g!("    return {{ static_cast<uint32_t>(ans.error), ans.count }};");
         g!("}}");
@@ -67,7 +67,7 @@ pub fn codegen_cpp() {
     for_each_count(|encoding| {
         let ch = map_cpp_char_type(encoding);
         decl_cpp_cfg(encoding);
-        g!("size_t simdutfrs_count_{encoding}(const {ch}* buf, size_t len) {{");
+        g!("SIMDUTFRS_FLATTEN size_t simdutfrs_count_{encoding}(const {ch}* buf, size_t len) {{");
         g!("    return simdutf::count_{encoding}(buf, len);");
         g!("}}");
         decl_cpp_endif(encoding);
@@ -80,7 +80,7 @@ pub fn codegen_cpp() {
         }
         decl_cpp_cfg2(from, to);
         if is_fixed_length_for_latin1(from, to) {
-            g!("size_t simdutfrs_{to}_length_from_{from}(size_t len) {{");
+            g!("SIMDUTFRS_FLATTEN size_t simdutfrs_{to}_length_from_{from}(size_t len) {{");
             g!("    return simdutf::{to}_length_from_{from}(len);");
             g!("}}");
             decl_cpp_endif2(from, to);
@@ -88,7 +88,7 @@ pub fn codegen_cpp() {
             return;
         }
         let from_ch = map_cpp_char_type(from);
-        g!("size_t simdutfrs_{to}_length_from_{from}(const {from_ch}* buf, size_t len) {{");
+        g!("SIMDUTFRS_FLATTEN size_t simdutfrs_{to}_length_from_{from}(const {from_ch}* buf, size_t len) {{");
         g!("    return simdutf::{to}_length_from_{from}(buf, len);");
         g!("}}");
         decl_cpp_endif2(from, to);
@@ -99,7 +99,7 @@ pub fn codegen_cpp() {
         let from_ch = map_cpp_char_type(from);
         let to_ch = map_cpp_char_type(to);
         decl_cpp_cfg2(from, to);
-        g!("size_t simdutfrs_convert_{from}_to_{to}(const {from_ch}* src, size_t len, {to_ch}* dst) {{");
+        g!("SIMDUTFRS_FLATTEN size_t simdutfrs_convert_{from}_to_{to}(const {from_ch}* src, size_t len, {to_ch}* dst) {{");
         g!("    return simdutf::convert_{from}_to_{to}(src, len, dst);");
         g!("}}");
         decl_cpp_endif2(from, to);
@@ -113,7 +113,7 @@ pub fn codegen_cpp() {
         let from_ch = map_cpp_char_type(from);
         let to_ch = map_cpp_char_type(to);
         decl_cpp_cfg2(from, to);
-        g!("simdutfrs_result_t \
+        g!("SIMDUTFRS_FLATTEN simdutfrs_result_t \
             simdutfrs_convert_{from}_to_{to}_with_errors(const {from_ch}* src, size_t len, {to_ch}* dst) {{");
         g!("const simdutf::result ans = \
             simdutf::convert_{from}_to_{to}_with_errors(src, len, dst);");
@@ -130,7 +130,7 @@ pub fn codegen_cpp() {
         let from_ch = map_cpp_char_type(from);
         let to_ch = map_cpp_char_type(to);
         decl_cpp_cfg2(from, to);
-        g!("size_t simdutfrs_convert_valid_{from}_to_{to}(const {from_ch}* src, size_t len, {to_ch}* dst) {{");
+        g!("SIMDUTFRS_FLATTEN size_t simdutfrs_convert_valid_{from}_to_{to}(const {from_ch}* src, size_t len, {to_ch}* dst) {{");
         g!("    return simdutf::convert_valid_{from}_to_{to}(src, len, dst);");
         g!("}}");
         decl_cpp_endif2(from, to);
@@ -140,7 +140,7 @@ pub fn codegen_cpp() {
     for_each_count(|encoding| {
         let ch = map_cpp_char_type(encoding);
         decl_cpp_cfg(encoding);
-        g!("size_t simdutfrs_trim_partial_{encoding}(const {ch}* buf, size_t len) {{");
+        g!("SIMDUTFRS_FLATTEN size_t simdutfrs_trim_partial_{encoding}(const {ch}* buf, size_t len) {{");
         g!("    return simdutf::trim_partial_{encoding}(buf, len);");
         g!("}}");
         decl_cpp_endif(encoding);
@@ -151,7 +151,7 @@ pub fn codegen_cpp() {
 
     // maximal_binary_length_from_base64 (char* version)
     g!("#if SIMDUTF_FEATURE_BASE64");
-    g!("size_t simdutfrs_maximal_binary_length_from_base64(const char *input,");
+    g!("SIMDUTFRS_FLATTEN size_t simdutfrs_maximal_binary_length_from_base64(const char *input,");
     g!("                                               size_t length) {{");
     g!("    return simdutf::maximal_binary_length_from_base64(input, length);");
     g!("}}");
@@ -160,7 +160,7 @@ pub fn codegen_cpp() {
 
     // maximal_binary_length_from_base64 (char16_t* version)
     g!("#if SIMDUTF_FEATURE_BASE64");
-    g!("size_t simdutfrs_maximal_binary_length_from_base64_utf16(const char16_t *input,");
+    g!("SIMDUTFRS_FLATTEN size_t simdutfrs_maximal_binary_length_from_base64_utf16(const char16_t *input,");
     g!("                                               size_t length) {{");
     g!("    return simdutf::maximal_binary_length_from_base64(input, length);");
     g!("}}");
@@ -169,7 +169,7 @@ pub fn codegen_cpp() {
 
     // base64_to_binary (char* version)
     g!("#if SIMDUTF_FEATURE_BASE64");
-    g!("simdutfrs_result_t simdutfrs_base64_to_binary(const char *input,");
+    g!("SIMDUTFRS_FLATTEN simdutfrs_result_t simdutfrs_base64_to_binary(const char *input,");
     g!("                                               size_t length, char *output,");
     g!("                                               uint64_t options,");
     g!("                                               uint64_t last_chunk_options) {{");
@@ -184,7 +184,7 @@ pub fn codegen_cpp() {
 
     // base64_length_from_binary
     g!("#if SIMDUTF_FEATURE_BASE64");
-    g!("size_t simdutfrs_base64_length_from_binary(size_t length,");
+    g!("SIMDUTFRS_FLATTEN size_t simdutfrs_base64_length_from_binary(size_t length,");
     g!("                                        uint64_t options) {{");
     g!("    return simdutf::base64_length_from_binary(");
     g!("       length, static_cast<simdutf::base64_options>(options));");
@@ -194,7 +194,7 @@ pub fn codegen_cpp() {
 
     // base64_length_from_binary_with_lines
     g!("#if SIMDUTF_FEATURE_BASE64");
-    g!("size_t simdutfrs_base64_length_from_binary_with_lines(size_t length,");
+    g!("SIMDUTFRS_FLATTEN size_t simdutfrs_base64_length_from_binary_with_lines(size_t length,");
     g!("                                        uint64_t options,");
     g!("                                        size_t line_length) {{");
     g!("    return simdutf::base64_length_from_binary_with_lines(");
@@ -205,7 +205,7 @@ pub fn codegen_cpp() {
 
     // binary_to_base64
     g!("#if SIMDUTF_FEATURE_BASE64");
-    g!("size_t simdutfrs_binary_to_base64(const char *input,");
+    g!("SIMDUTFRS_FLATTEN size_t simdutfrs_binary_to_base64(const char *input,");
     g!("                        size_t length, char *output,");
     g!("                        uint64_t options) {{");
     g!("    return simdutf::binary_to_base64(");
@@ -216,7 +216,7 @@ pub fn codegen_cpp() {
 
     // binary_to_base64_with_lines
     g!("#if SIMDUTF_FEATURE_BASE64");
-    g!("size_t simdutfrs_binary_to_base64_with_lines(const char *input,");
+    g!("SIMDUTFRS_FLATTEN size_t simdutfrs_binary_to_base64_with_lines(const char *input,");
     g!("                        size_t length, char *output,");
     g!("                        size_t line_length,");
     g!("                        uint64_t options) {{");
@@ -228,7 +228,7 @@ pub fn codegen_cpp() {
 
     // base64_to_binary (char16_t* version)
     g!("#if SIMDUTF_FEATURE_BASE64");
-    g!("simdutfrs_result_t simdutfrs_base64_to_binary_utf16(const char16_t *input,");
+    g!("SIMDUTFRS_FLATTEN simdutfrs_result_t simdutfrs_base64_to_binary_utf16(const char16_t *input,");
     g!("                                               size_t length, char *output,");
     g!("                                               uint64_t options,");
     g!("                                               uint64_t last_chunk_options) {{");
@@ -243,7 +243,7 @@ pub fn codegen_cpp() {
 
     // base64_to_binary_safe (char* version)
     g!("#if SIMDUTF_FEATURE_BASE64");
-    g!("simdutfrs_result_t simdutfrs_base64_to_binary_safe(const char *input,");
+    g!("SIMDUTFRS_FLATTEN simdutfrs_result_t simdutfrs_base64_to_binary_safe(const char *input,");
     g!("                                               size_t length, char *output,");
     g!("                                               size_t *outlen,");
     g!("                                               uint64_t options,");
@@ -261,7 +261,7 @@ pub fn codegen_cpp() {
 
     // base64_to_binary_safe (char16_t* version)
     g!("#if SIMDUTF_FEATURE_BASE64");
-    g!("simdutfrs_result_t simdutfrs_base64_to_binary_safe_utf16(const char16_t *input,");
+    g!("SIMDUTFRS_FLATTEN simdutfrs_result_t simdutfrs_base64_to_binary_safe_utf16(const char16_t *input,");
     g!("                                               size_t length, char *output,");
     g!("                                               size_t *outlen,");
     g!("                                               uint64_t options,");
