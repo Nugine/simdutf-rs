@@ -1,3 +1,5 @@
+#![cfg(feature = "base64")]
+
 #[test]
 fn base64_decoding() {
     let input = "aGVsbG8gd29ybGQK";

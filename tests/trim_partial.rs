@@ -1,3 +1,5 @@
+#![cfg(all(feature = "utf8", feature = "utf16"))]
+
 #[test]
 fn trim_partial_utf8_complete() {
     // Complete UTF-8 string: "Hello" (all ASCII, no partial characters)

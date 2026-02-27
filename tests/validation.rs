@@ -1,3 +1,5 @@
+#![cfg(feature = "ascii")]
+
 #[test]
 fn ascii() {
     let cases: &[&[u8]] = &[

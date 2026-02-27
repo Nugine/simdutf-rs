@@ -100,6 +100,28 @@ pub fn for_each_transcoding_convert(mut f: impl FnMut(&str, &str)) {
     }
 }
 
+pub fn map_feature(encoding: &str) -> &str {
+    match encoding {
+        "ascii" => "ascii",
+        "utf8" => "utf8",
+        "utf16" | "utf16be" | "utf16le" => "utf16",
+        "utf32" => "utf32",
+        "latin1" => "latin1",
+        _ => unimplemented!(),
+    }
+}
+
+pub fn map_cpp_feature_define(encoding: &str) -> &str {
+    match encoding {
+        "ascii" => "SIMDUTF_FEATURE_ASCII",
+        "utf8" => "SIMDUTF_FEATURE_UTF8",
+        "utf16" | "utf16be" | "utf16le" => "SIMDUTF_FEATURE_UTF16",
+        "utf32" => "SIMDUTF_FEATURE_UTF32",
+        "latin1" => "SIMDUTF_FEATURE_LATIN1",
+        _ => unimplemented!(),
+    }
+}
+
 pub fn is_fixed_length_for_latin1(from: &str, to: &str) -> bool {
     if from == "latin1" && to != "utf8" {
         return true;

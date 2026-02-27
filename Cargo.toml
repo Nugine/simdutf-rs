@@ -13,6 +13,16 @@ rust-version = "1.78.0"
 [package.metadata.docs.rs]
 rustdoc-args = ["--cfg", "docsrs"]
 
+[features]
+default = ["detect_encoding", "ascii", "latin1", "utf8", "utf16", "utf32", "base64"]
+detect_encoding = []
+ascii = []
+latin1 = []
+utf8 = []
+utf16 = []
+utf32 = []
+base64 = []
+
 [build-dependencies]
 cc = "1.2.55"
 

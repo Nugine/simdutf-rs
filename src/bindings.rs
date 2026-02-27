@@ -4,113 +4,211 @@ use crate::extra::Result;
 
 extern "C" {
 
+    #[cfg(feature = "ascii")]
     pub fn simdutfrs_validate_ascii(buf: *const u8, len: usize) -> bool;
+    #[cfg(feature = "utf8")]
     pub fn simdutfrs_validate_utf8(buf: *const u8, len: usize) -> bool;
+    #[cfg(feature = "utf16")]
     pub fn simdutfrs_validate_utf16(buf: *const u16, len: usize) -> bool;
+    #[cfg(feature = "utf16")]
     pub fn simdutfrs_validate_utf16be(buf: *const u16, len: usize) -> bool;
+    #[cfg(feature = "utf16")]
     pub fn simdutfrs_validate_utf16le(buf: *const u16, len: usize) -> bool;
+    #[cfg(feature = "utf32")]
     pub fn simdutfrs_validate_utf32(buf: *const u32, len: usize) -> bool;
 
+    #[cfg(feature = "ascii")]
     pub fn simdutfrs_validate_ascii_with_errors(buf: *const u8, len: usize) -> Result;
+    #[cfg(feature = "utf8")]
     pub fn simdutfrs_validate_utf8_with_errors(buf: *const u8, len: usize) -> Result;
+    #[cfg(feature = "utf16")]
     pub fn simdutfrs_validate_utf16_with_errors(buf: *const u16, len: usize) -> Result;
+    #[cfg(feature = "utf16")]
     pub fn simdutfrs_validate_utf16be_with_errors(buf: *const u16, len: usize) -> Result;
+    #[cfg(feature = "utf16")]
     pub fn simdutfrs_validate_utf16le_with_errors(buf: *const u16, len: usize) -> Result;
+    #[cfg(feature = "utf32")]
     pub fn simdutfrs_validate_utf32_with_errors(buf: *const u32, len: usize) -> Result;
 
+    #[cfg(feature = "utf8")]
     pub fn simdutfrs_count_utf8(buf: *const u8, len: usize) -> usize;
+    #[cfg(feature = "utf16")]
     pub fn simdutfrs_count_utf16(buf: *const u16, len: usize) -> usize;
+    #[cfg(feature = "utf16")]
     pub fn simdutfrs_count_utf16be(buf: *const u16, len: usize) -> usize;
+    #[cfg(feature = "utf16")]
     pub fn simdutfrs_count_utf16le(buf: *const u16, len: usize) -> usize;
 
+    #[cfg(all(feature = "utf16", feature = "utf8"))]
     pub fn simdutfrs_utf8_length_from_utf16(buf: *const u16, len: usize) -> usize;
+    #[cfg(all(feature = "utf16", feature = "utf8"))]
     pub fn simdutfrs_utf8_length_from_utf16be(buf: *const u16, len: usize) -> usize;
+    #[cfg(all(feature = "utf16", feature = "utf8"))]
     pub fn simdutfrs_utf8_length_from_utf16le(buf: *const u16, len: usize) -> usize;
+    #[cfg(all(feature = "utf32", feature = "utf8"))]
     pub fn simdutfrs_utf8_length_from_utf32(buf: *const u32, len: usize) -> usize;
+    #[cfg(all(feature = "latin1", feature = "utf8"))]
     pub fn simdutfrs_utf8_length_from_latin1(buf: *const u8, len: usize) -> usize;
+    #[cfg(all(feature = "utf8", feature = "utf16"))]
     pub fn simdutfrs_utf16_length_from_utf8(buf: *const u8, len: usize) -> usize;
+    #[cfg(all(feature = "utf32", feature = "utf16"))]
     pub fn simdutfrs_utf16_length_from_utf32(buf: *const u32, len: usize) -> usize;
+    #[cfg(all(feature = "latin1", feature = "utf16"))]
     pub fn simdutfrs_utf16_length_from_latin1(len: usize) -> usize;
+    #[cfg(all(feature = "utf8", feature = "utf32"))]
     pub fn simdutfrs_utf32_length_from_utf8(buf: *const u8, len: usize) -> usize;
+    #[cfg(all(feature = "utf16", feature = "utf32"))]
     pub fn simdutfrs_utf32_length_from_utf16(buf: *const u16, len: usize) -> usize;
+    #[cfg(all(feature = "utf16", feature = "utf32"))]
     pub fn simdutfrs_utf32_length_from_utf16be(buf: *const u16, len: usize) -> usize;
+    #[cfg(all(feature = "utf16", feature = "utf32"))]
     pub fn simdutfrs_utf32_length_from_utf16le(buf: *const u16, len: usize) -> usize;
+    #[cfg(all(feature = "utf8", feature = "latin1"))]
     pub fn simdutfrs_latin1_length_from_utf8(buf: *const u8, len: usize) -> usize;
+    #[cfg(all(feature = "utf16", feature = "latin1"))]
     pub fn simdutfrs_latin1_length_from_utf16(len: usize) -> usize;
+    #[cfg(all(feature = "utf32", feature = "latin1"))]
     pub fn simdutfrs_latin1_length_from_utf32(len: usize) -> usize;
 
+    #[cfg(all(feature = "utf8", feature = "utf16"))]
     pub fn simdutfrs_convert_utf8_to_utf16(src: *const u8, len: usize, dst: *mut u16) -> usize;
+    #[cfg(all(feature = "utf8", feature = "utf16"))]
     pub fn simdutfrs_convert_utf8_to_utf16be(src: *const u8, len: usize, dst: *mut u16) -> usize;
+    #[cfg(all(feature = "utf8", feature = "utf16"))]
     pub fn simdutfrs_convert_utf8_to_utf16le(src: *const u8, len: usize, dst: *mut u16) -> usize;
+    #[cfg(all(feature = "utf8", feature = "utf32"))]
     pub fn simdutfrs_convert_utf8_to_utf32(src: *const u8, len: usize, dst: *mut u32) -> usize;
+    #[cfg(all(feature = "utf8", feature = "latin1"))]
     pub fn simdutfrs_convert_utf8_to_latin1(src: *const u8, len: usize, dst: *mut u8) -> usize;
+    #[cfg(all(feature = "utf16", feature = "utf8"))]
     pub fn simdutfrs_convert_utf16_to_utf8(src: *const u16, len: usize, dst: *mut u8) -> usize;
+    #[cfg(all(feature = "utf16", feature = "utf32"))]
     pub fn simdutfrs_convert_utf16_to_utf32(src: *const u16, len: usize, dst: *mut u32) -> usize;
+    #[cfg(all(feature = "utf16", feature = "latin1"))]
     pub fn simdutfrs_convert_utf16_to_latin1(src: *const u16, len: usize, dst: *mut u8) -> usize;
+    #[cfg(all(feature = "utf16", feature = "utf8"))]
     pub fn simdutfrs_convert_utf16be_to_utf8(src: *const u16, len: usize, dst: *mut u8) -> usize;
+    #[cfg(all(feature = "utf16", feature = "utf32"))]
     pub fn simdutfrs_convert_utf16be_to_utf32(src: *const u16, len: usize, dst: *mut u32) -> usize;
+    #[cfg(all(feature = "utf16", feature = "latin1"))]
     pub fn simdutfrs_convert_utf16be_to_latin1(src: *const u16, len: usize, dst: *mut u8) -> usize;
+    #[cfg(all(feature = "utf16", feature = "utf8"))]
     pub fn simdutfrs_convert_utf16le_to_utf8(src: *const u16, len: usize, dst: *mut u8) -> usize;
+    #[cfg(all(feature = "utf16", feature = "utf32"))]
     pub fn simdutfrs_convert_utf16le_to_utf32(src: *const u16, len: usize, dst: *mut u32) -> usize;
+    #[cfg(all(feature = "utf16", feature = "latin1"))]
     pub fn simdutfrs_convert_utf16le_to_latin1(src: *const u16, len: usize, dst: *mut u8) -> usize;
+    #[cfg(all(feature = "utf32", feature = "utf8"))]
     pub fn simdutfrs_convert_utf32_to_utf8(src: *const u32, len: usize, dst: *mut u8) -> usize;
+    #[cfg(all(feature = "utf32", feature = "utf16"))]
     pub fn simdutfrs_convert_utf32_to_utf16(src: *const u32, len: usize, dst: *mut u16) -> usize;
+    #[cfg(all(feature = "utf32", feature = "utf16"))]
     pub fn simdutfrs_convert_utf32_to_utf16be(src: *const u32, len: usize, dst: *mut u16) -> usize;
+    #[cfg(all(feature = "utf32", feature = "utf16"))]
     pub fn simdutfrs_convert_utf32_to_utf16le(src: *const u32, len: usize, dst: *mut u16) -> usize;
+    #[cfg(all(feature = "utf32", feature = "latin1"))]
     pub fn simdutfrs_convert_utf32_to_latin1(src: *const u32, len: usize, dst: *mut u8) -> usize;
+    #[cfg(all(feature = "latin1", feature = "utf8"))]
     pub fn simdutfrs_convert_latin1_to_utf8(src: *const u8, len: usize, dst: *mut u8) -> usize;
+    #[cfg(all(feature = "latin1", feature = "utf16"))]
     pub fn simdutfrs_convert_latin1_to_utf16(src: *const u8, len: usize, dst: *mut u16) -> usize;
+    #[cfg(all(feature = "latin1", feature = "utf16"))]
     pub fn simdutfrs_convert_latin1_to_utf16be(src: *const u8, len: usize, dst: *mut u16) -> usize;
+    #[cfg(all(feature = "latin1", feature = "utf16"))]
     pub fn simdutfrs_convert_latin1_to_utf16le(src: *const u8, len: usize, dst: *mut u16) -> usize;
+    #[cfg(all(feature = "latin1", feature = "utf32"))]
     pub fn simdutfrs_convert_latin1_to_utf32(src: *const u8, len: usize, dst: *mut u32) -> usize;
 
+    #[cfg(all(feature = "utf8", feature = "utf16"))]
     pub fn simdutfrs_convert_utf8_to_utf16_with_errors(src: *const u8, len: usize, dst: *mut u16) -> Result;
+    #[cfg(all(feature = "utf8", feature = "utf16"))]
     pub fn simdutfrs_convert_utf8_to_utf16be_with_errors(src: *const u8, len: usize, dst: *mut u16) -> Result;
+    #[cfg(all(feature = "utf8", feature = "utf16"))]
     pub fn simdutfrs_convert_utf8_to_utf16le_with_errors(src: *const u8, len: usize, dst: *mut u16) -> Result;
+    #[cfg(all(feature = "utf8", feature = "utf32"))]
     pub fn simdutfrs_convert_utf8_to_utf32_with_errors(src: *const u8, len: usize, dst: *mut u32) -> Result;
+    #[cfg(all(feature = "utf8", feature = "latin1"))]
     pub fn simdutfrs_convert_utf8_to_latin1_with_errors(src: *const u8, len: usize, dst: *mut u8) -> Result;
+    #[cfg(all(feature = "utf16", feature = "utf8"))]
     pub fn simdutfrs_convert_utf16_to_utf8_with_errors(src: *const u16, len: usize, dst: *mut u8) -> Result;
+    #[cfg(all(feature = "utf16", feature = "utf32"))]
     pub fn simdutfrs_convert_utf16_to_utf32_with_errors(src: *const u16, len: usize, dst: *mut u32) -> Result;
+    #[cfg(all(feature = "utf16", feature = "latin1"))]
     pub fn simdutfrs_convert_utf16_to_latin1_with_errors(src: *const u16, len: usize, dst: *mut u8) -> Result;
+    #[cfg(all(feature = "utf16", feature = "utf8"))]
     pub fn simdutfrs_convert_utf16be_to_utf8_with_errors(src: *const u16, len: usize, dst: *mut u8) -> Result;
+    #[cfg(all(feature = "utf16", feature = "utf32"))]
     pub fn simdutfrs_convert_utf16be_to_utf32_with_errors(src: *const u16, len: usize, dst: *mut u32) -> Result;
+    #[cfg(all(feature = "utf16", feature = "latin1"))]
     pub fn simdutfrs_convert_utf16be_to_latin1_with_errors(src: *const u16, len: usize, dst: *mut u8) -> Result;
+    #[cfg(all(feature = "utf16", feature = "utf8"))]
     pub fn simdutfrs_convert_utf16le_to_utf8_with_errors(src: *const u16, len: usize, dst: *mut u8) -> Result;
+    #[cfg(all(feature = "utf16", feature = "utf32"))]
     pub fn simdutfrs_convert_utf16le_to_utf32_with_errors(src: *const u16, len: usize, dst: *mut u32) -> Result;
+    #[cfg(all(feature = "utf16", feature = "latin1"))]
     pub fn simdutfrs_convert_utf16le_to_latin1_with_errors(src: *const u16, len: usize, dst: *mut u8) -> Result;
+    #[cfg(all(feature = "utf32", feature = "utf8"))]
     pub fn simdutfrs_convert_utf32_to_utf8_with_errors(src: *const u32, len: usize, dst: *mut u8) -> Result;
+    #[cfg(all(feature = "utf32", feature = "utf16"))]
     pub fn simdutfrs_convert_utf32_to_utf16_with_errors(src: *const u32, len: usize, dst: *mut u16) -> Result;
+    #[cfg(all(feature = "utf32", feature = "utf16"))]
     pub fn simdutfrs_convert_utf32_to_utf16be_with_errors(src: *const u32, len: usize, dst: *mut u16) -> Result;
+    #[cfg(all(feature = "utf32", feature = "utf16"))]
     pub fn simdutfrs_convert_utf32_to_utf16le_with_errors(src: *const u32, len: usize, dst: *mut u16) -> Result;
 
+    #[cfg(all(feature = "utf8", feature = "utf16"))]
     pub fn simdutfrs_convert_valid_utf8_to_utf16(src: *const u8, len: usize, dst: *mut u16) -> usize;
+    #[cfg(all(feature = "utf8", feature = "utf16"))]
     pub fn simdutfrs_convert_valid_utf8_to_utf16be(src: *const u8, len: usize, dst: *mut u16) -> usize;
+    #[cfg(all(feature = "utf8", feature = "utf16"))]
     pub fn simdutfrs_convert_valid_utf8_to_utf16le(src: *const u8, len: usize, dst: *mut u16) -> usize;
+    #[cfg(all(feature = "utf8", feature = "utf32"))]
     pub fn simdutfrs_convert_valid_utf8_to_utf32(src: *const u8, len: usize, dst: *mut u32) -> usize;
+    #[cfg(all(feature = "utf8", feature = "latin1"))]
     pub fn simdutfrs_convert_valid_utf8_to_latin1(src: *const u8, len: usize, dst: *mut u8) -> usize;
+    #[cfg(all(feature = "utf16", feature = "utf8"))]
     pub fn simdutfrs_convert_valid_utf16_to_utf8(src: *const u16, len: usize, dst: *mut u8) -> usize;
+    #[cfg(all(feature = "utf16", feature = "utf32"))]
     pub fn simdutfrs_convert_valid_utf16_to_utf32(src: *const u16, len: usize, dst: *mut u32) -> usize;
+    #[cfg(all(feature = "utf16", feature = "latin1"))]
     pub fn simdutfrs_convert_valid_utf16_to_latin1(src: *const u16, len: usize, dst: *mut u8) -> usize;
+    #[cfg(all(feature = "utf16", feature = "utf8"))]
     pub fn simdutfrs_convert_valid_utf16be_to_utf8(src: *const u16, len: usize, dst: *mut u8) -> usize;
+    #[cfg(all(feature = "utf16", feature = "utf32"))]
     pub fn simdutfrs_convert_valid_utf16be_to_utf32(src: *const u16, len: usize, dst: *mut u32) -> usize;
+    #[cfg(all(feature = "utf16", feature = "latin1"))]
     pub fn simdutfrs_convert_valid_utf16be_to_latin1(src: *const u16, len: usize, dst: *mut u8) -> usize;
+    #[cfg(all(feature = "utf16", feature = "utf8"))]
     pub fn simdutfrs_convert_valid_utf16le_to_utf8(src: *const u16, len: usize, dst: *mut u8) -> usize;
+    #[cfg(all(feature = "utf16", feature = "utf32"))]
     pub fn simdutfrs_convert_valid_utf16le_to_utf32(src: *const u16, len: usize, dst: *mut u32) -> usize;
+    #[cfg(all(feature = "utf16", feature = "latin1"))]
     pub fn simdutfrs_convert_valid_utf16le_to_latin1(src: *const u16, len: usize, dst: *mut u8) -> usize;
+    #[cfg(all(feature = "utf32", feature = "utf8"))]
     pub fn simdutfrs_convert_valid_utf32_to_utf8(src: *const u32, len: usize, dst: *mut u8) -> usize;
+    #[cfg(all(feature = "utf32", feature = "utf16"))]
     pub fn simdutfrs_convert_valid_utf32_to_utf16(src: *const u32, len: usize, dst: *mut u16) -> usize;
+    #[cfg(all(feature = "utf32", feature = "utf16"))]
     pub fn simdutfrs_convert_valid_utf32_to_utf16be(src: *const u32, len: usize, dst: *mut u16) -> usize;
+    #[cfg(all(feature = "utf32", feature = "utf16"))]
     pub fn simdutfrs_convert_valid_utf32_to_utf16le(src: *const u32, len: usize, dst: *mut u16) -> usize;
 
+    #[cfg(feature = "utf8")]
     pub fn simdutfrs_trim_partial_utf8(buf: *const u8, len: usize) -> usize;
+    #[cfg(feature = "utf16")]
     pub fn simdutfrs_trim_partial_utf16(buf: *const u16, len: usize) -> usize;
+    #[cfg(feature = "utf16")]
     pub fn simdutfrs_trim_partial_utf16be(buf: *const u16, len: usize) -> usize;
+    #[cfg(feature = "utf16")]
     pub fn simdutfrs_trim_partial_utf16le(buf: *const u16, len: usize) -> usize;
 
+    #[cfg(feature = "base64")]
     pub fn simdutfrs_maximal_binary_length_from_base64(input: *const u8, len: usize) -> usize;
 
+    #[cfg(feature = "base64")]
     pub fn simdutfrs_maximal_binary_length_from_base64_utf16(input: *const u16, len: usize) -> usize;
 
+    #[cfg(feature = "base64")]
     pub fn simdutfrs_base64_to_binary(
         input: *const u8,
         len: usize,
@@ -119,12 +217,16 @@ extern "C" {
         last_chunk_options: u64,
     ) -> Result;
 
+    #[cfg(feature = "base64")]
     pub fn simdutfrs_base64_length_from_binary(len: usize, options: u64) -> usize;
 
+    #[cfg(feature = "base64")]
     pub fn simdutfrs_base64_length_from_binary_with_lines(len: usize, options: u64, line_length: usize) -> usize;
 
+    #[cfg(feature = "base64")]
     pub fn simdutfrs_binary_to_base64(input: *const u8, len: usize, output: *mut u8, options: u64) -> usize;
 
+    #[cfg(feature = "base64")]
     pub fn simdutfrs_binary_to_base64_with_lines(
         input: *const u8,
         len: usize,
@@ -133,6 +235,7 @@ extern "C" {
         options: u64,
     ) -> usize;
 
+    #[cfg(feature = "base64")]
     pub fn simdutfrs_base64_to_binary_utf16(
         input: *const u16,
         len: usize,
@@ -141,6 +244,7 @@ extern "C" {
         last_chunk_options: u64,
     ) -> Result;
 
+    #[cfg(feature = "base64")]
     pub fn simdutfrs_base64_to_binary_safe(
         input: *const u8,
         len: usize,
@@ -151,6 +255,7 @@ extern "C" {
         decode_up_to_bad_char: bool,
     ) -> Result;
 
+    #[cfg(feature = "base64")]
     pub fn simdutfrs_base64_to_binary_safe_utf16(
         input: *const u16,
         len: usize,

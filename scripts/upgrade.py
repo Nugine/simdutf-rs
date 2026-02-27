@@ -67,6 +67,16 @@ def postprocess(src: Path, dst: Path):
                 if re.match(r"^// /.+simdutf-rs.+simdutf/src.+\.cpp:.+$", line):
                     continue
 
+                # Make SIMDUTF_FEATURE_* defines conditional so that
+                # they can be overridden from compiler flags (build.rs).
+                m = re.match(r"^#define (SIMDUTF_FEATURE_\w+) 1$", line)
+                if m:
+                    name = m.group(1)
+                    dst_file.write(f"#ifndef {name}\n")
+                    dst_file.write(line + "\n")
+                    dst_file.write("#endif\n")
+                    continue
+
                 dst_file.write(line + "\n")
 
 
