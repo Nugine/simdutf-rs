@@ -208,6 +208,78 @@ pub fn count_utf16le(src: &[u16]) -> usize {
     unsafe { crate::bindings::simdutfrs_count_utf16le(buf, len) }
 }
 
+/// Given a valid UTF-8 string having a possibly truncated last character,
+/// this function checks the end of string. If the last character is truncated
+/// (or partial), then it returns a shorter length so that the short UTF-8
+/// string only contains complete characters. If there is no truncated character,
+/// the original length is returned.
+///
+/// This function assumes that the input string is valid UTF-8, but possibly truncated.
+///
+#[inline]
+#[must_use]
+pub fn trim_partial_utf8(src: &[u8]) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    unsafe { crate::bindings::simdutfrs_trim_partial_utf8(buf, len) }
+}
+
+/// Given a valid UTF-16 string having a possibly truncated last character,
+/// this function checks the end of string. If the last character is truncated
+/// (or partial), then it returns a shorter length so that the short UTF-16
+/// string only contains complete characters. If there is no truncated character,
+/// the original length is returned.
+///
+/// This function uses native endianness.
+///
+/// This function is not BOM-aware.
+///
+/// This function assumes that the input string is valid UTF-16, but possibly truncated.
+///
+#[inline]
+#[must_use]
+pub fn trim_partial_utf16(src: &[u16]) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    unsafe { crate::bindings::simdutfrs_trim_partial_utf16(buf, len) }
+}
+
+/// Given a valid UTF-16BE string having a possibly truncated last character,
+/// this function checks the end of string. If the last character is truncated
+/// (or partial), then it returns a shorter length so that the short UTF-16BE
+/// string only contains complete characters. If there is no truncated character,
+/// the original length is returned.
+///
+/// This function is not BOM-aware.
+///
+/// This function assumes that the input string is valid UTF-16BE, but possibly truncated.
+///
+#[inline]
+#[must_use]
+pub fn trim_partial_utf16be(src: &[u16]) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    unsafe { crate::bindings::simdutfrs_trim_partial_utf16be(buf, len) }
+}
+
+/// Given a valid UTF-16LE string having a possibly truncated last character,
+/// this function checks the end of string. If the last character is truncated
+/// (or partial), then it returns a shorter length so that the short UTF-16LE
+/// string only contains complete characters. If there is no truncated character,
+/// the original length is returned.
+///
+/// This function is not BOM-aware.
+///
+/// This function assumes that the input string is valid UTF-16LE, but possibly truncated.
+///
+#[inline]
+#[must_use]
+pub fn trim_partial_utf16le(src: &[u16]) -> usize {
+    let len = src.len();
+    let buf = src.as_ptr();
+    unsafe { crate::bindings::simdutfrs_trim_partial_utf16le(buf, len) }
+}
+
 /// Count the number of code units that the UTF-16 string would require in UTF-8 format.
 ///
 /// This function uses native endianness.
