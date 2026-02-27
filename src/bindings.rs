@@ -193,6 +193,15 @@ extern "C" {
     #[cfg(all(feature = "utf16", feature = "utf32"))]
     pub fn simdutfrs_convert_valid_utf32_to_utf16le(src: *const u32, len: usize, dst: *mut u16) -> usize;
 
+    #[cfg(feature = "utf8")]
+    pub fn simdutfrs_trim_partial_utf8(buf: *const u8, len: usize) -> usize;
+    #[cfg(feature = "utf16")]
+    pub fn simdutfrs_trim_partial_utf16(buf: *const u16, len: usize) -> usize;
+    #[cfg(feature = "utf16")]
+    pub fn simdutfrs_trim_partial_utf16be(buf: *const u16, len: usize) -> usize;
+    #[cfg(feature = "utf16")]
+    pub fn simdutfrs_trim_partial_utf16le(buf: *const u16, len: usize) -> usize;
+
     #[cfg(feature = "base64")]
     pub fn simdutfrs_maximal_binary_length_from_base64(input: *const u8, len: usize) -> usize;
 

@@ -13,6 +13,7 @@ pub fn codegen() {
 
     codegen_validate();
     codegen_count();
+    codegen_trim_partial();
     codegen_transcoding_length();
     codegen_transcoding_convert();
     codegen_base64();
@@ -112,6 +113,34 @@ fn codegen_count() {
         g!("let len = src.len();");
         g!("let buf = src.as_ptr();");
         g!("unsafe{{ crate::bindings::simdutfrs_count_{encoding}(buf, len) }}");
+        g!("}}");
+        g!();
+    });
+}
+
+fn codegen_trim_partial() {
+    for_each_count(|encoding| {
+        let ch = map_rs_char_type(encoding);
+        let doc_name = map_doc_name(encoding);
+
+        g!("/// Given a valid {doc_name} string having a possibly truncated last character,");
+        g!("/// this function checks the end of string. If the last character is truncated");
+        g!("/// (or partial), then it returns a shorter length so that the short {doc_name}");
+        g!("/// string only contains complete characters. If there is no truncated character,");
+        g!("/// the original length is returned.");
+        g!("///");
+
+        decl_ne_and_bom(encoding);
+
+        g!("/// This function assumes that the input string is valid {doc_name}, but possibly truncated.");
+        g!("///");
+
+        g!("#[inline]");
+        g!("#[must_use]");
+        g!("pub fn trim_partial_{encoding}(src: &[{ch}]) -> usize {{");
+        g!("let len = src.len();");
+        g!("let buf = src.as_ptr();");
+        g!("unsafe{{ crate::bindings::simdutfrs_trim_partial_{encoding}(buf, len) }}");
         g!("}}");
         g!();
     });

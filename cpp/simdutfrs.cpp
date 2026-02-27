@@ -677,6 +677,22 @@ size_t simdutfrs_convert_valid_utf32_to_utf16le(const char32_t *src, size_t len,
 #endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_UTF32
 #if SIMDUTF_FEATURE_BASE64
 
+size_t simdutfrs_trim_partial_utf8(const char *buf, size_t len) {
+    return simdutf::trim_partial_utf8(buf, len);
+}
+
+size_t simdutfrs_trim_partial_utf16(const char16_t *buf, size_t len) {
+    return simdutf::trim_partial_utf16(buf, len);
+}
+
+size_t simdutfrs_trim_partial_utf16be(const char16_t *buf, size_t len) {
+    return simdutf::trim_partial_utf16be(buf, len);
+}
+
+size_t simdutfrs_trim_partial_utf16le(const char16_t *buf, size_t len) {
+    return simdutf::trim_partial_utf16le(buf, len);
+}
+
 size_t simdutfrs_maximal_binary_length_from_base64(const char *input,
                                                    size_t length) {
     return simdutf::maximal_binary_length_from_base64(input, length);

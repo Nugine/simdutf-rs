@@ -92,6 +92,14 @@ pub fn codegen_cpp() {
         g!();
     });
 
+    for_each_count(|encoding| {
+        let ch = map_cpp_char_type(encoding);
+        g!("size_t simdutfrs_trim_partial_{encoding}(const {ch}* buf, size_t len) {{");
+        g!("    return simdutf::trim_partial_{encoding}(buf, len);");
+        g!("}}");
+        g!();
+    });
+
     // Base64 functions
 
     // maximal_binary_length_from_base64 (char* version)
@@ -274,6 +282,12 @@ pub fn codegen_rust() {
         let to_ch = map_rs_char_type(to);
         g!("pub fn simdutfrs_convert_valid_{from}_to_{to}\
             (src: *const {from_ch}, len: usize, dst: *mut {to_ch}) -> usize;");
+    });
+    g!();
+
+    for_each_count(|encoding| {
+        let ch = map_rs_char_type(encoding);
+        g!("pub fn simdutfrs_trim_partial_{encoding}(buf: *const {ch}, len: usize) -> usize;");
     });
     g!();
 
