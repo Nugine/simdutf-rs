@@ -24,10 +24,10 @@ utf32 = []
 base64 = []
 
 [build-dependencies]
-cc = "1.2.55"
+cc = "1.2.56"
 
 [dependencies]
-bitflags = "2.10.0"
+bitflags = "2.11.0"
 
 [workspace]
 members = ["codegen"]
