@@ -24,7 +24,7 @@ utf32 = []
 base64 = []
 
 [build-dependencies]
-cc = "1.2.56"
+cc = "1.2.58"
 
 [dependencies]
 bitflags = "2.11.0"
