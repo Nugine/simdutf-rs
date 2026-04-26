@@ -1,6 +1,10 @@
 fn cpp17(cc: &mut cc::Build) {
     cc.cpp(true);
-    if cfg!(not(all(windows, target_env = "msvc"))) {
+    if cfg!(all(windows, target_env = "msvc")) {
+        // MSVC uses /std:c++17 or /std:c++latest
+        cc.flag("/std:c++17");
+    } else {
+        // GCC/Clang use -std=c++17
         cc.flag("-std=c++17");
     }
 }
