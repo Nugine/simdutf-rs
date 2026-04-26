@@ -1,7 +1,11 @@
-fn cpp11(cc: &mut cc::Build) {
+fn cpp17(cc: &mut cc::Build) {
     cc.cpp(true);
-    if cfg!(not(all(windows, target_env = "msvc"))) {
-        cc.flag("-std=c++11");
+    if cfg!(all(windows, target_env = "msvc")) {
+        // MSVC uses /std:c++17 or /std:c++latest
+        cc.flag("/std:c++17");
+    } else {
+        // GCC/Clang use -std=c++17
+        cc.flag("-std=c++17");
     }
 }
 
@@ -15,7 +19,7 @@ fn main() {
     println!("cargo:rerun-if-changed=cpp/");
 
     let mut cc = cc::Build::new();
-    cpp11(&mut cc);
+    cpp17(&mut cc);
 
     feature_define(&mut cc, "DETECT_ENCODING", "SIMDUTF_FEATURE_DETECT_ENCODING");
     feature_define(&mut cc, "ASCII", "SIMDUTF_FEATURE_ASCII");

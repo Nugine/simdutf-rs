@@ -4,7 +4,7 @@
 /* begin file src/encoding_types.cpp */
 
 namespace simdutf {
-std::string to_string(encoding_type bom) {
+std::string_view to_string(encoding_type bom) {
   switch (bom) {
   case UTF16_LE:
     return "UTF16 little-endian";
@@ -2079,7 +2079,6 @@ public:
 /* begin file src/simdutf/arm64/begin.h */
 // redefining SIMDUTF_IMPLEMENTATION to "arm64"
 // #define SIMDUTF_IMPLEMENTATION arm64
-#define SIMDUTF_SIMD_HAS_BYTEMASK 1
 /* end file src/simdutf/arm64/begin.h */
 
   // Declarations
@@ -2441,7 +2440,7 @@ template <> struct simd8<int8_t> {
   //    ...
   template <endianness big_endian>
   simdutf_really_inline void store_ascii_as_utf16(char16_t *p) const {
-    simdutf_constexpr auto matches = match_system(big_endian);
+    constexpr auto matches = match_system(big_endian);
     const int8x16x2_t pair = matches
                                  ? int8x16x2_t{{this->value, vmovq_n_s8(0)}}
                                  : int8x16x2_t{{vmovq_n_s8(0), this->value}};
@@ -3242,7 +3241,6 @@ simdutf_really_inline simd64<uint64_t> sum_8bytes(const simd8<uint8_t> v) {
 /* end file src/simdutf/arm64/simd.h */
 
 /* begin file src/simdutf/arm64/end.h */
-#undef SIMDUTF_SIMD_HAS_BYTEMASK
 /* end file src/simdutf/arm64/end.h */
 
 #endif // SIMDUTF_IMPLEMENTATION_ARM64
@@ -6918,12 +6916,12 @@ public:
                                         size_t length) const noexcept override;
 #endif // SIMDUTF_FEATURE_UTF8
 
-#if SIMDUTF_FEATURE_UTF16
+#if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
   simdutf_warn_unused size_t utf8_length_from_utf16le(
       const char16_t *input, size_t length) const noexcept override;
   simdutf_warn_unused size_t utf8_length_from_utf16be(
       const char16_t *input, size_t length) const noexcept override;
-#endif // SIMDUTF_FEATURE_UTF16
+#endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_UTF32
   simdutf_warn_unused size_t utf32_length_from_utf16le(
@@ -6936,10 +6934,10 @@ public:
   simdutf_warn_unused size_t utf16_length_from_utf8(
       const char *input, size_t length) const noexcept override;
   simdutf_warn_unused result utf8_length_from_utf16le_with_replacement(
-      const char16_t *input, size_t length) const noexcept;
+      const char16_t *input, size_t length) const noexcept override;
   ;
   simdutf_warn_unused result utf8_length_from_utf16be_with_replacement(
-      const char16_t *input, size_t length) const noexcept;
+      const char16_t *input, size_t length) const noexcept override;
   ;
 
   simdutf_warn_unused size_t convert_utf16le_to_utf8_with_replacement(
@@ -6953,28 +6951,28 @@ public:
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
-  simdutf_warn_unused size_t
-  utf8_length_from_utf32(const char32_t *input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf8_length_from_utf32(
+      const char32_t *input, size_t length) const noexcept override;
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
 
 #if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_UTF32
-  simdutf_warn_unused size_t
-  utf16_length_from_utf32(const char32_t *input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf16_length_from_utf32(
+      const char32_t *input, size_t length) const noexcept override;
 #endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_UTF32
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
-  simdutf_warn_unused size_t
-  utf32_length_from_utf8(const char *input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf32_length_from_utf8(
+      const char *input, size_t length) const noexcept override;
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
-  simdutf_warn_unused size_t
-  latin1_length_from_utf8(const char *input, size_t length) const noexcept;
+  simdutf_warn_unused size_t latin1_length_from_utf8(
+      const char *input, size_t length) const noexcept override;
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
-  simdutf_warn_unused size_t
-  utf8_length_from_latin1(const char *input, size_t length) const noexcept;
+  simdutf_warn_unused size_t utf8_length_from_latin1(
+      const char *input, size_t length) const noexcept override;
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
 
 #if SIMDUTF_FEATURE_BASE64
@@ -6983,32 +6981,33 @@ public:
   simdutf_warn_unused result base64_to_binary(
       const char *input, size_t length, char *output, base64_options options,
       last_chunk_handling_options last_chunk_options =
-          last_chunk_handling_options::loose) const noexcept;
+          last_chunk_handling_options::loose) const noexcept override;
   simdutf_warn_unused full_result base64_to_binary_details(
       const char *input, size_t length, char *output, base64_options options,
       last_chunk_handling_options last_chunk_options =
-          last_chunk_handling_options::loose) const noexcept;
-  simdutf_warn_unused result
-  base64_to_binary(const char16_t *input, size_t length, char *output,
-                   base64_options options,
-                   last_chunk_handling_options last_chunk_options =
-                       last_chunk_handling_options::loose) const noexcept;
+          last_chunk_handling_options::loose) const noexcept override;
+  simdutf_warn_unused result base64_to_binary(
+      const char16_t *input, size_t length, char *output,
+      base64_options options,
+      last_chunk_handling_options last_chunk_options =
+          last_chunk_handling_options::loose) const noexcept override;
   simdutf_warn_unused full_result base64_to_binary_details(
       const char16_t *input, size_t length, char *output,
       base64_options options,
       last_chunk_handling_options last_chunk_options =
-          last_chunk_handling_options::loose) const noexcept;
+          last_chunk_handling_options::loose) const noexcept override;
   size_t binary_to_base64(const char *input, size_t length, char *output,
-                          base64_options options) const noexcept;
+                          base64_options options) const noexcept override;
 
-  size_t binary_to_base64_with_lines(const char *input, size_t length,
-                                     char *output, size_t line_length,
-                                     base64_options options) const noexcept;
+  size_t
+  binary_to_base64_with_lines(const char *input, size_t length, char *output,
+                              size_t line_length,
+                              base64_options options) const noexcept override;
   const char *find(const char *start, const char *end,
-                   char character) const noexcept;
+                   char character) const noexcept override;
 
   const char16_t *find(const char16_t *start, const char16_t *end,
-                       char16_t character) const noexcept;
+                       char16_t character) const noexcept override;
 #endif // SIMDUTF_FEATURE_BASE64
 
 #ifdef SIMDUTF_INTERNAL_TESTS
@@ -11393,7 +11392,7 @@ template <> struct simd8<int8_t> {
   template <endianness big_endian>
   simdutf_really_inline void store_ascii_as_utf16(char16_t *p) const {
     __m128i zero = __lsx_vldi(0);
-    if simdutf_constexpr (match_system(big_endian)) {
+    if constexpr (match_system(big_endian)) {
       __lsx_vst(__lsx_vilvl_b(zero, (__m128i)this->value),
                 reinterpret_cast<uint16_t *>(p), 0);
       __lsx_vst(__lsx_vilvh_b(zero, (__m128i)this->value),
@@ -12432,11 +12431,56 @@ SIMDUTF_POP_DISABLE_WARNINGS
 #endif // SIMDUTF_FEATURE_UTF32 && SIMDUTF_FEATURE_LATIN1
 
 /* begin file src/implementation.cpp */
-#include <initializer_list>
+#include <algorithm>
 #include <climits>
 #include <type_traits>
+#include <utility>
 #if SIMDUTF_ATOMIC_REF
   #include <array>
+#endif
+
+// The macro SIMDUTF_USE_STATIC_INITIALIZATION, when set to 1, means that we
+// will use translation-unit-scope variables to hold our implementations.
+//
+// The downside of a translation-unit-scope variable is that the initialization
+// order is not well defined, thus if someone uses simdutf before main() starts,
+// they might get a crash. Thus setting SIMDUTF_USE_STATIC_INITIALIZATION to 1
+// is not recommended if you are using simdutf in a library that might be used
+// by other code before main() starts. However, the upside is that there is no
+// synchronization overhead on every call to get_active_implementation(). When
+// compiling without the c++ standard library, we use static initialization,
+// because C++ relies on the standard library for thread-safe initialization of
+// function-scope static variables.
+//
+// By default, we avoid translation-unit-scope static initialization, so we set
+// SIMDUTF_USE_STATIC_INITIALIZATION to 0. It comes with a small performance
+// cost on the first call to get_active_implementation(), and a smaller cost on
+// subsequent calls but it is then safe to use the simdutf library in static
+// initialization.
+//
+// Further reading: https://en.cppreference.com/cpp/language/siof
+#ifndef SIMDUTF_USE_STATIC_INITIALIZATION
+  #if SIMDUTF_NO_LIBCXX
+    #define SIMDUTF_USE_STATIC_INITIALIZATION 1
+  #else // SIMDUTF_NO_LIBCXX
+    #define SIMDUTF_USE_STATIC_INITIALIZATION 0
+  #endif // SIMDUTF_NO_LIBCXX
+#endif   // SIMDUTF_USE_STATIC_INITIALIZATION
+
+// When building without libc++abi (SIMDUTF_NO_LIBCXX=1) on GCC/Clang, provide
+// a weak stub for __cxa_pure_virtual so the abstract implementation vtable
+// does not drag in libc++abi just for this unreachable hook. Kept weak so a
+// real libc++abi definition wins if one is linked in anyway.
+#if SIMDUTF_NO_LIBCXX
+extern "C" __attribute__((weak, noreturn)) void __cxa_pure_virtual() {
+  __builtin_trap();
+}
+namespace std {
+__attribute__((weak, noreturn)) void
+__glibcxx_assert_fail(const char *, int, const char *, const char *) noexcept {
+  __builtin_trap();
+}
+} // namespace std
 #endif
 
 static_assert(sizeof(uint8_t) == sizeof(char),
@@ -12447,22 +12491,6 @@ static_assert(sizeof(uint32_t) == sizeof(char32_t),
               "simdutf requires that char32_t be 32 bits");
 // next line is redundant, but it is kept to catch defective systems.
 static_assert(CHAR_BIT == 8, "simdutf requires 8-bit bytes");
-
-// Useful for debugging purposes
-namespace simdutf {
-namespace {
-
-template <typename T> std::string toBinaryString(T b) {
-  std::string binary = "";
-  T mask = T(1) << (sizeof(T) * CHAR_BIT - 1);
-  while (mask > 0) {
-    binary += ((b & mask) == 0) ? '0' : '1';
-    mask >>= 1;
-  }
-  return binary;
-}
-} // namespace
-} // namespace simdutf
 
 namespace simdutf {
 bool implementation::supported_by_runtime_system() const {
@@ -12554,60 +12582,102 @@ namespace internal {
        SIMDUTF_IMPLEMENTATION_LASX + SIMDUTF_IMPLEMENTATION_FALLBACK ==        \
    1)
 
-// Static array of known implementations. We are hoping these get baked into the
-// executable without requiring a static initializer.
-
 #if SIMDUTF_IMPLEMENTATION_ICELAKE
+  #if SIMDUTF_USE_STATIC_INITIALIZATION
+static const icelake::implementation icelake_singleton{};
+  #endif
 static const icelake::implementation *get_icelake_singleton() {
+  #if !SIMDUTF_USE_STATIC_INITIALIZATION
   static const icelake::implementation icelake_singleton{};
+  #endif
   return &icelake_singleton;
 }
 #endif
 #if SIMDUTF_IMPLEMENTATION_HASWELL
+  #if SIMDUTF_USE_STATIC_INITIALIZATION
+static const haswell::implementation haswell_singleton{};
+  #endif
 static const haswell::implementation *get_haswell_singleton() {
+  #if !SIMDUTF_USE_STATIC_INITIALIZATION
   static const haswell::implementation haswell_singleton{};
+  #endif
   return &haswell_singleton;
 }
 #endif
 #if SIMDUTF_IMPLEMENTATION_WESTMERE
+  #if SIMDUTF_USE_STATIC_INITIALIZATION
+static const westmere::implementation westmere_singleton{};
+  #endif
 static const westmere::implementation *get_westmere_singleton() {
+  #if !SIMDUTF_USE_STATIC_INITIALIZATION
   static const westmere::implementation westmere_singleton{};
+  #endif
   return &westmere_singleton;
 }
 #endif
 #if SIMDUTF_IMPLEMENTATION_ARM64
+  #if SIMDUTF_USE_STATIC_INITIALIZATION
+static const arm64::implementation arm64_singleton{};
+  #endif
 static const arm64::implementation *get_arm64_singleton() {
+  #if !SIMDUTF_USE_STATIC_INITIALIZATION
   static const arm64::implementation arm64_singleton{};
+  #endif
   return &arm64_singleton;
 }
 #endif
 #if SIMDUTF_IMPLEMENTATION_PPC64
+  #if SIMDUTF_USE_STATIC_INITIALIZATION
+static const ppc64::implementation ppc64_singleton{};
+  #endif
 static const ppc64::implementation *get_ppc64_singleton() {
+  #if !SIMDUTF_USE_STATIC_INITIALIZATION
   static const ppc64::implementation ppc64_singleton{};
+  #endif
   return &ppc64_singleton;
 }
 #endif
 #if SIMDUTF_IMPLEMENTATION_RVV
+  #if SIMDUTF_USE_STATIC_INITIALIZATION
+static const rvv::implementation rvv_singleton{};
+  #endif
 static const rvv::implementation *get_rvv_singleton() {
+  #if !SIMDUTF_USE_STATIC_INITIALIZATION
   static const rvv::implementation rvv_singleton{};
+  #endif
   return &rvv_singleton;
 }
 #endif
 #if SIMDUTF_IMPLEMENTATION_LASX
+  #if SIMDUTF_USE_STATIC_INITIALIZATION
+static const lasx::implementation lasx_singleton{};
+  #endif
 static const lasx::implementation *get_lasx_singleton() {
+  #if !SIMDUTF_USE_STATIC_INITIALIZATION
   static const lasx::implementation lasx_singleton{};
+  #endif
   return &lasx_singleton;
 }
 #endif
 #if SIMDUTF_IMPLEMENTATION_LSX
+  #if SIMDUTF_USE_STATIC_INITIALIZATION
+static const lsx::implementation lsx_singleton{};
+  #endif
 static const lsx::implementation *get_lsx_singleton() {
+  #if !SIMDUTF_USE_STATIC_INITIALIZATION
   static const lsx::implementation lsx_singleton{};
+  #endif
   return &lsx_singleton;
 }
 #endif
 #if SIMDUTF_IMPLEMENTATION_FALLBACK
+  #if SIMDUTF_USE_STATIC_INITIALIZATION
+static const fallback::implementation fallback_singleton{};
+  #endif
 static const fallback::implementation *get_fallback_singleton() {
+  #if !SIMDUTF_USE_STATIC_INITIALIZATION
   static const fallback::implementation fallback_singleton{};
+  #endif
   return &fallback_singleton;
 }
 #endif
@@ -12648,8 +12718,8 @@ simdutf_really_inline static const implementation *get_single_implementation() {
 class detect_best_supported_implementation_on_first_use final
     : public implementation {
 public:
-  std::string name() const noexcept final { return set_best()->name(); }
-  std::string description() const noexcept final {
+  std::string_view name() const noexcept final { return set_best()->name(); }
+  std::string_view description() const noexcept final {
     return set_best()->description();
   }
   uint32_t required_instruction_sets() const noexcept final {
@@ -13259,38 +13329,72 @@ static_assert(std::is_trivially_destructible<
               "detect_best_supported_implementation_on_first_use should be "
               "trivially destructible");
 
+#if SIMDUTF_USE_STATIC_INITIALIZATION
+static const std::initializer_list<const implementation *>
+    available_implementation_pointers{
+  #if SIMDUTF_IMPLEMENTATION_ICELAKE
+        get_icelake_singleton(),
+  #endif
+  #if SIMDUTF_IMPLEMENTATION_HASWELL
+        get_haswell_singleton(),
+  #endif
+  #if SIMDUTF_IMPLEMENTATION_WESTMERE
+        get_westmere_singleton(),
+  #endif
+  #if SIMDUTF_IMPLEMENTATION_ARM64
+        get_arm64_singleton(),
+  #endif
+  #if SIMDUTF_IMPLEMENTATION_PPC64
+        get_ppc64_singleton(),
+  #endif
+  #if SIMDUTF_IMPLEMENTATION_RVV
+        get_rvv_singleton(),
+  #endif
+  #if SIMDUTF_IMPLEMENTATION_LASX
+        get_lasx_singleton(),
+  #endif
+  #if SIMDUTF_IMPLEMENTATION_LSX
+        get_lsx_singleton(),
+  #endif
+  #if SIMDUTF_IMPLEMENTATION_FALLBACK
+        get_fallback_singleton(),
+  #endif
+    };
+#endif
 static const std::initializer_list<const implementation *> &
 get_available_implementation_pointers() {
+#if !SIMDUTF_USE_STATIC_INITIALIZATION
   static const std::initializer_list<const implementation *>
       available_implementation_pointers{
-#if SIMDUTF_IMPLEMENTATION_ICELAKE
+  #if SIMDUTF_IMPLEMENTATION_ICELAKE
           get_icelake_singleton(),
-#endif
-#if SIMDUTF_IMPLEMENTATION_HASWELL
+  #endif
+  #if SIMDUTF_IMPLEMENTATION_HASWELL
           get_haswell_singleton(),
-#endif
-#if SIMDUTF_IMPLEMENTATION_WESTMERE
+  #endif
+  #if SIMDUTF_IMPLEMENTATION_WESTMERE
           get_westmere_singleton(),
-#endif
-#if SIMDUTF_IMPLEMENTATION_ARM64
+  #endif
+  #if SIMDUTF_IMPLEMENTATION_ARM64
           get_arm64_singleton(),
-#endif
-#if SIMDUTF_IMPLEMENTATION_PPC64
+  #endif
+  #if SIMDUTF_IMPLEMENTATION_PPC64
           get_ppc64_singleton(),
-#endif
-#if SIMDUTF_IMPLEMENTATION_RVV
+  #endif
+  #if SIMDUTF_IMPLEMENTATION_RVV
           get_rvv_singleton(),
-#endif
-#if SIMDUTF_IMPLEMENTATION_LASX
+  #endif
+  #if SIMDUTF_IMPLEMENTATION_LASX
           get_lasx_singleton(),
-#endif
-#if SIMDUTF_IMPLEMENTATION_LSX
+  #endif
+  #if SIMDUTF_IMPLEMENTATION_LSX
           get_lsx_singleton(),
-#endif
-#if SIMDUTF_IMPLEMENTATION_FALLBACK
+  #endif
+  #if SIMDUTF_IMPLEMENTATION_FALLBACK
           get_fallback_singleton(),
+  #endif
+      };
 #endif
-      }; // available_implementation_pointers
   return available_implementation_pointers;
 }
 
@@ -13812,8 +13916,13 @@ public:
                        "Unsupported CPU (no detected SIMD instructions)", 0) {}
 };
 
+#if SIMDUTF_USE_STATIC_INITIALIZATION
+static const unsupported_implementation unsupported_singleton{};
+#endif
 const unsupported_implementation *get_unsupported_singleton() {
+#if !SIMDUTF_USE_STATIC_INITIALIZATION
   static const unsupported_implementation unsupported_singleton{};
+#endif
   return &unsupported_singleton;
 }
 static_assert(std::is_trivially_destructible<unsupported_implementation>::value,
@@ -13873,30 +13982,55 @@ detect_best_supported_implementation_on_first_use::set_best() const noexcept {
 /**
  * The list of available implementations compiled into simdutf.
  */
+#if SIMDUTF_USE_STATIC_INITIALIZATION
+static const internal::available_implementation_list
+    available_implementations_instance{};
+#endif
 SIMDUTF_DLLIMPORTEXPORT const internal::available_implementation_list &
 get_available_implementations() {
+#if !SIMDUTF_USE_STATIC_INITIALIZATION
   static const internal::available_implementation_list
-      available_implementations{};
-  return available_implementations;
+      available_implementations_instance{};
+#endif
+  return available_implementations_instance;
 }
+
+#if SIMDUTF_USE_STATIC_INITIALIZATION && !SIMDUTF_SINGLE_IMPLEMENTATION
+static const internal::detect_best_supported_implementation_on_first_use
+    detect_best_supported_implementation_on_first_use_singleton;
+#endif
+
+#if SIMDUTF_USE_STATIC_INITIALIZATION
+static internal::atomic_ptr<const implementation>
+    active_implementation_instance{
+  #if SIMDUTF_SINGLE_IMPLEMENTATION
+        internal::get_single_implementation()
+  #else
+        &detect_best_supported_implementation_on_first_use_singleton
+  #endif
+    };
+#endif
 
 /**
  * The active implementation.
  */
 SIMDUTF_DLLIMPORTEXPORT internal::atomic_ptr<const implementation> &
 get_active_implementation() {
-#if SIMDUTF_SINGLE_IMPLEMENTATION
-  // skip runtime detection
-  static internal::atomic_ptr<const implementation> active_implementation{
-      internal::get_single_implementation()};
-  return active_implementation;
-#else
+#if !SIMDUTF_USE_STATIC_INITIALIZATION
+  #if !SIMDUTF_SINGLE_IMPLEMENTATION
   static const internal::detect_best_supported_implementation_on_first_use
       detect_best_supported_implementation_on_first_use_singleton;
-  static internal::atomic_ptr<const implementation> active_implementation{
-      &detect_best_supported_implementation_on_first_use_singleton};
-  return active_implementation;
+  #endif
+  static internal::atomic_ptr<const implementation>
+      active_implementation_instance{
+  #if SIMDUTF_SINGLE_IMPLEMENTATION
+          internal::get_single_implementation()
+  #else
+          &detect_best_supported_implementation_on_first_use_singleton
+  #endif
+      };
 #endif
+  return active_implementation_instance;
 }
 
 #if SIMDUTF_SINGLE_IMPLEMENTATION
@@ -14804,6 +14938,20 @@ simdutf_warn_unused result base64_to_binary(
       input, length, output, options, last_chunk_handling_options);
 }
 
+simdutf_warn_unused full_result base64_to_binary_details(
+    const char *input, size_t length, char *output, base64_options options,
+    last_chunk_handling_options last_chunk_handling_options) noexcept {
+  return get_default_implementation()->base64_to_binary_details(
+      input, length, output, options, last_chunk_handling_options);
+}
+
+simdutf_warn_unused full_result base64_to_binary_details(
+    const char16_t *input, size_t length, char *output, base64_options options,
+    last_chunk_handling_options last_chunk_handling_options) noexcept {
+  return get_default_implementation()->base64_to_binary_details(
+      input, length, output, options, last_chunk_handling_options);
+}
+
 // moved to implementation.h
 // simdutf_warn_unused bool base64_ignorable(char input,
 //                                           base64_options options) noexcept
@@ -14921,11 +15069,18 @@ simdutf_warn_unused int detect_encodings(const char *buf,
 }
 #endif // SIMDUTF_FEATURE_DETECT_ENCODING
 
+#if SIMDUTF_USE_STATIC_INITIALIZATION
+static const implementation *const builtin_impl_instance =
+    get_available_implementations()[SIMDUTF_STRINGIFY(
+        SIMDUTF_BUILTIN_IMPLEMENTATION)];
+#endif
 const implementation *builtin_implementation() {
-  static const implementation *builtin_impl =
+#if !SIMDUTF_USE_STATIC_INITIALIZATION
+  static const implementation *const builtin_impl_instance =
       get_available_implementations()[SIMDUTF_STRINGIFY(
           SIMDUTF_BUILTIN_IMPLEMENTATION)];
-  return builtin_impl;
+#endif
+  return builtin_impl_instance;
 }
 
 #if SIMDUTF_FEATURE_UTF8
@@ -14966,7 +15121,6 @@ SIMDUTF_DISABLE_UNDESIRED_WARNINGS
 /* begin file src/simdutf/arm64/begin.h */
 // redefining SIMDUTF_IMPLEMENTATION to "arm64"
 // #define SIMDUTF_IMPLEMENTATION arm64
-#define SIMDUTF_SIMD_HAS_BYTEMASK 1
 /* end file src/simdutf/arm64/begin.h */
 namespace simdutf {
 namespace arm64 {
@@ -15133,7 +15287,7 @@ void utf16fix_block(char16_t *out, const char16_t *in) {
     out[-1] = ill ? replacement : lbc;
 
     /* fix illegal sequencing in the main block */
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       block.val[1] = vbslq_u8(block_illseq, vdupq_n_u8(0xfd), block.val[1]);
       block.val[0] = vorrq_u8(block_illseq, block.val[0]);
     } else {
@@ -15280,7 +15434,7 @@ const char16_t *arm_validate_utf16(const char16_t *input, size_t size) {
     auto in0 = simd16<uint16_t>(input);
     auto in1 =
         simd16<uint16_t>(input + simd16<uint16_t>::SIZE / sizeof(char16_t));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       in0 = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in0)));
       in1 = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in1)));
     }
@@ -15344,7 +15498,7 @@ const char16_t *arm_validate_utf16_as_ascii(const char16_t *input,
     uint16x8_t in1 = vld1q_u16(reinterpret_cast<const uint16_t *>(input));
     uint16x8_t in2 = vld1q_u16(reinterpret_cast<const uint16_t *>(input + 8));
     uint16x8_t inor = vorrq_u16(in1, in2);
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       inor = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(inor)));
     }
     // next we compute inor > 0x7f
@@ -15376,7 +15530,7 @@ const result arm_validate_utf16_with_errors(const char16_t *input,
     auto in1 =
         simd16<uint16_t>(input + simd16<uint16_t>::SIZE / sizeof(char16_t));
 
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       in0 = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in0)));
       in1 = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in1)));
     }
@@ -15514,12 +15668,12 @@ arm_convert_latin1_to_utf16(const char *buf, size_t len,
   while (end - buf >= 16) {
     uint8x16_t in8 = vld1q_u8(reinterpret_cast<const uint8_t *>(buf));
     uint16x8_t inlow = vmovl_u8(vget_low_u8(in8));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       inlow = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(inlow)));
     }
     vst1q_u16(reinterpret_cast<uint16_t *>(utf16_output), inlow);
     uint16x8_t inhigh = vmovl_u8(vget_high_u8(in8));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       inhigh = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(inhigh)));
     }
     vst1q_u16(reinterpret_cast<uint16_t *>(utf16_output + 8), inhigh);
@@ -15748,7 +15902,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     // UTF-16 code units.
     uint16x4_t composed = convert_utf8_3_byte_to_utf16(in);
     // Byte swap if necessary
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       composed = vreinterpret_u16_u8(vrev16_u8(vreinterpret_u8_u16(composed)));
     }
     vst1_u16(reinterpret_cast<uint16_t *>(utf16_output), composed);
@@ -15762,7 +15916,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     // UTF-16 code units.
     uint16x8_t composed = convert_utf8_2_byte_to_utf16(in);
     // Byte swap if necessary
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       composed =
           vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(composed)));
     }
@@ -15785,7 +15939,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     // Convert to UTF-16
     uint16x8_t composed = convert_utf8_1_to_2_byte_to_utf16(in, idx);
     // Byte swap if necessary
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       composed =
           vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(composed)));
     }
@@ -15832,7 +15986,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     // 3 byte: aaaabbbb bbcccccc
     uint16x4_t composed = vsli_n_u16(middlelow, highperm, 12);
     // Byte swap if necessary
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       composed = vreinterpret_u16_u8(vrev16_u8(vreinterpret_u8_u16(composed)));
     }
     vst1_u16(reinterpret_cast<uint16_t *>(utf16_output), composed);
@@ -15887,7 +16041,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
       // 110111CC CCDDDDDD|110110AA BBBBBBCC
       uint16x8_t composed = vaddq_u16(blend, magic_with_low_2);
       // Byte swap if necessary
-      if simdutf_constexpr (!match_system(big_endian)) {
+      if constexpr (!match_system(big_endian)) {
         composed =
             vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(composed)));
       }
@@ -15992,7 +16146,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     // 4 byte: 110110AA BBBBBBCC|110111CC CCDDDDDD
     uint32x4_t selected = vbslq_u32(is_pair, surrogates, composed);
     // Byte swap if necessary
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       selected =
           vreinterpretq_u32_u8(vrev16q_u8(vreinterpretq_u8_u32(selected)));
     }
@@ -16218,7 +16372,7 @@ arm_convert_utf16_to_latin1(const char16_t *buf, size_t len,
   const char16_t *end = buf + len;
   while (end - buf >= 8) {
     uint16x8_t in = vld1q_u16(reinterpret_cast<const uint16_t *>(buf));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       in = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in)));
     }
     if (vmaxvq_u16(in) <= 0xff) {
@@ -16244,7 +16398,7 @@ arm_convert_utf16_to_latin1_with_errors(const char16_t *buf, size_t len,
   const char16_t *end = buf + len;
   while (end - buf >= 8) {
     uint16x8_t in = vld1q_u16(reinterpret_cast<const uint16_t *>(buf));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       in = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in)));
     }
     if (vmaxvq_u16(in) <= 0xff) {
@@ -16339,7 +16493,7 @@ arm_convert_utf16_to_utf32(const char16_t *buf, size_t len,
 
   while (end - buf >= 8) {
     uint16x8_t in = vld1q_u16(reinterpret_cast<const uint16_t *>(buf));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       in = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in)));
     }
 
@@ -16409,7 +16563,7 @@ arm_convert_utf16_to_utf32_with_errors(const char16_t *buf, size_t len,
 
   while ((end - buf) >= 8) {
     uint16x8_t in = vld1q_u16(reinterpret_cast<const uint16_t *>(buf));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       in = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in)));
     }
 
@@ -16530,7 +16684,7 @@ arm_convert_utf16_to_utf8(const char16_t *buf, size_t len, char *utf8_out) {
           // https://github.com/simdutf/simdutf/issues/92
   while (end - buf >= std::ptrdiff_t(16 + safety_margin)) {
     uint16x8_t in = vld1q_u16(reinterpret_cast<const uint16_t *>(buf));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       in = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in)));
     }
     if (vmaxvq_u16(in) <= 0x7F) { // ASCII fast path!!!!
@@ -16538,7 +16692,7 @@ arm_convert_utf16_to_utf8(const char16_t *buf, size_t len, char *utf8_out) {
       // characters.
       uint16x8_t nextin =
           vld1q_u16(reinterpret_cast<const uint16_t *>(buf) + 8);
-      if simdutf_constexpr (!match_system(big_endian)) {
+      if constexpr (!match_system(big_endian)) {
         nextin = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(nextin)));
       }
       if (vmaxvq_u16(nextin) > 0x7F) {
@@ -16799,7 +16953,7 @@ arm_convert_utf16_to_utf8_with_errors(const char16_t *buf, size_t len,
 
   while (end - buf >= std::ptrdiff_t(16 + safety_margin)) {
     uint16x8_t in = vld1q_u16(reinterpret_cast<const uint16_t *>(buf));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       in = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(in)));
     }
     if (vmaxvq_u16(in) <= 0x7F) { // ASCII fast path!!!!
@@ -16807,7 +16961,7 @@ arm_convert_utf16_to_utf8_with_errors(const char16_t *buf, size_t len,
       // characters.
       uint16x8_t nextin =
           vld1q_u16(reinterpret_cast<const uint16_t *>(buf) + 8);
-      if simdutf_constexpr (!match_system(big_endian)) {
+      if constexpr (!match_system(big_endian)) {
         nextin = vreinterpretq_u16_u8(vrev16q_u8(vreinterpretq_u8_u16(nextin)));
       }
       if (vmaxvq_u16(nextin) > 0x7F) {
@@ -17071,7 +17225,7 @@ arm64_utf8_length_from_utf16_bytemask(const char16_t *in, size_t size) {
     auto base_input = vld2q_u8(reinterpret_cast<const uint8_t *>(in + pos));
     //
     size_t idx = 1; // we use the second lane of the deinterleaved load
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       idx = 0;
     }
     size_t idx_lsb = idx ^ 1;
@@ -17152,7 +17306,7 @@ arm64_utf8_length_from_utf16_with_replacement(const char16_t *in, size_t size) {
   for (; size - pos >= N + 1; pos += N) {
     auto base_input = vld2q_u8(reinterpret_cast<const uint8_t *>(in + pos));
     size_t idx = 1; // we use the second lane of the deinterleaved load
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       idx = 0;
     }
     size_t idx_lsb = idx ^ 1;
@@ -18400,7 +18554,7 @@ arm_convert_utf32_to_utf16(const char32_t *buf, size_t len,
           vorrq_u16(vceqq_u16(vandq_u16(utf16_packed, v_f800), v_d800),
                     forbidden_bytemask);
 
-      if simdutf_constexpr (!match_system(big_endian)) {
+      if constexpr (!match_system(big_endian)) {
         utf16_packed = vreinterpretq_u16_u8(
             vrev16q_u8(vreinterpretq_u8_u16(utf16_packed)));
       }
@@ -18458,7 +18612,7 @@ arm_convert_utf32_to_utf16_with_errors(const char32_t *buf, size_t len,
                               reinterpret_cast<char16_t *>(utf16_output));
       }
 
-      if simdutf_constexpr (!match_system(big_endian)) {
+      if constexpr (!match_system(big_endian)) {
         utf16_packed = vreinterpretq_u16_u8(
             vrev16q_u8(vreinterpretq_u8_u16(utf16_packed)));
       }
@@ -18482,7 +18636,7 @@ arm_convert_utf32_to_utf16_with_errors(const char32_t *buf, size_t len,
             word -= 0x10000;
             uint16_t high_surrogate = uint16_t(0xD800 + (word >> 10));
             uint16_t low_surrogate = uint16_t(0xDC00 + (word & 0x3FF));
-            if simdutf_constexpr (!match_system(big_endian)) {
+            if constexpr (!match_system(big_endian)) {
               high_surrogate =
                   uint16_t(high_surrogate >> 8 | high_surrogate << 8);
               low_surrogate = uint16_t(low_surrogate << 8 | low_surrogate >> 8);
@@ -19066,40 +19220,6 @@ private:
   size_t idx;
 };
 
-// Routines to print masks and text for debugging bitmask operations
-simdutf_unused static char *format_input_text_64(const uint8_t *text) {
-  static char *buf =
-      reinterpret_cast<char *>(malloc(sizeof(simd8x64<uint8_t>) + 1));
-  for (size_t i = 0; i < sizeof(simd8x64<uint8_t>); i++) {
-    buf[i] = int8_t(text[i]) < ' ' ? '_' : int8_t(text[i]);
-  }
-  buf[sizeof(simd8x64<uint8_t>)] = '\0';
-  return buf;
-}
-
-// Routines to print masks and text for debugging bitmask operations
-simdutf_unused static char *format_input_text(const simd8x64<uint8_t> &in) {
-  static char *buf =
-      reinterpret_cast<char *>(malloc(sizeof(simd8x64<uint8_t>) + 1));
-  in.store(reinterpret_cast<uint8_t *>(buf));
-  for (size_t i = 0; i < sizeof(simd8x64<uint8_t>); i++) {
-    if (buf[i] < ' ') {
-      buf[i] = '_';
-    }
-  }
-  buf[sizeof(simd8x64<uint8_t>)] = '\0';
-  return buf;
-}
-
-simdutf_unused static char *format_mask(uint64_t mask) {
-  static char *buf = reinterpret_cast<char *>(malloc(64 + 1));
-  for (size_t i = 0; i < 64; i++) {
-    buf[i] = (mask & (size_t(1) << i)) ? 'X' : ' ';
-  }
-  buf[64] = '\0';
-  return buf;
-}
-
 template <size_t STEP_SIZE>
 simdutf_really_inline
 buf_block_reader<STEP_SIZE>::buf_block_reader(const uint8_t *_buf, size_t _len)
@@ -19675,10 +19795,10 @@ struct validating_transcoder {
                 (simd8x64<uint8_t>::NUM_CHUNKS == 4),
             "We support either two or four chunks per 64-byte block.");
         auto zero = simd8<uint8_t>{uint8_t(0)};
-        if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
+        if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
-        } else if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
+        } else if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
           this->check_utf8_bytes(input.chunks[2], input.chunks[1]);
@@ -19763,10 +19883,10 @@ struct validating_transcoder {
                 (simd8x64<uint8_t>::NUM_CHUNKS == 4),
             "We support either two or four chunks per 64-byte block.");
         auto zero = simd8<uint8_t>{uint8_t(0)};
-        if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
+        if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
-        } else if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
+        } else if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
           this->check_utf8_bytes(input.chunks[2], input.chunks[1]);
@@ -20307,7 +20427,7 @@ simdutf_really_inline size_t count_code_points(const char16_t *in,
   size_t count = 0;
   for (; pos < size / 32 * 32; pos += 32) {
     simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input.swap_bytes();
     }
     uint64_t not_pair = input.not_in_range(0xDC00, 0xDFFF);
@@ -20325,7 +20445,7 @@ simdutf_really_inline size_t utf8_length_from_utf16(const char16_t *in,
   // This algorithm could no doubt be improved!
   for (; pos < size / 32 * 32; pos += 32) {
     simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input.swap_bytes();
     }
     uint64_t ascii_mask = input.lteq(0x7F);
@@ -22175,7 +22295,6 @@ simdutf_warn_unused size_t implementation::binary_length_from_base64(
 } // namespace simdutf
 
 /* begin file src/simdutf/arm64/end.h */
-#undef SIMDUTF_SIMD_HAS_BYTEMASK
 /* end file src/simdutf/arm64/end.h */
 /* end file src/arm64/implementation.cpp */
 #endif
@@ -24297,7 +24416,7 @@ simdutf_really_inline void utf16fix_block(char16_t *out, const char16_t *in) {
   const char16_t replacement = scalar::utf16::replacement<big_endian>();
   __m512i lookback, block, lb_masked, block_masked;
   __mmask32 lb_is_high, block_is_low, illseq;
-  auto swap_if_needed = [](uint16_t x) simdutf_constexpr -> uint16_t {
+  auto swap_if_needed = [](uint16_t x) constexpr -> uint16_t {
     return scalar::utf16::swap_if_needed<big_endian>(x);
   };
 
@@ -24350,7 +24469,7 @@ void utf16fix_short(const char16_t *in, size_t n, char16_t *out) {
   __m512i lookback, block, lb_masked, block_masked;
   __mmask32 lb_is_high, block_is_low, illseq;
   uint32_t mask = 0xFFFFFFFF >> (32 - n);
-  auto swap_if_needed = [](uint16_t x) simdutf_constexpr -> uint16_t {
+  auto swap_if_needed = [](uint16_t x) constexpr -> uint16_t {
     return scalar::utf16::swap_if_needed<big_endian>(x);
   };
   lookback = _mm512_maskz_loadu_epi16(_cvtmask32_u32(mask << 1),
@@ -25025,7 +25144,7 @@ simdutf_really_inline size_t icelake_utf8_length_from_utf16(const char16_t *in,
     __m512i input2 =
         _mm512_loadu_si512(reinterpret_cast<const __m512i *>(in + pos + N));
 
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input1 = _mm512_shuffle_epi8(input1, byteflip);
       input2 = _mm512_shuffle_epi8(input2, byteflip);
     }
@@ -25058,7 +25177,7 @@ simdutf_really_inline size_t icelake_utf8_length_from_utf16(const char16_t *in,
   if (pos + N <= size) {
     __m512i input =
         _mm512_loadu_si512(reinterpret_cast<const __m512i *>(in + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input = _mm512_shuffle_epi8(input, byteflip);
     }
     // 0xd800 .. 0xdbff - low surrogate
@@ -25085,7 +25204,7 @@ simdutf_really_inline size_t icelake_utf8_length_from_utf16(const char16_t *in,
       0xFFFFFFFFULL >>
       (32 - (size - pos)); // mask for the remaining char16 values
   __m512i input = _mm512_maskz_loadu_epi16(remaining_mask, in + pos);
-  if simdutf_constexpr (!match_system(big_endian)) {
+  if constexpr (!match_system(big_endian)) {
     input = _mm512_shuffle_epi8(input, byteflip);
   }
   // 0xd800 .. 0xdbff - low surrogate
@@ -25146,12 +25265,12 @@ simdutf_really_inline result icelake_utf8_length_from_utf16_with_replacement(
   for (; pos < (size - 1) / (2 * N) * (2 * N); pos += 2 * N) {
     __m512i current1 =
         _mm512_loadu_si512(reinterpret_cast<const __m512i *>(in + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       current1 = _mm512_shuffle_epi8(current1, byteflip);
     }
     __m512i current2 =
         _mm512_loadu_si512(reinterpret_cast<const __m512i *>(in + pos + N));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       current2 = _mm512_shuffle_epi8(current2, byteflip);
     }
 
@@ -25201,7 +25320,7 @@ simdutf_really_inline result icelake_utf8_length_from_utf16_with_replacement(
   if (pos + N + 1 <= size) {
     __m512i input =
         _mm512_loadu_si512(reinterpret_cast<const __m512i *>(in + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input = _mm512_shuffle_epi8(input, byteflip);
     }
 
@@ -25235,7 +25354,7 @@ simdutf_really_inline result icelake_utf8_length_from_utf16_with_replacement(
   __mmask32 remaining_mask(uint32_t(0xFFFFFFFFULL << overshoot));
   __m512i input =
       _mm512_maskz_loadu_epi16(remaining_mask, in + pos - overshoot);
-  if simdutf_constexpr (!match_system(big_endian)) {
+  if constexpr (!match_system(big_endian)) {
     input = _mm512_shuffle_epi8(input, byteflip);
   }
 
@@ -27020,7 +27139,7 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
   size_t full_input_length = ri.full_input_length;
   if (srclen == 0) {
     if (!ignore_garbage && padding_characters > 0) {
-      return {INVALID_BASE64_CHARACTER, equallocation, 0};
+      return {INVALID_BASE64_CHARACTER, equallocation, 0, true};
     }
     return {SUCCESS, full_input_length, 0};
   }
@@ -27118,8 +27237,8 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
     // We never should have that the number of base64 characters + the
     // number of padding characters is more than 4.
     if (!ignore_garbage && (idx + padding_characters > 4)) {
-      return {INVALID_BASE64_CHARACTER, size_t(src - srcinit),
-              size_t(dst - dstinit), true};
+      return {INVALID_BASE64_CHARACTER, equallocation, size_t(dst - dstinit),
+              true};
     }
     // The idea here is that in loose mode,
     // if there is padding at all, it must be used
@@ -27129,8 +27248,8 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
         last_chunk_options == last_chunk_handling_options::loose &&
         (idx >= 2) && padding_characters > 0 &&
         ((idx + padding_characters) & 3) != 0) {
-      return {INVALID_BASE64_CHARACTER, size_t(src - srcinit),
-              size_t(dst - dstinit), true};
+      return {INVALID_BASE64_CHARACTER, equallocation, size_t(dst - dstinit),
+              true};
     } else
       // The idea here is that in strict mode, we do not want to accept
       // incomplete base64 chunks. So if the chunk was otherwise valid, we
@@ -27141,7 +27260,8 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
         // The partial chunk was at src - idx
         _mm512_mask_storeu_epi8((__m512i *)dst, output_mask, shuffled);
         dst += output_len;
-        return {BASE64_INPUT_REMAINDER, equallocation, size_t(dst - dstinit)};
+        return {BASE64_INPUT_REMAINDER, equallocation, size_t(dst - dstinit),
+                true};
       } else
         // If there is a partial chunk with insufficient padding, with
         // stop_before_partial, we need to just ignore it. In "only full" mode,
@@ -27222,7 +27342,7 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
             _mm512_mask_storeu_epi8((__m512i *)dst, output_mask, shuffled);
             dst += output_len;
             return {INVALID_BASE64_CHARACTER, equallocation,
-                    size_t(dst - dstinit)};
+                    size_t(dst - dstinit), true};
           } else {
             _mm512_mask_storeu_epi8((__m512i *)dst, output_mask, shuffled);
             dst += output_len;
@@ -27233,7 +27353,7 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
       size_t output_count = size_t(dst - dstinit);
       if ((output_count % 3 == 0) ||
           ((output_count % 3) + 1 + padding_characters != 4)) {
-        return {INVALID_BASE64_CHARACTER, equallocation, output_count};
+        return {INVALID_BASE64_CHARACTER, equallocation, output_count, true};
       }
     }
     return {SUCCESS, full_input_length, size_t(dst - dstinit)};
@@ -27242,7 +27362,8 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
   if (!ignore_garbage && padding_characters > 0) {
     if ((size_t(dst - dstinit) % 3 == 0) ||
         ((size_t(dst - dstinit) % 3) + 1 + padding_characters != 4)) {
-      return {INVALID_BASE64_CHARACTER, equallocation, size_t(dst - dstinit)};
+      return {INVALID_BASE64_CHARACTER, equallocation, size_t(dst - dstinit),
+              true};
     }
   }
   return {SUCCESS, srclen, size_t(dst - dstinit)};
@@ -27332,6 +27453,8 @@ simdutf_really_inline const char *util_find(const char *start, const char *end,
     __m512i data = _mm512_maskz_loadu_epi8(
         load_mask, reinterpret_cast<const __m512i *>(start));
     __mmask64 match_mask = _mm512_cmpeq_epi8_mask(data, char_vec);
+    match_mask &= load_mask; // When searching for null terminators, this
+                             // prevents false positives
 
     if (match_mask != 0) {
       size_t index = _tzcnt_u64(match_mask);
@@ -27421,6 +27544,8 @@ simdutf_really_inline const char16_t *util_find(const char16_t *start,
     __m512i data = _mm512_maskz_loadu_epi16(
         load_mask, reinterpret_cast<const __m512i *>(start));
     __mmask32 match_mask = _mm512_cmpeq_epi16_mask(data, char_vec);
+    match_mask &= load_mask; // When searching for null terminators, this
+                             // prevents false positives
 
     if (match_mask != 0) {
       size_t index = _tzcnt_u32(match_mask);
@@ -29517,7 +29642,7 @@ simd8<uint8_t> utf16_gather_high_bytes(const simd16<uint16_t> &in0,
  */
 template <endianness big_endian, bool in_place>
 void utf16fix_block(char16_t *out, const char16_t *in) {
-  auto swap_if_needed = [](uint16_t x) simdutf_constexpr -> uint16_t {
+  auto swap_if_needed = [](uint16_t x) constexpr -> uint16_t {
     return scalar::utf16::swap_if_needed<big_endian>(x);
   };
   const char16_t replacement = scalar::utf16::replacement<big_endian>();
@@ -29579,7 +29704,7 @@ void utf16fix_block(char16_t *out, const char16_t *in) {
 
 template <endianness big_endian, bool in_place>
 void utf16fix_block_sse(char16_t *out, const char16_t *in) {
-  auto swap_if_needed = [](uint16_t x) simdutf_constexpr -> uint16_t {
+  auto swap_if_needed = [](uint16_t x) constexpr -> uint16_t {
     return scalar::utf16::swap_if_needed<big_endian>(x);
   };
   const char16_t replacement = scalar::utf16::replacement<big_endian>();
@@ -30181,7 +30306,7 @@ avx2_convert_utf16_to_latin1(const char16_t *buf, size_t len,
     __m256i in1 =
         _mm256_loadu_si256(reinterpret_cast<const __m256i *>(buf + 16));
 
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       const __m256i swap = _mm256_setr_epi8(
           1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14, 17, 16, 19, 18,
           21, 20, 23, 22, 25, 24, 27, 26, 29, 28, 31, 30);
@@ -30216,7 +30341,7 @@ avx2_convert_utf16_to_latin1_with_errors(const char16_t *buf, size_t len,
   while (end - buf >= 16) {
     __m256i in = _mm256_loadu_si256(reinterpret_cast<const __m256i *>(buf));
 
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       const __m256i swap = _mm256_setr_epi8(
           1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14, 17, 16, 19, 18,
           21, 20, 23, 22, 25, 24, 27, 26, 29, 28, 31, 30);
@@ -32886,40 +33011,6 @@ private:
   size_t idx;
 };
 
-// Routines to print masks and text for debugging bitmask operations
-simdutf_unused static char *format_input_text_64(const uint8_t *text) {
-  static char *buf =
-      reinterpret_cast<char *>(malloc(sizeof(simd8x64<uint8_t>) + 1));
-  for (size_t i = 0; i < sizeof(simd8x64<uint8_t>); i++) {
-    buf[i] = int8_t(text[i]) < ' ' ? '_' : int8_t(text[i]);
-  }
-  buf[sizeof(simd8x64<uint8_t>)] = '\0';
-  return buf;
-}
-
-// Routines to print masks and text for debugging bitmask operations
-simdutf_unused static char *format_input_text(const simd8x64<uint8_t> &in) {
-  static char *buf =
-      reinterpret_cast<char *>(malloc(sizeof(simd8x64<uint8_t>) + 1));
-  in.store(reinterpret_cast<uint8_t *>(buf));
-  for (size_t i = 0; i < sizeof(simd8x64<uint8_t>); i++) {
-    if (buf[i] < ' ') {
-      buf[i] = '_';
-    }
-  }
-  buf[sizeof(simd8x64<uint8_t>)] = '\0';
-  return buf;
-}
-
-simdutf_unused static char *format_mask(uint64_t mask) {
-  static char *buf = reinterpret_cast<char *>(malloc(64 + 1));
-  for (size_t i = 0; i < 64; i++) {
-    buf[i] = (mask & (size_t(1) << i)) ? 'X' : ' ';
-  }
-  buf[64] = '\0';
-  return buf;
-}
-
 template <size_t STEP_SIZE>
 simdutf_really_inline
 buf_block_reader<STEP_SIZE>::buf_block_reader(const uint8_t *_buf, size_t _len)
@@ -33572,10 +33663,10 @@ struct validating_transcoder {
                 (simd8x64<uint8_t>::NUM_CHUNKS == 4),
             "We support either two or four chunks per 64-byte block.");
         auto zero = simd8<uint8_t>{uint8_t(0)};
-        if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
+        if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
-        } else if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
+        } else if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
           this->check_utf8_bytes(input.chunks[2], input.chunks[1]);
@@ -33660,10 +33751,10 @@ struct validating_transcoder {
                 (simd8x64<uint8_t>::NUM_CHUNKS == 4),
             "We support either two or four chunks per 64-byte block.");
         auto zero = simd8<uint8_t>{uint8_t(0)};
-        if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
+        if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
-        } else if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
+        } else if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
           this->check_utf8_bytes(input.chunks[2], input.chunks[1]);
@@ -34420,7 +34511,7 @@ simdutf_really_inline size_t count_code_points(const char16_t *in,
   size_t count = 0;
   for (; pos < size / 32 * 32; pos += 32) {
     simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input.swap_bytes();
     }
     uint64_t not_pair = input.not_in_range(0xDC00, 0xDFFF);
@@ -34438,7 +34529,7 @@ simdutf_really_inline size_t utf8_length_from_utf16(const char16_t *in,
   // This algorithm could no doubt be improved!
   for (; pos < size / 32 * 32; pos += 32) {
     simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input.swap_bytes();
     }
     uint64_t ascii_mask = input.lteq(0x7F);
@@ -34512,7 +34603,7 @@ simdutf_really_inline size_t utf8_length_from_utf16_bytemask(const char16_t *in,
 
   for (; pos < size / N * N; pos += N) {
     auto input = vector_u16::load(reinterpret_cast<const uint16_t *>(in + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input = input.swap_bytes();
     }
     // 0xd800 .. 0xdbff - low surrogate
@@ -34601,7 +34692,7 @@ utf8_length_from_utf16_with_replacement(const char16_t *in, size_t size) {
 
   for (; pos < (size - 1) / N * N; pos += N) {
     auto input = vector_u16::load(reinterpret_cast<const uint16_t *>(in + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input = input.swap_bytes();
     }
     // 0xd800 .. 0xdbff - low surrogate
@@ -34622,7 +34713,7 @@ utf8_length_from_utf16_with_replacement(const char16_t *in, size_t size) {
       any_surrogates = true;
       auto input_next =
           vector_u16::load(reinterpret_cast<const uint16_t *>(in + pos + 1));
-      if simdutf_constexpr (!match_system(big_endian)) {
+      if constexpr (!match_system(big_endian)) {
         input_next = input_next.swap_bytes();
       }
 
@@ -34823,7 +34914,7 @@ const result validate_utf16_as_ascii_with_errors(const char16_t *input,
   for (; pos < size / 32 * 32; pos += 32) {
     simd16x32<uint16_t> input_vec(
         reinterpret_cast<const uint16_t *>(input + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input_vec.swap_bytes();
     }
     uint64_t matches = input_vec.lteq(uint16_t(0x7f));
@@ -35283,7 +35374,7 @@ simdutf_really_inline bool validate(const char32_t *input, size_t size) {
 
   while (input + N < end) {
     auto in = vector_u32(input);
-    if simdutf_constexpr (!match_system(endianness::BIG)) {
+    if constexpr (!match_system(endianness::BIG)) {
       in.swap_bytes();
     }
 
@@ -35326,7 +35417,7 @@ simdutf_really_inline result validate_with_errors(const char32_t *input,
 
   while (input + N < end) {
     auto in = vector_u32(input);
-    if simdutf_constexpr (!match_system(endianness::BIG)) {
+    if constexpr (!match_system(endianness::BIG)) {
       in.swap_bytes();
     }
 
@@ -35417,7 +35508,7 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
   size_t full_input_length = ri.full_input_length;
   if (srclen == 0) {
     if (!ignore_garbage && equalsigns > 0) {
-      return {INVALID_BASE64_CHARACTER, equallocation, 0};
+      return {INVALID_BASE64_CHARACTER, equallocation, 0, true};
     }
     return {SUCCESS, full_input_length, 0};
   }
@@ -35584,7 +35675,8 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
   if (!ignore_garbage && equalsigns > 0) {
     if ((size_t(dst - dstinit) % 3 == 0) ||
         ((size_t(dst - dstinit) % 3) + 1 + equalsigns != 4)) {
-      return {INVALID_BASE64_CHARACTER, equallocation, size_t(dst - dstinit)};
+      return {INVALID_BASE64_CHARACTER, equallocation, size_t(dst - dstinit),
+              true};
     }
   }
   return {SUCCESS, srclen, size_t(dst - dstinit)};
@@ -38045,7 +38137,7 @@ enum class ErrorReporting {
   none,       // no error checking is done, we assume valid inputs
 };
 
-#if SIMDUTF_FEATURE_UTF16
+#if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
 /* begin file src/ppc64/ppc64_validate_utf16.cpp */
 template <endianness big_endian>
 simd8<uint8_t> utf16_gather_high_bytes(const simd16<uint16_t> in0,
@@ -38067,10 +38159,10 @@ simd8<uint8_t> utf16_gather_high_bytes(const simd16<uint16_t> in0,
   }
 }
 /* end file src/ppc64/ppc64_validate_utf16.cpp */
-#endif // SIMDUTF_FEATURE_UTF16
+#endif // SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
 
-#if SIMDUTF_FEATURE_LATIN1 && SIMDUTF_FEATURE_UTF8
-/* begin file src/ppc64/ppc64_convert_latin1_to_utf8.cpp */
+#if SIMDUTF_FEATURE_UTF8 || SIMDUTF_FEATURE_UTF32
+/* begin file src/ppc64/ppc64_write_to_utf8.cpp */
 /*
  * reads a vector of uint16 values
  * bits after 11th are ignored
@@ -38143,7 +38235,11 @@ inline void write_v_u16_11bits_to_utf8(const vector_u16 v_u16,
   write_v_u16_11bits_to_utf8(v_u16, utf8_output,
                              as_vector_u8(one_byte_bytemask), one_byte_bitmask);
 }
+/* end file src/ppc64/ppc64_write_to_utf8.cpp */
+#endif // SIMDUTF_FEATURE_UTF8 || SIMDUTF_FEATURE_UTF32
 
+#if SIMDUTF_FEATURE_LATIN1 && SIMDUTF_FEATURE_UTF8
+/* begin file src/ppc64/ppc64_convert_latin1_to_utf8.cpp */
 std::pair<const char *const, char *const>
 ppc64_convert_latin1_to_utf8(const char *latin_input,
                              const size_t latin_input_length,
@@ -38376,7 +38472,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     const auto hi = in16.shr<2>();
 
     auto composed = select(uint16_t(0x1f00 >> 2), hi, lo);
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       composed = composed.swap_bytes();
     }
 
@@ -38405,7 +38501,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     const auto composed = b2;
     auto packed = vector_u32::pack(composed, composed);
 
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       packed = packed.swap_bytes();
     }
 
@@ -38439,7 +38535,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
 
     auto composed = b0 | b1.shr<2>();
 
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       composed = composed.swap_bytes();
     }
 
@@ -38462,7 +38558,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
 
     auto packed = vector_u32::pack(composed, composed);
 
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       packed = packed.swap_bytes();
     }
 
@@ -38723,7 +38819,7 @@ utf16_to_latin1_t ppc64_convert_utf16_to_latin1(const char16_t *buf, size_t len,
 
     // Move low bytes of UTF-16 chars to lower half of `in`
     // and upper bytes to upper half of `in`.
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       const auto perm =
           vector_u8(0, 2, 4, 6, 8, 10, 12, 14, 1, 3, 5, 7, 9, 11, 13, 15);
       in = perm.lookup_16(in);
@@ -38777,7 +38873,7 @@ utf16_to_latin1_t ppc64_convert_utf16_to_latin1(const char16_t *buf, size_t len,
 /* end file src/ppc64/ppc64_convert_utf16_to_latin1.cpp */
 #endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_LATIN1
 
-#if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_UTF8
+#if (SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_UTF32) && SIMDUTF_FEATURE_UTF8
 /* begin file src/ppc64/ppc64_convert_utf16_to_utf8.cpp */
 /*
     The vectorized algorithm works on single SSE register i.e., it
@@ -39076,7 +39172,8 @@ utf16_to_utf8_t ppc64_convert_utf16_to_utf8(const char16_t *buf, size_t len,
   return utf16_to_utf8_t{error_code::SUCCESS, buf, utf8_output};
 }
 /* end file src/ppc64/ppc64_convert_utf16_to_utf8.cpp */
-#endif // SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_UTF8
+#endif // (SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_UTF32) &&
+       // SIMDUTF_FEATURE_UTF8
 
 #if SIMDUTF_FEATURE_UTF16 && SIMDUTF_FEATURE_UTF32
 /* begin file src/ppc64/ppc64_convert_utf16_to_utf32.cpp */
@@ -39354,7 +39451,7 @@ utf32_to_utf16_t ppc64_convert_utf32_to_utf16(const char32_t *buf, size_t len,
 /* end file src/ppc64/ppc64_convert_utf32_to_utf16.cpp */
 #endif // SIMDUTF_FEATURE_UTF32 && SIMDUTF_FEATURE_UTF16
 
-#if SIMDUTF_FEATURE_UTF32 && SIMDUTF_FEATURE_UTF32
+#if SIMDUTF_FEATURE_UTF32 && SIMDUTF_FEATURE_UTF8
 /* begin file src/ppc64/ppc64_convert_utf32_to_utf8.cpp */
 struct utf32_to_utf8_t {
   error_code err;
@@ -39523,7 +39620,7 @@ utf32_to_utf8_t ppc64_convert_utf32_to_utf8(const char32_t *buf, size_t len,
   };
 }
 /* end file src/ppc64/ppc64_convert_utf32_to_utf8.cpp */
-#endif // SIMDUTF_FEATURE_UTF32 && SIMDUTF_FEATURE_UTF32
+#endif // SIMDUTF_FEATURE_UTF32 && SIMDUTF_FEATURE_UTF8
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_LATIN1
 /* begin file src/ppc64/ppc64_utf8_length_from_latin1.cpp */
@@ -40056,7 +40153,8 @@ public:
 } // namespace ppc64
 } // namespace simdutf
 
-#if SIMDUTF_FEATURE_UTF8
+#if SIMDUTF_FEATURE_UTF8 || SIMDUTF_FEATURE_ASCII ||                           \
+    SIMDUTF_FEATURE_DETECT_ENCODING
 /* begin file src/generic/buf_block_reader.h */
 namespace simdutf {
 namespace ppc64 {
@@ -40089,40 +40187,6 @@ private:
   const size_t lenminusstep;
   size_t idx;
 };
-
-// Routines to print masks and text for debugging bitmask operations
-simdutf_unused static char *format_input_text_64(const uint8_t *text) {
-  static char *buf =
-      reinterpret_cast<char *>(malloc(sizeof(simd8x64<uint8_t>) + 1));
-  for (size_t i = 0; i < sizeof(simd8x64<uint8_t>); i++) {
-    buf[i] = int8_t(text[i]) < ' ' ? '_' : int8_t(text[i]);
-  }
-  buf[sizeof(simd8x64<uint8_t>)] = '\0';
-  return buf;
-}
-
-// Routines to print masks and text for debugging bitmask operations
-simdutf_unused static char *format_input_text(const simd8x64<uint8_t> &in) {
-  static char *buf =
-      reinterpret_cast<char *>(malloc(sizeof(simd8x64<uint8_t>) + 1));
-  in.store(reinterpret_cast<uint8_t *>(buf));
-  for (size_t i = 0; i < sizeof(simd8x64<uint8_t>); i++) {
-    if (buf[i] < ' ') {
-      buf[i] = '_';
-    }
-  }
-  buf[sizeof(simd8x64<uint8_t>)] = '\0';
-  return buf;
-}
-
-simdutf_unused static char *format_mask(uint64_t mask) {
-  static char *buf = reinterpret_cast<char *>(malloc(64 + 1));
-  for (size_t i = 0; i < 64; i++) {
-    buf[i] = (mask & (size_t(1) << i)) ? 'X' : ' ';
-  }
-  buf[64] = '\0';
-  return buf;
-}
 
 template <size_t STEP_SIZE>
 simdutf_really_inline
@@ -40168,6 +40232,9 @@ simdutf_really_inline void buf_block_reader<STEP_SIZE>::advance() {
 } // namespace ppc64
 } // namespace simdutf
 /* end file src/generic/buf_block_reader.h */
+#endif // SIMDUTF_FEATURE_UTF8 || SIMDUTF_FEATURE_ASCII ||
+       // SIMDUTF_FEATURE_DETECT_ENCODING
+#if SIMDUTF_FEATURE_UTF8 || SIMDUTF_FEATURE_DETECT_ENCODING
 /* begin file src/generic/utf8_validation/utf8_lookup4_algorithm.h */
 namespace simdutf {
 namespace ppc64 {
@@ -40479,7 +40546,7 @@ result generic_validate_utf8_with_errors(const char *input, size_t length) {
 } // namespace ppc64
 } // namespace simdutf
 /* end file src/generic/utf8_validation/utf8_validator.h */
-#endif // SIMDUTF_FEATURE_UTF8
+#endif // SIMDUTF_FEATURE_UTF8 || SIMDUTF_FEATURE_DETECT_ENCODING
 
 #if SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF16
 /* begin file src/generic/utf8_to_utf16/utf8_to_utf16.h */
@@ -40643,10 +40710,10 @@ struct validating_transcoder {
                 (simd8x64<uint8_t>::NUM_CHUNKS == 4),
             "We support either two or four chunks per 64-byte block.");
         auto zero = simd8<uint8_t>{uint8_t(0)};
-        if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
+        if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
-        } else if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
+        } else if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
           this->check_utf8_bytes(input.chunks[2], input.chunks[1]);
@@ -40731,10 +40798,10 @@ struct validating_transcoder {
                 (simd8x64<uint8_t>::NUM_CHUNKS == 4),
             "We support either two or four chunks per 64-byte block.");
         auto zero = simd8<uint8_t>{uint8_t(0)};
-        if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
+        if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
-        } else if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
+        } else if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
           this->check_utf8_bytes(input.chunks[2], input.chunks[1]);
@@ -41261,7 +41328,7 @@ simdutf_warn_unused size_t convert_valid(const char *input, size_t size,
 /* end file src/generic/utf8_to_utf32/valid_utf8_to_utf32.h */
 #endif // SIMDUTF_FEATURE_UTF8 && SIMDUTF_FEATURE_UTF32
 
-#if SIMDUTF_FEATURE_UTF8
+#if SIMDUTF_FEATURE_UTF8 || SIMDUTF_FEATURE_DETECT_ENCODING
 /* begin file src/generic/utf8.h */
 namespace simdutf {
 namespace ppc64 {
@@ -41356,9 +41423,9 @@ simdutf_really_inline size_t utf16_length_from_utf8(const char *in,
 } // namespace ppc64
 } // namespace simdutf
 /* end file src/generic/utf8.h */
-#endif // SIMDUTF_FEATURE_UTF8
+#endif // SIMDUTF_FEATURE_UTF8 || SIMDUTF_FEATURE_DETECT_ENCODING
 
-#if SIMDUTF_FEATURE_UTF16
+#if SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
 /* begin file src/generic/utf16.h */
 namespace simdutf {
 namespace ppc64 {
@@ -41372,7 +41439,7 @@ simdutf_really_inline size_t count_code_points(const char16_t *in,
   size_t count = 0;
   for (; pos < size / 32 * 32; pos += 32) {
     simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input.swap_bytes();
     }
     uint64_t not_pair = input.not_in_range(0xDC00, 0xDFFF);
@@ -41390,7 +41457,7 @@ simdutf_really_inline size_t utf8_length_from_utf16(const char16_t *in,
   // This algorithm could no doubt be improved!
   for (; pos < size / 32 * 32; pos += 32) {
     simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input.swap_bytes();
     }
     uint64_t ascii_mask = input.lteq(0x7F);
@@ -41572,7 +41639,7 @@ const result validate_utf16_as_ascii_with_errors(const char16_t *input,
   for (; pos < size / 32 * 32; pos += 32) {
     simd16x32<uint16_t> input_vec(
         reinterpret_cast<const uint16_t *>(input + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input_vec.swap_bytes();
     }
     uint64_t matches = input_vec.lteq(uint16_t(0x7f));
@@ -41600,9 +41667,9 @@ const result validate_utf16_as_ascii_with_errors(const char16_t *input,
 } // namespace ppc64
 } // namespace simdutf
 /* end file src/generic/validate_utf16.h */
-#endif // SIMDUTF_FEATURE_UTF16
+#endif // SIMDUTF_FEATURE_UTF16 || SIMDUTF_FEATURE_DETECT_ENCODING
 
-#if SIMDUTF_FEATURE_UTF32
+#if SIMDUTF_FEATURE_UTF32 || SIMDUTF_FEATURE_DETECT_ENCODING
 /* begin file src/generic/utf32.h */
 #include <limits>
 
@@ -41768,7 +41835,7 @@ simdutf_really_inline bool validate(const char32_t *input, size_t size) {
 
   while (input + N < end) {
     auto in = vector_u32(input);
-    if simdutf_constexpr (!match_system(endianness::BIG)) {
+    if constexpr (!match_system(endianness::BIG)) {
       in.swap_bytes();
     }
 
@@ -41811,7 +41878,7 @@ simdutf_really_inline result validate_with_errors(const char32_t *input,
 
   while (input + N < end) {
     auto in = vector_u32(input);
-    if simdutf_constexpr (!match_system(endianness::BIG)) {
+    if constexpr (!match_system(endianness::BIG)) {
       in.swap_bytes();
     }
 
@@ -41842,7 +41909,7 @@ simdutf_really_inline result validate_with_errors(const char32_t *input,
 } // namespace ppc64
 } // namespace simdutf
 /* end file src/generic/validate_utf32.h */
-#endif // SIMDUTF_FEATURE_UTF32
+#endif // SIMDUTF_FEATURE_UTF32 || SIMDUTF_FEATURE_DETECT_ENCODING
 
 #if SIMDUTF_FEATURE_ASCII
 /* begin file src/generic/ascii_validation.h */
@@ -42358,7 +42425,7 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
   size_t full_input_length = ri.full_input_length;
   if (srclen == 0) {
     if (!ignore_garbage && equalsigns > 0) {
-      return {INVALID_BASE64_CHARACTER, equallocation, 0};
+      return {INVALID_BASE64_CHARACTER, equallocation, 0, true};
     }
     return {SUCCESS, full_input_length, 0};
   }
@@ -42525,7 +42592,8 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
   if (!ignore_garbage && equalsigns > 0) {
     if ((size_t(dst - dstinit) % 3 == 0) ||
         ((size_t(dst - dstinit) % 3) + 1 + equalsigns != 4)) {
-      return {INVALID_BASE64_CHARACTER, equallocation, size_t(dst - dstinit)};
+      return {INVALID_BASE64_CHARACTER, equallocation, size_t(dst - dstinit),
+              true};
     }
   }
   return {SUCCESS, srclen, size_t(dst - dstinit)};
@@ -45667,7 +45735,7 @@ inline void write_v_u16_11bits_to_utf8(const __m128i v_u16, char *&utf8_output,
 template <endianness big_endian, bool in_place>
 simdutf_really_inline void utf16fix_block_sse(char16_t *out,
                                               const char16_t *in) {
-  auto swap_if_needed = [](uint16_t x) simdutf_constexpr -> uint16_t {
+  auto swap_if_needed = [](uint16_t x) constexpr -> uint16_t {
     return scalar::utf16::swap_if_needed<big_endian>(x);
   };
   const char16_t replacement = scalar::utf16::replacement<big_endian>();
@@ -46322,7 +46390,7 @@ sse_convert_utf16_to_latin1(const char16_t *buf, size_t len,
     // Load 8 UTF-16 characters into 128-bit SSE register
     __m128i in = _mm_loadu_si128(reinterpret_cast<const __m128i *>(buf));
 
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       const __m128i swap =
           _mm_setr_epi8(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
       in = _mm_shuffle_epi8(in, swap);
@@ -46353,7 +46421,7 @@ sse_convert_utf16_to_latin1_with_errors(const char16_t *buf, size_t len,
   while (end - buf >= 8) {
     __m128i in = _mm_loadu_si128(reinterpret_cast<const __m128i *>(buf));
 
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       const __m128i swap =
           _mm_setr_epi8(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
       in = _mm_shuffle_epi8(in, swap);
@@ -48715,40 +48783,6 @@ private:
   size_t idx;
 };
 
-// Routines to print masks and text for debugging bitmask operations
-simdutf_unused static char *format_input_text_64(const uint8_t *text) {
-  static char *buf =
-      reinterpret_cast<char *>(malloc(sizeof(simd8x64<uint8_t>) + 1));
-  for (size_t i = 0; i < sizeof(simd8x64<uint8_t>); i++) {
-    buf[i] = int8_t(text[i]) < ' ' ? '_' : int8_t(text[i]);
-  }
-  buf[sizeof(simd8x64<uint8_t>)] = '\0';
-  return buf;
-}
-
-// Routines to print masks and text for debugging bitmask operations
-simdutf_unused static char *format_input_text(const simd8x64<uint8_t> &in) {
-  static char *buf =
-      reinterpret_cast<char *>(malloc(sizeof(simd8x64<uint8_t>) + 1));
-  in.store(reinterpret_cast<uint8_t *>(buf));
-  for (size_t i = 0; i < sizeof(simd8x64<uint8_t>); i++) {
-    if (buf[i] < ' ') {
-      buf[i] = '_';
-    }
-  }
-  buf[sizeof(simd8x64<uint8_t>)] = '\0';
-  return buf;
-}
-
-simdutf_unused static char *format_mask(uint64_t mask) {
-  static char *buf = reinterpret_cast<char *>(malloc(64 + 1));
-  for (size_t i = 0; i < 64; i++) {
-    buf[i] = (mask & (size_t(1) << i)) ? 'X' : ' ';
-  }
-  buf[64] = '\0';
-  return buf;
-}
-
 template <size_t STEP_SIZE>
 simdutf_really_inline
 buf_block_reader<STEP_SIZE>::buf_block_reader(const uint8_t *_buf, size_t _len)
@@ -49400,10 +49434,10 @@ struct validating_transcoder {
                 (simd8x64<uint8_t>::NUM_CHUNKS == 4),
             "We support either two or four chunks per 64-byte block.");
         auto zero = simd8<uint8_t>{uint8_t(0)};
-        if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
+        if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
-        } else if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
+        } else if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
           this->check_utf8_bytes(input.chunks[2], input.chunks[1]);
@@ -49488,10 +49522,10 @@ struct validating_transcoder {
                 (simd8x64<uint8_t>::NUM_CHUNKS == 4),
             "We support either two or four chunks per 64-byte block.");
         auto zero = simd8<uint8_t>{uint8_t(0)};
-        if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
+        if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
-        } else if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
+        } else if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
           this->check_utf8_bytes(input.chunks[2], input.chunks[1]);
@@ -50245,7 +50279,7 @@ simdutf_really_inline size_t count_code_points(const char16_t *in,
   size_t count = 0;
   for (; pos < size / 32 * 32; pos += 32) {
     simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input.swap_bytes();
     }
     uint64_t not_pair = input.not_in_range(0xDC00, 0xDFFF);
@@ -50263,7 +50297,7 @@ simdutf_really_inline size_t utf8_length_from_utf16(const char16_t *in,
   // This algorithm could no doubt be improved!
   for (; pos < size / 32 * 32; pos += 32) {
     simd16x32<uint16_t> input(reinterpret_cast<const uint16_t *>(in + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input.swap_bytes();
     }
     uint64_t ascii_mask = input.lteq(0x7F);
@@ -50337,7 +50371,7 @@ simdutf_really_inline size_t utf8_length_from_utf16_bytemask(const char16_t *in,
 
   for (; pos < size / N * N; pos += N) {
     auto input = vector_u16::load(reinterpret_cast<const uint16_t *>(in + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input = input.swap_bytes();
     }
     // 0xd800 .. 0xdbff - low surrogate
@@ -50426,7 +50460,7 @@ utf8_length_from_utf16_with_replacement(const char16_t *in, size_t size) {
 
   for (; pos < (size - 1) / N * N; pos += N) {
     auto input = vector_u16::load(reinterpret_cast<const uint16_t *>(in + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input = input.swap_bytes();
     }
     // 0xd800 .. 0xdbff - low surrogate
@@ -50447,7 +50481,7 @@ utf8_length_from_utf16_with_replacement(const char16_t *in, size_t size) {
       any_surrogates = true;
       auto input_next =
           vector_u16::load(reinterpret_cast<const uint16_t *>(in + pos + 1));
-      if simdutf_constexpr (!match_system(big_endian)) {
+      if constexpr (!match_system(big_endian)) {
         input_next = input_next.swap_bytes();
       }
 
@@ -50648,7 +50682,7 @@ const result validate_utf16_as_ascii_with_errors(const char16_t *input,
   for (; pos < size / 32 * 32; pos += 32) {
     simd16x32<uint16_t> input_vec(
         reinterpret_cast<const uint16_t *>(input + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input_vec.swap_bytes();
     }
     uint64_t matches = input_vec.lteq(uint16_t(0x7f));
@@ -51106,7 +51140,7 @@ simdutf_really_inline bool validate(const char32_t *input, size_t size) {
 
   while (input + N < end) {
     auto in = vector_u32(input);
-    if simdutf_constexpr (!match_system(endianness::BIG)) {
+    if constexpr (!match_system(endianness::BIG)) {
       in.swap_bytes();
     }
 
@@ -51149,7 +51183,7 @@ simdutf_really_inline result validate_with_errors(const char32_t *input,
 
   while (input + N < end) {
     auto in = vector_u32(input);
-    if simdutf_constexpr (!match_system(endianness::BIG)) {
+    if constexpr (!match_system(endianness::BIG)) {
       in.swap_bytes();
     }
 
@@ -51240,7 +51274,7 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
   size_t full_input_length = ri.full_input_length;
   if (srclen == 0) {
     if (!ignore_garbage && equalsigns > 0) {
-      return {INVALID_BASE64_CHARACTER, equallocation, 0};
+      return {INVALID_BASE64_CHARACTER, equallocation, 0, true};
     }
     return {SUCCESS, full_input_length, 0};
   }
@@ -51407,7 +51441,8 @@ compress_decode_base64(char *dst, const chartype *src, size_t srclen,
   if (!ignore_garbage && equalsigns > 0) {
     if ((size_t(dst - dstinit) % 3 == 0) ||
         ((size_t(dst - dstinit) % 3) + 1 + equalsigns != 4)) {
-      return {INVALID_BASE64_CHARACTER, equallocation, size_t(dst - dstinit)};
+      return {INVALID_BASE64_CHARACTER, equallocation, size_t(dst - dstinit),
+              true};
     }
   }
   return {SUCCESS, srclen, size_t(dst - dstinit)};
@@ -53382,7 +53417,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
   // The obvious first test is ASCII, which actually consumes the full 16.
   if ((utf8_end_of_code_point_mask & 0xFFFF) == 0xFFFF) {
     __m128i zero = __lsx_vldi(0);
-    if simdutf_constexpr (match_system(big_endian)) {
+    if constexpr (match_system(big_endian)) {
       __lsx_vst(__lsx_vilvl_b(zero, in),
                 reinterpret_cast<uint16_t *>(utf16_output), 0);
       __lsx_vst(__lsx_vilvh_b(zero, in),
@@ -53404,7 +53439,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     // UTF-16 code units.
     __m128i composed = convert_utf8_3_byte_to_utf16(in);
     // Byte swap if necessary
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       composed = lsx_swap_bytes(composed);
     }
 
@@ -53419,7 +53454,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     // UTF-16 code units.
     __m128i composed = convert_utf8_2_byte_to_utf16(in);
     // Byte swap if necessary
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       composed = lsx_swap_bytes(composed);
     }
 
@@ -53441,7 +53476,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     // Convert to UTF-16
     __m128i composed = convert_utf8_1_to_2_byte_to_utf16(in, idx);
     // Byte swap if necessary
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       composed = lsx_swap_bytes(composed);
     }
     // Store
@@ -53487,7 +53522,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     // aaaabbbb bbcccccc
     composed = __lsx_vbitsel_v(highperm, composed, v0fff);
 
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       composed = lsx_swap_bytes(composed);
     }
 
@@ -53550,7 +53585,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
       // 110111CC CCDDDDDD|110110AA BBBBBBCC
       __m128i composed = __lsx_vadd_h(blend, magic_with_low_2);
       // Byte swap if necessary
-      if simdutf_constexpr (!match_system(big_endian)) {
+      if constexpr (!match_system(big_endian)) {
         composed = lsx_swap_bytes(composed);
       }
       __lsx_vst(composed, reinterpret_cast<uint16_t *>(utf16_output), 0);
@@ -53624,7 +53659,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     // 4 byte: 110110AA BBBBBBCC|110111CC CCDDDDDD
     __m128i selected = __lsx_vbitsel_v(composed, surrogates, is_pair);
     // Byte swap if necessary
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       selected = lsx_swap_bytes(selected);
     }
     // Attempting to shuffle and store would be complex, just scalarize.
@@ -53936,7 +53971,7 @@ lasx_convert_utf16_to_latin1(const char16_t *buf, size_t len,
   while (end - buf >= 16) {
     __m128i in = __lsx_vld(reinterpret_cast<const uint16_t *>(buf), 0);
     __m128i in1 = __lsx_vld(reinterpret_cast<const uint16_t *>(buf), 16);
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       in = lsx_swap_bytes(in);
       in1 = lsx_swap_bytes(in1);
     }
@@ -53964,7 +53999,7 @@ lasx_convert_utf16_to_latin1_with_errors(const char16_t *buf, size_t len,
   while (end - buf >= 16) {
     __m128i in = __lsx_vld(reinterpret_cast<const uint16_t *>(buf), 0);
     __m128i in1 = __lsx_vld(reinterpret_cast<const uint16_t *>(buf), 16);
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       in = lsx_swap_bytes(in);
       in1 = lsx_swap_bytes(in1);
     }
@@ -54064,7 +54099,7 @@ lasx_convert_utf16_to_utf8(const char16_t *buf, size_t len, char *utf8_out) {
   __m128i zero_128 = __lsx_vldi(0);
   while (end - buf >= std::ptrdiff_t(16 + safety_margin)) {
     __m256i in = __lasx_xvld(reinterpret_cast<const uint16_t *>(buf), 0);
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       in = lasx_swap_bytes(in);
     }
     if (__lasx_xbnz_h(__lasx_xvslt_hu(
@@ -54316,7 +54351,7 @@ lasx_convert_utf16_to_utf8_with_errors(const char16_t *buf, size_t len,
   __m128i zero_128 = __lsx_vldi(0);
   while (end - buf >= std::ptrdiff_t(16 + safety_margin)) {
     __m256i in = __lasx_xvld(reinterpret_cast<const uint16_t *>(buf), 0);
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       in = lasx_swap_bytes(in);
     }
     if (__lasx_xbnz_h(__lasx_xvslt_hu(
@@ -54587,7 +54622,7 @@ lasx_convert_utf16_to_utf32(const char16_t *buf, size_t len,
 
   while (end - buf >= 16) {
     __m256i in = __lasx_xvld(reinterpret_cast<const uint16_t *>(buf), 0);
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       in = lasx_swap_bytes(in);
     }
 
@@ -54681,7 +54716,7 @@ lasx_convert_utf16_to_utf32_with_errors(const char16_t *buf, size_t len,
   __m256i v_d800 = lasx_splat_u16(0xd800);
   while (end - buf >= 16) {
     __m256i in = __lasx_xvld(reinterpret_cast<const uint16_t *>(buf), 0);
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       in = lasx_swap_bytes(in);
     }
 
@@ -55437,7 +55472,7 @@ lasx_convert_utf32_to_utf16(const char32_t *buf, size_t len,
       word -= 0x10000;
       uint16_t high_surrogate = uint16_t(0xD800 + (word >> 10));
       uint16_t low_surrogate = uint16_t(0xDC00 + (word & 0x3FF));
-      if simdutf_constexpr (!match_system(big_endian)) {
+      if constexpr (!match_system(big_endian)) {
         high_surrogate = uint16_t(high_surrogate >> 8 | high_surrogate << 8);
         low_surrogate = uint16_t(low_surrogate << 8 | low_surrogate >> 8);
       }
@@ -55464,7 +55499,7 @@ lasx_convert_utf32_to_utf16(const char32_t *buf, size_t len,
               __lasx_xvsle_h(v_d800, utf16_packed)), // utf16_packed >= 0xd800
           forbidden_bytemask);
 
-      if simdutf_constexpr (!match_system(big_endian)) {
+      if constexpr (!match_system(big_endian)) {
         utf16_packed = lasx_swap_bytes(utf16_packed);
       }
       __lasx_xvst(utf16_packed, utf16_output, 0);
@@ -55496,7 +55531,7 @@ lasx_convert_utf32_to_utf16(const char32_t *buf, size_t len,
           word -= 0x10000;
           uint16_t high_surrogate = uint16_t(0xD800 + (word >> 10));
           uint16_t low_surrogate = uint16_t(0xDC00 + (word & 0x3FF));
-          if simdutf_constexpr (!match_system(big_endian)) {
+          if constexpr (!match_system(big_endian)) {
             high_surrogate =
                 uint16_t(high_surrogate >> 8 | high_surrogate << 8);
             low_surrogate = uint16_t(low_surrogate << 8 | low_surrogate >> 8);
@@ -55545,7 +55580,7 @@ lasx_convert_utf32_to_utf16_with_errors(const char32_t *buf, size_t len,
       word -= 0x10000;
       uint16_t high_surrogate = uint16_t(0xD800 + (word >> 10));
       uint16_t low_surrogate = uint16_t(0xDC00 + (word & 0x3FF));
-      if simdutf_constexpr (!match_system(big_endian)) {
+      if constexpr (!match_system(big_endian)) {
         high_surrogate = uint16_t(high_surrogate >> 8 | high_surrogate << 8);
         low_surrogate = uint16_t(low_surrogate << 8 | low_surrogate >> 8);
       }
@@ -55575,7 +55610,7 @@ lasx_convert_utf32_to_utf16_with_errors(const char32_t *buf, size_t len,
                               reinterpret_cast<char16_t *>(utf16_output));
       }
 
-      if simdutf_constexpr (!match_system(big_endian)) {
+      if constexpr (!match_system(big_endian)) {
         utf16_packed = lasx_swap_bytes(utf16_packed);
       }
 
@@ -55610,7 +55645,7 @@ lasx_convert_utf32_to_utf16_with_errors(const char32_t *buf, size_t len,
           word -= 0x10000;
           uint16_t high_surrogate = uint16_t(0xD800 + (word >> 10));
           uint16_t low_surrogate = uint16_t(0xDC00 + (word & 0x3FF));
-          if simdutf_constexpr (!match_system(big_endian)) {
+          if constexpr (!match_system(big_endian)) {
             high_surrogate =
                 uint16_t(high_surrogate >> 8 | high_surrogate << 8);
             low_surrogate = uint16_t(low_surrogate << 8 | low_surrogate >> 8);
@@ -56430,40 +56465,6 @@ private:
   const size_t lenminusstep;
   size_t idx;
 };
-
-// Routines to print masks and text for debugging bitmask operations
-simdutf_unused static char *format_input_text_64(const uint8_t *text) {
-  static char *buf =
-      reinterpret_cast<char *>(malloc(sizeof(simd8x64<uint8_t>) + 1));
-  for (size_t i = 0; i < sizeof(simd8x64<uint8_t>); i++) {
-    buf[i] = int8_t(text[i]) < ' ' ? '_' : int8_t(text[i]);
-  }
-  buf[sizeof(simd8x64<uint8_t>)] = '\0';
-  return buf;
-}
-
-// Routines to print masks and text for debugging bitmask operations
-simdutf_unused static char *format_input_text(const simd8x64<uint8_t> &in) {
-  static char *buf =
-      reinterpret_cast<char *>(malloc(sizeof(simd8x64<uint8_t>) + 1));
-  in.store(reinterpret_cast<uint8_t *>(buf));
-  for (size_t i = 0; i < sizeof(simd8x64<uint8_t>); i++) {
-    if (buf[i] < ' ') {
-      buf[i] = '_';
-    }
-  }
-  buf[sizeof(simd8x64<uint8_t>)] = '\0';
-  return buf;
-}
-
-simdutf_unused static char *format_mask(uint64_t mask) {
-  static char *buf = reinterpret_cast<char *>(malloc(64 + 1));
-  for (size_t i = 0; i < 64; i++) {
-    buf[i] = (mask & (size_t(1) << i)) ? 'X' : ' ';
-  }
-  buf[64] = '\0';
-  return buf;
-}
 
 template <size_t STEP_SIZE>
 simdutf_really_inline
@@ -57517,10 +57518,10 @@ struct validating_transcoder {
                 (simd8x64<uint8_t>::NUM_CHUNKS == 4),
             "We support either two or four chunks per 64-byte block.");
         auto zero = simd8<uint8_t>{uint8_t(0)};
-        if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
+        if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
-        } else if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
+        } else if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
           this->check_utf8_bytes(input.chunks[2], input.chunks[1]);
@@ -57605,10 +57606,10 @@ struct validating_transcoder {
                 (simd8x64<uint8_t>::NUM_CHUNKS == 4),
             "We support either two or four chunks per 64-byte block.");
         auto zero = simd8<uint8_t>{uint8_t(0)};
-        if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
+        if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
-        } else if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
+        } else if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
           this->check_utf8_bytes(input.chunks[2], input.chunks[1]);
@@ -58238,7 +58239,7 @@ simdutf_really_inline size_t count_code_points(const char16_t *in,
   auto counters = zero;
   for (; pos < size / N * N; pos += N) {
     auto input = vector_u16::load(in + pos);
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input = input.swap_bytes();
     }
 
@@ -58328,7 +58329,7 @@ simdutf_really_inline size_t utf8_length_from_utf16_bytemask(const char16_t *in,
 
   for (; pos < size / N * N; pos += N) {
     auto input = vector_u16::load(reinterpret_cast<const uint16_t *>(in + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input = input.swap_bytes();
     }
     // 0xd800 .. 0xdbff - low surrogate
@@ -58417,7 +58418,7 @@ utf8_length_from_utf16_with_replacement(const char16_t *in, size_t size) {
 
   for (; pos < (size - 1) / N * N; pos += N) {
     auto input = vector_u16::load(reinterpret_cast<const uint16_t *>(in + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input = input.swap_bytes();
     }
     // 0xd800 .. 0xdbff - low surrogate
@@ -58438,7 +58439,7 @@ utf8_length_from_utf16_with_replacement(const char16_t *in, size_t size) {
       any_surrogates = true;
       auto input_next =
           vector_u16::load(reinterpret_cast<const uint16_t *>(in + pos + 1));
-      if simdutf_constexpr (!match_system(big_endian)) {
+      if constexpr (!match_system(big_endian)) {
         input_next = input_next.swap_bytes();
       }
 
@@ -58537,7 +58538,7 @@ simdutf_really_inline void utf16fix_block(char16_t *out, const char16_t *in) {
   const char16_t replacement = scalar::utf16::replacement<big_endian>();
 
   using vector_u16 = simd16<uint16_t>;
-  auto swap_if_needed = [](uint16_t x) simdutf_constexpr -> uint16_t {
+  auto swap_if_needed = [](uint16_t x) constexpr -> uint16_t {
     return scalar::utf16::swap_if_needed<big_endian>(x);
   };
 
@@ -58752,7 +58753,7 @@ const result validate_utf16_as_ascii_with_errors(const char16_t *input,
   for (; pos < size / 32 * 32; pos += 32) {
     simd16x32<uint16_t> input_vec(
         reinterpret_cast<const uint16_t *>(input + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input_vec.swap_bytes();
     }
     uint64_t matches = input_vec.lteq(uint16_t(0x7f));
@@ -60697,7 +60698,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     // UTF-16 code units.
     __m128i composed = convert_utf8_3_byte_to_utf16(in);
     // Byte swap if necessary
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       composed = lsx_swap_bytes(composed);
     }
 
@@ -60712,7 +60713,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     // UTF-16 code units.
     __m128i composed = convert_utf8_2_byte_to_utf16(in);
     // Byte swap if necessary
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       composed = lsx_swap_bytes(composed);
     }
 
@@ -60734,7 +60735,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     // Convert to UTF-16
     __m128i composed = convert_utf8_1_to_2_byte_to_utf16(in, idx);
     // Byte swap if necessary
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       composed = lsx_swap_bytes(composed);
     }
     // Store
@@ -60780,7 +60781,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     // aaaabbbb bbcccccc
     composed = __lsx_vbitsel_v(highperm, composed, v0fff);
 
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       composed = lsx_swap_bytes(composed);
     }
 
@@ -60843,7 +60844,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
       // 110111CC CCDDDDDD|110110AA BBBBBBCC
       __m128i composed = __lsx_vadd_h(blend, magic_with_low_2);
       // Byte swap if necessary
-      if simdutf_constexpr (!match_system(big_endian)) {
+      if constexpr (!match_system(big_endian)) {
         composed = lsx_swap_bytes(composed);
       }
       // __lsx_vst(composed, reinterpret_cast<uint16_t *>(utf16_output), 0);
@@ -60919,7 +60920,7 @@ size_t convert_masked_utf8_to_utf16(const char *input,
     // 4 byte: 110110AA BBBBBBCC|110111CC CCDDDDDD
     __m128i selected = __lsx_vbitsel_v(composed, surrogates, is_pair);
     // Byte swap if necessary
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       selected = lsx_swap_bytes(selected);
     }
     // Attempting to shuffle and store would be complex, just scalarize.
@@ -61223,7 +61224,7 @@ lsx_convert_utf16_to_latin1(const char16_t *buf, size_t len,
   while (end - buf >= 16) {
     __m128i in = __lsx_vld(reinterpret_cast<const uint16_t *>(buf), 0);
     __m128i in1 = __lsx_vld(reinterpret_cast<const uint16_t *>(buf), 16);
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       in = lsx_swap_bytes(in);
       in1 = lsx_swap_bytes(in1);
     }
@@ -61251,7 +61252,7 @@ lsx_convert_utf16_to_latin1_with_errors(const char16_t *buf, size_t len,
   while (end - buf >= 16) {
     __m128i in = __lsx_vld(reinterpret_cast<const uint16_t *>(buf), 0);
     __m128i in1 = __lsx_vld(reinterpret_cast<const uint16_t *>(buf), 16);
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       in = lsx_swap_bytes(in);
       in1 = lsx_swap_bytes(in1);
     }
@@ -61348,7 +61349,7 @@ lsx_convert_utf16_to_utf8(const char16_t *buf, size_t len, char *utf8_out) {
   __m128i v_07ff = __lsx_vreplgr2vr_h(uint16_t(0x7ff));
   while (end - buf >= std::ptrdiff_t(16 + safety_margin)) {
     __m128i in = __lsx_vld(reinterpret_cast<const uint16_t *>(buf), 0);
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       in = lsx_swap_bytes(in);
     }
     if (__lsx_bz_v(
@@ -61356,7 +61357,7 @@ lsx_convert_utf16_to_utf8(const char16_t *buf, size_t len, char *utf8_out) {
       // It is common enough that we have sequences of 16 consecutive ASCII
       // characters.
       __m128i nextin = __lsx_vld(reinterpret_cast<const uint16_t *>(buf), 16);
-      if simdutf_constexpr (!match_system(big_endian)) {
+      if constexpr (!match_system(big_endian)) {
         nextin = lsx_swap_bytes(nextin);
       }
       if (__lsx_bz_v(__lsx_vslt_hu(__lsx_vrepli_h(0x7F), nextin))) {
@@ -61583,7 +61584,7 @@ lsx_convert_utf16_to_utf8_with_errors(const char16_t *buf, size_t len,
           // https://github.com/simdutf/simdutf/issues/92
   while (end - buf >= std::ptrdiff_t(16 + safety_margin)) {
     __m128i in = __lsx_vld(reinterpret_cast<const uint16_t *>(buf), 0);
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       in = lsx_swap_bytes(in);
     }
     if (__lsx_bz_v(
@@ -61591,7 +61592,7 @@ lsx_convert_utf16_to_utf8_with_errors(const char16_t *buf, size_t len,
       // It is common enough that we have sequences of 16 consecutive ASCII
       // characters.
       __m128i nextin = __lsx_vld(reinterpret_cast<const uint16_t *>(buf), 16);
-      if simdutf_constexpr (!match_system(big_endian)) {
+      if constexpr (!match_system(big_endian)) {
         nextin = lsx_swap_bytes(nextin);
       }
       if (__lsx_bz_v(__lsx_vslt_hu(__lsx_vrepli_h(0x7F), nextin))) {
@@ -61818,7 +61819,7 @@ lsx_convert_utf16_to_utf32(const char16_t *buf, size_t len,
 
   while (end - buf >= 8) {
     __m128i in = __lsx_vld(reinterpret_cast<const uint16_t *>(buf), 0);
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       in = lsx_swap_bytes(in);
     }
 
@@ -61889,7 +61890,7 @@ lsx_convert_utf16_to_utf32_with_errors(const char16_t *buf, size_t len,
 
   while (end - buf >= 8) {
     __m128i in = __lsx_vld(reinterpret_cast<const uint16_t *>(buf), 0);
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       in = lsx_swap_bytes(in);
     }
 
@@ -62499,7 +62500,7 @@ lsx_convert_utf32_to_utf16(const char32_t *buf, size_t len,
               __lsx_vsle_h(v_d800, utf16_packed)), // utf16_packed >= 0xd800
           forbidden_bytemask);
 
-      if simdutf_constexpr (!match_system(big_endian)) {
+      if constexpr (!match_system(big_endian)) {
         utf16_packed = lsx_swap_bytes(utf16_packed);
       }
       __lsx_vst(utf16_packed, utf16_output, 0);
@@ -62531,7 +62532,7 @@ lsx_convert_utf32_to_utf16(const char32_t *buf, size_t len,
           word -= 0x10000;
           uint16_t high_surrogate = uint16_t(0xD800 + (word >> 10));
           uint16_t low_surrogate = uint16_t(0xDC00 + (word & 0x3FF));
-          if simdutf_constexpr (!match_system(big_endian)) {
+          if constexpr (!match_system(big_endian)) {
             high_surrogate =
                 uint16_t(high_surrogate >> 8 | high_surrogate << 8);
             low_surrogate = uint16_t(low_surrogate << 8 | low_surrogate >> 8);
@@ -62580,7 +62581,7 @@ lsx_convert_utf32_to_utf16_with_errors(const char32_t *buf, size_t len,
                               reinterpret_cast<char16_t *>(utf16_output));
       }
 
-      if simdutf_constexpr (!match_system(big_endian)) {
+      if constexpr (!match_system(big_endian)) {
         utf16_packed = lsx_swap_bytes(utf16_packed);
       }
 
@@ -62615,7 +62616,7 @@ lsx_convert_utf32_to_utf16_with_errors(const char32_t *buf, size_t len,
           word -= 0x10000;
           uint16_t high_surrogate = uint16_t(0xD800 + (word >> 10));
           uint16_t low_surrogate = uint16_t(0xDC00 + (word & 0x3FF));
-          if simdutf_constexpr (!match_system(big_endian)) {
+          if constexpr (!match_system(big_endian)) {
             high_surrogate =
                 uint16_t(high_surrogate >> 8 | high_surrogate << 8);
             low_surrogate = uint16_t(low_surrogate << 8 | low_surrogate >> 8);
@@ -63411,40 +63412,6 @@ private:
   const size_t lenminusstep;
   size_t idx;
 };
-
-// Routines to print masks and text for debugging bitmask operations
-simdutf_unused static char *format_input_text_64(const uint8_t *text) {
-  static char *buf =
-      reinterpret_cast<char *>(malloc(sizeof(simd8x64<uint8_t>) + 1));
-  for (size_t i = 0; i < sizeof(simd8x64<uint8_t>); i++) {
-    buf[i] = int8_t(text[i]) < ' ' ? '_' : int8_t(text[i]);
-  }
-  buf[sizeof(simd8x64<uint8_t>)] = '\0';
-  return buf;
-}
-
-// Routines to print masks and text for debugging bitmask operations
-simdutf_unused static char *format_input_text(const simd8x64<uint8_t> &in) {
-  static char *buf =
-      reinterpret_cast<char *>(malloc(sizeof(simd8x64<uint8_t>) + 1));
-  in.store(reinterpret_cast<uint8_t *>(buf));
-  for (size_t i = 0; i < sizeof(simd8x64<uint8_t>); i++) {
-    if (buf[i] < ' ') {
-      buf[i] = '_';
-    }
-  }
-  buf[sizeof(simd8x64<uint8_t>)] = '\0';
-  return buf;
-}
-
-simdutf_unused static char *format_mask(uint64_t mask) {
-  static char *buf = reinterpret_cast<char *>(malloc(64 + 1));
-  for (size_t i = 0; i < 64; i++) {
-    buf[i] = (mask & (size_t(1) << i)) ? 'X' : ' ';
-  }
-  buf[64] = '\0';
-  return buf;
-}
 
 template <size_t STEP_SIZE>
 simdutf_really_inline
@@ -64499,10 +64466,10 @@ struct validating_transcoder {
                 (simd8x64<uint8_t>::NUM_CHUNKS == 4),
             "We support either two or four chunks per 64-byte block.");
         auto zero = simd8<uint8_t>{uint8_t(0)};
-        if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
+        if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
-        } else if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
+        } else if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
           this->check_utf8_bytes(input.chunks[2], input.chunks[1]);
@@ -64587,10 +64554,10 @@ struct validating_transcoder {
                 (simd8x64<uint8_t>::NUM_CHUNKS == 4),
             "We support either two or four chunks per 64-byte block.");
         auto zero = simd8<uint8_t>{uint8_t(0)};
-        if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
+        if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 2) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
-        } else if simdutf_constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
+        } else if constexpr (simd8x64<uint8_t>::NUM_CHUNKS == 4) {
           this->check_utf8_bytes(input.chunks[0], zero);
           this->check_utf8_bytes(input.chunks[1], input.chunks[0]);
           this->check_utf8_bytes(input.chunks[2], input.chunks[1]);
@@ -65221,7 +65188,7 @@ simdutf_really_inline size_t count_code_points(const char16_t *in,
   auto counters = zero;
   for (; pos < size / N * N; pos += N) {
     auto input = vector_u16::load(in + pos);
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input = input.swap_bytes();
     }
 
@@ -65311,7 +65278,7 @@ simdutf_really_inline size_t utf8_length_from_utf16_bytemask(const char16_t *in,
 
   for (; pos < size / N * N; pos += N) {
     auto input = vector_u16::load(reinterpret_cast<const uint16_t *>(in + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input = input.swap_bytes();
     }
     // 0xd800 .. 0xdbff - low surrogate
@@ -65400,7 +65367,7 @@ utf8_length_from_utf16_with_replacement(const char16_t *in, size_t size) {
 
   for (; pos < (size - 1) / N * N; pos += N) {
     auto input = vector_u16::load(reinterpret_cast<const uint16_t *>(in + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input = input.swap_bytes();
     }
     // 0xd800 .. 0xdbff - low surrogate
@@ -65421,7 +65388,7 @@ utf8_length_from_utf16_with_replacement(const char16_t *in, size_t size) {
       any_surrogates = true;
       auto input_next =
           vector_u16::load(reinterpret_cast<const uint16_t *>(in + pos + 1));
-      if simdutf_constexpr (!match_system(big_endian)) {
+      if constexpr (!match_system(big_endian)) {
         input_next = input_next.swap_bytes();
       }
 
@@ -65520,7 +65487,7 @@ simdutf_really_inline void utf16fix_block(char16_t *out, const char16_t *in) {
   const char16_t replacement = scalar::utf16::replacement<big_endian>();
 
   using vector_u16 = simd16<uint16_t>;
-  auto swap_if_needed = [](uint16_t x) simdutf_constexpr -> uint16_t {
+  auto swap_if_needed = [](uint16_t x) constexpr -> uint16_t {
     return scalar::utf16::swap_if_needed<big_endian>(x);
   };
 
@@ -65735,7 +65702,7 @@ const result validate_utf16_as_ascii_with_errors(const char16_t *input,
   for (; pos < size / 32 * 32; pos += 32) {
     simd16x32<uint16_t> input_vec(
         reinterpret_cast<const uint16_t *>(input + pos));
-    if simdutf_constexpr (!match_system(big_endian)) {
+    if constexpr (!match_system(big_endian)) {
       input_vec.swap_bytes();
     }
     uint64_t matches = input_vec.lteq(uint16_t(0x7f));
@@ -67224,6 +67191,12 @@ typedef struct simdutf_result {
   size_t count; /* position of error or number of code units validated */
 } simdutf_result;
 
+typedef struct simdutf_full_result {
+  simdutf_error_code error;
+  size_t input_count;  /* number of input units consumed */
+  size_t output_count; /* number of output bytes written */
+} simdutf_full_result;
+
 typedef enum simdutf_encoding_type {
   SIMDUTF_ENCODING_UNSPECIFIED = 0,
   SIMDUTF_ENCODING_UTF8 = 1,
@@ -67509,6 +67482,20 @@ simdutf_result simdutf_base64_to_binary_safe_utf16(
     simdutf_base64_options options,
     simdutf_last_chunk_handling_options last_chunk_options,
     bool decode_up_to_bad_char);
+
+/* detailed decoding returning input_count and output_count */
+simdutf_full_result simdutf_base64_to_binary_details(
+    const char *input, size_t length, char *output,
+    simdutf_base64_options options,
+    simdutf_last_chunk_handling_options last_chunk_options);
+simdutf_full_result simdutf_base64_to_binary_details_utf16(
+    const char16_t *input, size_t length, char *output,
+    simdutf_base64_options options,
+    simdutf_last_chunk_handling_options last_chunk_options);
+
+/* single-character base64 validation */
+bool simdutf_base64_valid(char input, simdutf_base64_options options);
+bool simdutf_base64_valid_utf16(char16_t input, simdutf_base64_options options);
 
 #ifdef __cplusplus
 } /* extern "C" */
@@ -68033,6 +68020,41 @@ simdutf_result simdutf_base64_to_binary_safe_utf16(
   if (outlen)
     *outlen = local_out;
   return to_c_result(r);
+}
+
+static simdutf_full_result to_c_full_result(const simdutf::full_result &r) {
+  simdutf_full_result out;
+  out.error = static_cast<simdutf_error_code>(r.error);
+  out.input_count = r.input_count;
+  out.output_count = r.output_count;
+  return out;
+}
+
+simdutf_full_result simdutf_base64_to_binary_details(
+    const char *input, size_t length, char *output,
+    simdutf_base64_options options,
+    simdutf_last_chunk_handling_options last_chunk_options) {
+  return to_c_full_result(simdutf::base64_to_binary_details(
+      input, length, output, static_cast<simdutf::base64_options>(options),
+      static_cast<simdutf::last_chunk_handling_options>(last_chunk_options)));
+}
+simdutf_full_result simdutf_base64_to_binary_details_utf16(
+    const char16_t *input, size_t length, char *output,
+    simdutf_base64_options options,
+    simdutf_last_chunk_handling_options last_chunk_options) {
+  return to_c_full_result(simdutf::base64_to_binary_details(
+      input, length, output, static_cast<simdutf::base64_options>(options),
+      static_cast<simdutf::last_chunk_handling_options>(last_chunk_options)));
+}
+
+bool simdutf_base64_valid(char input, simdutf_base64_options options) {
+  return simdutf::base64_valid(input,
+                               static_cast<simdutf::base64_options>(options));
+}
+bool simdutf_base64_valid_utf16(char16_t input,
+                                simdutf_base64_options options) {
+  return simdutf::base64_valid(input,
+                               static_cast<simdutf::base64_options>(options));
 }
 
 } // extern "C"
