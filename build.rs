@@ -1,11 +1,13 @@
 fn cpp17(cc: &mut cc::Build) {
     cc.cpp(true);
     if cfg!(all(windows, target_env = "msvc")) {
-        // MSVC uses /std:c++17 or /std:c++latest
+        // MSVC uses /std:c++17 or /std:c++latest, and does not support `-nostdlib++`
         cc.flag("/std:c++17");
     } else {
         // GCC/Clang use -std=c++17
-        cc.flag("-std=c++17");
+        cc.flags(["-std=c++17", "-nostdlib++", "-fno-rtti", "-fno-exceptions"]);
+        cc.define("SIMDUTF_NO_LIBCXX", "1");
+        cc.cpp_link_stdlib(None);
     }
 }
 
