@@ -5,9 +5,10 @@
 //! ## Compilation
 //!
 //! This crate works out of the box as long as
-//! you have a C++11-compatible toolchain installed correctly.
+//! you have a C++17-compatible toolchain installed correctly.
 //!
-//! [simdutf] links C++ standard library, which adds a dynamic linking dependency.
+//! On Windows (MSVC), [simdutf] links C++ standard library, which adds a dynamic linking dependency.
+//! Other targets do not depend on the C++ standard library.
 //!
 //! For more details, see [simdutf] documentation and [cc] documentation.
 //!
