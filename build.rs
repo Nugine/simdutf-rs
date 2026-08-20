@@ -29,5 +29,20 @@ fn main() {
     feature_define(&mut cc, "UTF32", "SIMDUTF_FEATURE_UTF32");
     feature_define(&mut cc, "BASE64", "SIMDUTF_FEATURE_BASE64");
 
+    println!("cargo:rerun-if-env-changed=SIMDUTF_LIB_DIR");
+    println!("cargo:rerun-if-env-changed=SIMDUTF_LIB_NAME");
+    if cfg!(feature = "bundled") {
+        cc.define("SIMDUTFRS_BUNDLED", None);
+    } else {
+        if let Some(dir) = std::env::var_os("SIMDUTF_LIB_DIR") {
+            println!("cargo:rustc-link-search=native={}", std::path::Path::new(&dir).display());
+        }
+        if let Ok(name) = std::env::var("SIMDUTF_LIB_NAME") {
+            if !name.is_empty() {
+                println!("cargo:rustc-link-lib={name}");
+            }
+        }
+    }
+
     cc.file("cpp/simdutfrs.cpp").compile("simdutfrs");
 }
