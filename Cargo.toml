@@ -9,12 +9,14 @@ keywords = ["utf8", "unicode", "string", "validation", "simd"]
 categories = ["encoding", "algorithms", "no-std", "text-processing"]
 readme = "README.md"
 rust-version = "1.78.0"
+links = "simdutf"
 
 [package.metadata.docs.rs]
 rustdoc-args = ["--cfg", "docsrs"]
 
 [features]
-default = ["detect_encoding", "ascii", "latin1", "utf8", "utf16", "utf32", "base64"]
+default = ["bundled", "detect_encoding", "ascii", "latin1", "utf8", "utf16", "utf32", "base64"]
+bundled = []
 detect_encoding = []
 ascii = []
 latin1 = []
